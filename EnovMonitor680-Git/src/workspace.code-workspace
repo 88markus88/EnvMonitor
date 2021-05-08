@@ -1,0 +1,41 @@
+{
+	"folders": [
+		{
+			"name": "E-Paper Test",
+			"path": "..\\..\\E-Paper Test"
+		},
+		{
+			"name": "EnvMonitorBME680",
+			"path": ".."
+		},
+		{
+			"name": "SerialDataLogger",
+			"path": "..\\..\\SerialDataLogger"
+		},
+		{
+			"name": "Senseair Test",
+			"path": "..\\..\\Senseair Test"
+		},
+		{
+			"name": "NovaSDS018Test",
+			"path": "..\\..\\NovaSDS018Test"
+		},
+		{
+			"name": "EnvMonitor-M5Stack-BME280",
+			"path": "..\\..\\EnvMonitor-M5Stack-BME280"
+		},
+		{
+			"name": "LCD Test",
+			"path": "..\\..\\LCD Test"
+		},
+		{
+			"name": "ESP32EvoPilotRemote",
+			"path": "..\\..\\ESP32EvoPilotRemote"
+		},
+		{
+			"name": "ESP32_433_Programming",
+			"path": "..\\..\\ESP32_433_Programming"
+		}
+	],
+	"settings": {}
+}
