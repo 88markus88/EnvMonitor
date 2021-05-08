@@ -1,12 +1,12 @@
 /******************************************************
 * LCD Display handling functions
 *******************************************************/
-#include <Arduino.h>
-#include "GlobalDefines.h"
+#include <Arduino.h>        // general library
+#include "GlobalDefines.h"  // needed here to convey the #defines
 
 #ifdef isLCD
-  #include <LiquidCrystal_I2C.h>
-  #include "LCDFunctions.h"
+  #include <LiquidCrystal_I2C.h>  // liquid crystal library
+  #include "LCDFunctions.h"       // header file for this .cpp file
 
   void initLCD()
   {
