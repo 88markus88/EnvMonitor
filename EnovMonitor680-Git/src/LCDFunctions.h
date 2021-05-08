@@ -10,7 +10,7 @@
 
     // module global variables  
     // set the LCD number of columns and rows  
-    // static prevents the linker from complaining, see
+    // 'static' prevents the linker from complaining, see
     // https://stackoverflow.com/questions/14909997/why-arent-my-include-guards-preventing-recursive-inclusion-and-multiple-symbol
 
     static int lcdColumns = 20;

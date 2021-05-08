@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# User Stuff Markus
+Credentials.h
