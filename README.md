@@ -7,6 +7,7 @@ The project consists of both code and the hardware description as KiCad and Frit
 It is presently work in progress, but already functional. Development is being done using Platformio with the Arduino platform. 
 
 So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in <i>GlobalDefines.h</i>:
+![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
 
 # Visualization:
 - via Blynk, a commercial service that can also be used with a local server, e.g. on a Raspberry Pi
@@ -31,6 +32,10 @@ So far the following sensors and devices on the following list can be included. 
 It is also possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). Not included here.
 
 The Fritzing files does not contain the option to connect a 433 MHz transmitter. It also does not contain the external power supply that has been included in KiCad, and the option to power the DS18B20 sensors via digital output 32 (Jumper on J9) as an alternative to 3.3V. This may be necessary if the sensors are too unstable for continued operation, they can then optionally be reset by switching their power supply. May be necessary since most available DS18B20s are fake and prone to unstability (no data for longer periods). First option in this case is the reduction of the pulllup resistor R2 to 2.5K.
+
+![Fritzing](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
+![Schema](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Schematic%20V0.4.jpg)
+![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Schematic%20V0.4.jpg)
 
 # Credits
 - Blynk Library from here: https://blynk.io/. Using <i>Wifi, WifiClient</i> and <i>BlynkSimpleEsp32</i> libraries
