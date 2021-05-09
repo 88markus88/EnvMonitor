@@ -776,12 +776,14 @@ void setup()
     sprintf(printstring,"Blynk setup section entered\n");
     logOut(printstring);
     // Blynk initialization for Blynk web account - MP internet
-    // Blynk.begin(auth, ssid, pass);
-
-    // Blynk initialization for local blynk server on raspi - MP Home
-    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,31), 8080);
-    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,64), 8080);
-    Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+    #ifdef blynkCloud
+      Blynk.begin(auth, ssid, pass);
+    #else
+      // Blynk initialization for local blynk server on raspi - MP Home
+      // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,31), 8080);
+      // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,64), 8080);
+      Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+    #endif  
 
     // Original example, never use in reality: You can also specify server:
     // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
