@@ -50,16 +50,34 @@ No special libraries are needed for the Arduino Sketch.
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Arduino%20Hardware/Pictures/Arduino433Receiver%20PCB%20V0.2.jpg)
 
 # Parts
-- PCBs for ESP32 and Arduino (e.g. from JLCPCB)
+- PCB for ESP32 (e.g. from JLCPCB)
 - ESP32 DevKit C
-- 
+- Resistors. One each 4,7K, 10K, 1K, 2K, 3.3K
+- Transistor BC 547
+- Terminal Block 3x, 5,08 mm spacing
+- 2 Terminal Block 3x, 2,54 mm spacing
+- 5-9 Terminal Block 2x, 2,54 mm spacing 
+- 2 Pinheader female 4x 2,54 mm spacing
+- Pinheader male 3x
+- OLED display 0.96' or LCD display (I2C) 4x20 
+- Button
+- Housing
 
+For power supply:
+- Terminal Block 2x, 5,08 mm spacing 
+- DCDC Converter Traco TSR 1-2450E
+- Diode 1N4001
+- Electrolyte Capacitor 470 uF
+
+For Arduino:
+-  PCB for Arduino (e.g. from JLCPCB)
 - Arduino Nano
 - 433 MHz Receiver RXB6
 - 433 MHz Antenna
 - 2 x Capacitor 100 nF
 - Terminal Block 4x, 2,54 mm spacing
 - Two Pinheader: 4x, 2,54 mm spacing  (used for debugging only)
+- Housing
 
 # Credits
 - Blynk Library from here: https://blynk.io/. Using <i>Wifi, WifiClient</i> and <i>BlynkSimpleEsp32</i> libraries
