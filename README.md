@@ -6,13 +6,13 @@ The project consists of both code and the hardware description as KiCad and Frit
 
 It is presently work in progress, but already functional. Development is being done using Platformio with the Arduino platform. 
 
-So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in <i>GlobalDefines.h</i>:
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
 
 ## Visualization:
 - via Blynk, a commercial service that can also be used with a local server, e.g. on a Raspberry Pi
 
 ## Sensors:
+So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in *GlobalDefines.h*:
 - BME280 (Temperature / Humidity / Pressure) via I2C
 - BME680 (Temperature / Humidity / Pressure / Air Quality) via I2C
 - DS18B20 (Temperature, up to 10 sensors) via OneWire
