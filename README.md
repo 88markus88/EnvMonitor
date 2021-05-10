@@ -54,7 +54,7 @@ No special libraries are needed for the Arduino Sketch.
 See [Parts List](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/Partslist.md)
 
 ## Blynk Virtual Pins
-
+See [List of Virtual Pins](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/BlynkVirtualPins.md)
 
 ## Credits
 - Blynk Library from here: https://blynk.io/. Using <i>Wifi, WifiClient</i> and <i>BlynkSimpleEsp32</i> libraries
