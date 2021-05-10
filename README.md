@@ -9,7 +9,9 @@ It is presently work in progress, but already functional. Development is being d
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
 
 ## Visualization:
-- via Blynk, a commercial service that can also be used with a local server, e.g. on a Raspberry Pi
+Is done via Blynk, a commercial service that can also be used with a local server, e.g. on a Raspberry Pi
+All data that the EnvMonitor provides can be shown via the Blynk App - very simple and powerful. Since the service is cloud based, the data can be viewed at every location.
+Blynk also supports a local server (e.g. on a Raspberry) - this eliminates the costs for the Blynk service.
 
 ## Sensors:
 So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in *GlobalDefines.h*:
@@ -28,13 +30,30 @@ So far the following sensors and devices on the following list can be included. 
 - Button to be able to switch content of displays, or mute display light
 - SD card reader via SPI
 
-## Hardware
-It is also possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). (The serial port is not included in the Fritzing drawing.) 
-The Arduino board is described below.
+## ESP32 Hardware
+The main component is an ESP32 with various peripherals attached. Communication to the peripherals is done via 
+- 1Wire (DS180B20 temperature sensors)
+- I2C (OLE or LCD displays, BME280 or BME 680 environment sensors
+- SPI (SD card drive)
+- Serial (CO2 sensors, external sensors via Arduino)
+- GPIOs (button, transistor or relais)
 
-The Fritzing files does not contain the option to connect a 433 MHz transmitter. It also does not contain the external power supply that has been included in KiCad, and the option to power the DS18B20 sensors via digital output 32 (Jumper on J9) as an alternative to 3.3V. This may be necessary if the sensors are too unstable for continued operation, they can then optionally be reset by switching their power supply. May be necessary since most available DS18B20s are fake and prone to unstability (no data for longer periods). First option in this case is the reduction of the pulllup resistor R2 to 2.5K.
+All components are optional. They can be used in a large varity of combinations, providing that there are no confliting requirements
+- Multiple devices can be combined on the I2C interface. E.g. BME280 and OLED display can be used together. Or LCD display and BME680. Or BME280 and no display.
+- Up to 3 DS18B20 temperature sensors are supported. 3 connectors are provided, where they are connected in parallel. 
+- Only one serial port (Serial2) is supported. Therefore only one CO2 sensor, or alternatively one Arduino, can be connected.
+- Running a fan etc. via BC547 transistor, or other devices via relay, is supported by the hardware. Could also be used for a buzzer.
+- An internal power source can be used, which requires 7V-36V input from an external power supply.
+Components that are not used do not have to be placed on the board. They can be configured out in the software via #defines
 
 The board can be powered via USB. However, the USB power is relatively unstable. Most USB power supplies are not stabilized and should not be used. Raspberry Pi power supplies are better. Best is to use the option to add an internal DCDC converter <I>Traco TSR 1-2450E</I> that can be driven with 7-36V and provides excellent power conditioning. If this is not used, just leave the comoponents (DCDC converter, capacitor, diode, terminal block) out.
+
+It is also possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). (The serial port is not included in the Fritzing drawing.) 
+The Arduino board, as well as it's softare are described in a separate section.
+
+KiCad files are provided for the electrical schema and the PCB board. 
+
+There is also a Fritzing file for illustration, however it is not complete: it does not contain the option to connect a 433 MHz transmitter. It also does not contain the external power supply that has been included in KiCad, and the option to power the DS18B20 sensors via digital output 32 (Jumper on J9) as an alternative to 3.3V. This may be necessary if the sensors are too unstable for continued operation, they can then optionally be reset by switching their power supply. May be necessary since most available DS18B20s are fake and prone to unstability (no data for longer periods). First option in this case is the reduction of the pulllup resistor R2 to 2.5K.
 
 ![Fritzing](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Fritzing%20V0.3.jpg)
 ![Schema](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Schematic%20V0.4.jpg)
