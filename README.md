@@ -63,13 +63,13 @@ No special libraries are needed for the Arduino Sketch.
 - Button
 - Housing
 
-For power supply:
+**For power supply:**
 - Terminal Block 2x, 5,08 mm spacing 
 - DCDC Converter Traco TSR 1-2450E
 - Diode 1N4001
 - Electrolyte Capacitor 470 uF
 
-For Arduino:
+**For Arduino:**
 -  PCB for Arduino (e.g. from JLCPCB)
 - Arduino Nano
 - 433 MHz Receiver RXB6
