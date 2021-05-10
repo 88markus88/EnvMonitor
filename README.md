@@ -1,4 +1,4 @@
-# EnvMonitor
+# EnvMonitor - ESP32
 
 This project aims to create a flexible software for ESP32 to use multiple environmental sensors and make the data visible using <B>Blynk</B> (https://blynk.io/)
 
@@ -40,7 +40,24 @@ The board can be powered via USB. However, the USB power is relatively unstable.
 ![Schema](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Schematic%20V0.4.jpg)
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20PCB%20V0.6.jpg)
 
-## Arduino
+## ESP32 Code
+The code is written in C##. It is intended to be flexible, to allow almost any combination of sensors and displays on the ESP32 device itself. 
+All data are sent to a Blynk server.
+
+Development platform is Platformio, but the code should also compile - with minimum adaptations - on the Arduino IDE.
+
+In order to compile the code, the following adaptations have to be made:
+1. Get the required libraries, adjust the library path in platformio.ini to point to your library directory
+2. create your own "Credentials.h" file. A template file is provided. You need to put in the name and password for your Wifi network, this is a must to allow the ESP32 to access the network. Then insert the auth code, temperature correction data and device info strings for each device you want to use. This file can contain many of these device definitions, each within a #ifdef /#endif construct
+3. Adapt "GlobalDefines.h" to your hardware.  
+  - enter the IP address of your local Blynk server
+  - set one #define for the name of the hardware configuration you want to use (one of those in the "credentials.h" file)
+  - set the actual hardware definitions: use of Blynk, use of sensors, use of display etc.
+  - determine if you want to log to a SD card and / or to the serial port
+  - determine if OTA (over the air) updates shall be used
+ 4. modify platformio.ini as needed: set _default_envs_ to determine which environment is to be used. This is largely required to determine if USB  upload or OTA upload to a given IP are to be used.
+
+# Arduino
 PCB and Code for the Arduino Nano that can provide the data from an external 433MHz sensor is also included.
 Why using and Arduino? It turns out that the Wifi used by the ESP32 interferes with the 433 MHz reception when an ESP32 is used directly. The signals are disturbed by the 100 ms heartbeat of the Wifi that cannot be changed easily. 
 So a small arduino PCB and sketch have been developed to still be able to use external sensors. This arduino needs to be connected via cable to the ESP32. Pins used for this are +5V, GND, RxD and TxD (the latter switched between ESP32 and arduino)
