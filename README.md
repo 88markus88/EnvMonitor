@@ -29,7 +29,8 @@ So far the following sensors and devices on the following list can be included. 
 - SD card reader via SPI
 
 ## Hardware
-It is also possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). Not included here.
+It is also possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). (The serial port is not included in the Fritzing drawing.) 
+The Arduino board is described below.
 
 The Fritzing files does not contain the option to connect a 433 MHz transmitter. It also does not contain the external power supply that has been included in KiCad, and the option to power the DS18B20 sensors via digital output 32 (Jumper on J9) as an alternative to 3.3V. This may be necessary if the sensors are too unstable for continued operation, they can then optionally be reset by switching their power supply. May be necessary since most available DS18B20s are fake and prone to unstability (no data for longer periods). First option in this case is the reduction of the pulllup resistor R2 to 2.5K.
 
