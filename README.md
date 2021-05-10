@@ -79,6 +79,33 @@ For Arduino:
 - Two Pinheader: 4x, 2,54 mm spacing  (used for debugging only)
 - Housing
 
+# Blynk Virtual Pins
+Inputs
+- V18 Relay 1
+- V19 Relay 2
+- V20 Start CO2 Sensor Calibration
+- V60 Manual restart of 1Wire bus (DS18B20 Sensors)
+
+Outputs
+- V5  BME280 / BME680 Temperature
+- V6  BME280 / BME680 Air Pressure
+- V7  BME280 / BME680 Humidity
+- V8  BME680 Air Quality Score
+- V12 BME680 Air Quality String
+- V13 DS18B20[0]  Temperature
+- V10 DS18B20[1]  Temperature
+- V11 DS18B20[2]  Temperature
+- V15 Infactory Temperature Ch1
+- V16 Infactory Humidity Ch1
+- V17 Infactory Temperatue Ch2
+- V18 Infactory Humidity Ch2
+- V19 Infactory Temperature Ch3
+- V20 Infactory Humidity Ch3
+- V35 Infactory Ch1 Counter 
+- V36 Infactory Ch2 Counter 
+- V37 Infactory Ch3 Counter 
+- V38 Infactory Serial Fail Counter 
+
 # Credits
 - Blynk Library from here: https://blynk.io/. Using <i>Wifi, WifiClient</i> and <i>BlynkSimpleEsp32</i> libraries
 - BME 280: <i>Wire</i>, <i>Adafruit_Sensor</i> and <i>Adafruit_BME280</i> libraries
