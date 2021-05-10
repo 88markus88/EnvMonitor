@@ -3,9 +3,9 @@
 ## Parts List
 - PCB for ESP32 (e.g. from JLCPCB)
 Can be ordered 
-- [ESP32 DevKit C] (https://www.amazon.de/gp/product/B074RGW2VQ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
+- [ESP32 DevKit C](https://www.amazon.de/gp/product/B074RGW2VQ/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)
 - Resistors. One each 4,7K, 10K, 1K, 2K, 3.3K
-- Transistor BC 547
+- [Transistor BC 547](https://www.reichelt.de/bipolartransistor-npn-45v-0-1a-0-5w-to-92-bc-547a-cdil-p5005.html?&trstct=pos_1&nbc=1)
 - [Terminal Block 3x, 5,08 mm spacing](https://www.reichelt.de/leiterplattenklemme-3-polig-rm-5-08-mm-dg127-5-08-3-p276157.html?&nbc=1)
 - [2 Terminal Block 3x, 2,54 mm spacing](https://www.reichelt.de/leiterplattenklemme-3-polig-rm-2-54-mm-dg308-2-54-3-p276215.html?&trstct=pol_1&nbc=1)
 - [5-9 Terminal Block 2x, 2,54 mm spacing](https://www.reichelt.de/leiterplattenklemme-2-polig-rm-2-54-mm-dg308-2-54-2-p276214.html?&nbc=1)
