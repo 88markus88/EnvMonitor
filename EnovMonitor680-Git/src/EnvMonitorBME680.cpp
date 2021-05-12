@@ -179,7 +179,6 @@ void logOut(char* printstring)
     }
   }
 
-
   //---- the following procedure determines the number of DS18B20, sets their precision to 12 bit and stores their addresses
   DeviceAddress tempDeviceAddress;
   #define TEMPERATURE_PRECISION 12   // precision 9..12 Bit
@@ -248,6 +247,47 @@ void logOut(char* printstring)
     return;
   }
 
+  // function to stop and restart the task that does DS18B20 measurements in parallel
+  // also toggles power to the 1Wire bus to restart the sensors 
+  void restartDS18B20MeasurementFunction()
+  {
+    noDS18B20Restarts++;
+    sprintf(printstring,"XXXX Restarting DS18B20 measuring function XXXX !!! %d \n", noDS18B20Restarts);
+    logOut(printstring);  
+    stopDS18B20MeasureFlag = true;   // use this flag to stop measurements with DS18B20
+    esp_task_wdt_reset();   // keep watchdog happy
+
+    vTaskDelete(Task1);              // delete the measurement task
+
+    // switch off Power (via GPIO 32)
+    pinMode(POWER_ONEWIRE_BUS, OUTPUT);
+    digitalWrite(POWER_ONEWIRE_BUS, LOW);
+    vTaskDelay(2000 / portTICK_PERIOD_MS); // delay for 2000 ms
+    esp_task_wdt_reset();   // keep watchdog happy
+
+    // switch on Power (via GPIO 32)
+    pinMode(POWER_ONEWIRE_BUS, OUTPUT);
+    digitalWrite(POWER_ONEWIRE_BUS, HIGH);
+    vTaskDelay(300 / portTICK_PERIOD_MS); // delay for 1000 ms
+    // Start OneWire for DS18B20
+    sensors.begin();
+    vTaskDelay(700 / portTICK_PERIOD_MS); // delay for 1000 ms
+
+    adresseAusgeben();       // adressen onewire devices ausgeben, devices finden
+    esp_task_wdt_reset();    // keep watchdog happy
+
+    // Create GetTemperature task for core 0, loop() runs on core 1
+    xTaskCreatePinnedToCore(
+      GetOneDS18B20Temperature, /* Function to implement the task */
+      "Task1", /* Name of the task */
+      10000,  /* Stack size in words */
+      NULL,  /* Task input parameter */
+      0,  /* Priority of the task. higher number is higher priority, https://esp32.com/viewtopic.php?t=10629 */
+      &Task1,  /* Task handle. */
+      1); /* Core where the task should run */
+    stopDS18B20MeasureFlag = false; // reset flag to start measurements
+  }
+
   // manual restart via V60
   BLYNK_WRITE(V60) 
   {
@@ -260,35 +300,6 @@ void logOut(char* printstring)
       manualDS18B20Restart = 1;
   }
 
-  //----- a short routine to restart the sensors 
-  void restartDS18B20()
-  {
-    // Toggle power on 32
-    // POWER_ONEWIRE_BUS
-    noDS18B20Restarts++;
-    sprintf(printstring,"Restarting OneWire Bus for DS18B20: %d \n", noDS18B20Restarts);
-    logOut(printstring);
-
-    stopDS18B20MeasureFlag = true;   // use this flag to stop measurements with DS18B20
-    esp_task_wdt_reset();   // keep watchdog happy
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // delay for 1000 ms
-
-    pinMode(POWER_ONEWIRE_BUS, OUTPUT);
-    digitalWrite(POWER_ONEWIRE_BUS, LOW);
-    vTaskDelay(3000 / portTICK_PERIOD_MS); // delay for 3000 ms
-    esp_task_wdt_reset();
-    digitalWrite(POWER_ONEWIRE_BUS, HIGH);
-    vTaskDelay(300 / portTICK_PERIOD_MS); // delay for 300 ms
-    // Start OneWire for DS18B20
-    sensors.begin();
-    vTaskDelay(200 / portTICK_PERIOD_MS); // delay for 200 ms
-      // Create GetTemperature task for core 0, loop() runs on core 1
-    adresseAusgeben();    // adressen onewire devices ausgeben, devices finden
-
-    esp_task_wdt_reset();   // keep watchdog happy
-    vTaskDelay(1000 / portTICK_PERIOD_MS); // delay for 1000 ms
-    stopDS18B20MeasureFlag = false; // reset flag to start measurements
-  }  
 #endif  // DS18B20
 
 #ifdef isDisplay
@@ -1840,6 +1851,20 @@ void main_handler()
       DS18B20Temperature[0], DS18B20Temperature[1], DS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
      logOut(printstring);
+
+    if(GetOneDS18B20Counter <= previousGetOneDS18B20Counter)  // DS18B20 routine not counting
+    {
+      notMeasuredDS18B20 ++;
+      sprintf(printstring,"!!!! DS18B20 not measuring !!! %ld %ld %ld \n",GetOneDS18B20Counter, previousGetOneDS18B20Counter, notMeasuredDS18B20);
+      logOut(printstring);  
+    }  
+    else
+      notMeasuredDS18B20 = 0;
+    if (notMeasuredDS18B20 > 5)
+      restartDS18B20MeasurementFunction();
+
+    previousGetOneDS18B20Counter = GetOneDS18B20Counter;
+
     //sprintf(printstring,"Cal. DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f \n", 
     //   calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
     //logOut(printstring);
@@ -1881,7 +1906,7 @@ void main_handler()
       sprintf(printstring,"\nRestarting DS18B20 Sensors since not measurement taken in %d %d cycles \n",
         notMeasuredCount, notChangedCount);
       logOut(printstring);
-      restartDS18B20();
+      restartDS18B20MeasurementFunction();
       notMeasuredCount = 0; // reset the counter
       notChangedCount = 0;  // reset the counter
       manualDS18B20Restart = 0; // reset the manual switch

@@ -83,6 +83,8 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   // Task handle for OneWire read (Core 0 on ESP32)
   TaskHandle_t Task1;
   volatile unsigned long GetOneDS18B20Counter = 0;     // loop counter for detached procedure GetOneDS18B20Temperature
+  unsigned long previousGetOneDS18B20Counter=0;         // comparison value for loop counter
+  unsigned long notMeasuredDS18B20=0;                   // counter for not measuring DS18B20
 
   bool stopDS18B20MeasureFlag = false;        // if this flag is set, no measurements are taken
 #endif  
@@ -261,6 +263,7 @@ void restartBlynk();
 void main_handler();
 void lcd_handler();
 void oled_handler();
+void restartDS18B20MeasurementFunction();
 
 //*** specific forward declarations
 #ifdef getNTPTIME
