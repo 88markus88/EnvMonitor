@@ -15,7 +15,9 @@ int NoReboots;
 Preferences preferences;    // Nonvolatile storage on ESP32 - To store NoReboots
 
 char printstring[180];
+char printstring1[80];
 char printstring2[180];
+char printstring3[80];
 
 //*** module global comeasuringInfactoryOngoingnstants
 const float  SEA_LEVEL_PRESSURE = 1013.25;         ///< Standard atmosphere sea level pressure
@@ -35,29 +37,6 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   int TimeIsInitialized = false;
 #endif // getNPTTIME
  
-
-#ifdef isDisplay
-  // for OLED Display
-  #include <SPI.h>
-  #include <Wire.h>
-  #include <Adafruit_GFX.h>
-  #include <Adafruit_SSD1306.h>
-  // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
-  #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
-  // Stuff for OLED Display
-  #define SCREEN_WIDTH 128 // OLED display width, in pixels
-  #define SCREEN_HEIGHT 64 // OLED display height, in pixels
-
-  volatile int displayMode = 1;  // determines mode for display. volatile since change by interrupt
-  volatile int displayDone = 0;  // zum Entprellen des Interrupthandlers
-  volatile bool displayDimmed = false; // wenn true ist das display aus
-  volatile unsigned long lastButtonTime = 0; // time when button was last pressed, for dimming of display
-  unsigned int displayOffDelay = 30000; // time delay in ms after which the display is switched off
-                                        // on again with next button press
-  int maxDisplayMode = 1;
-
-#endif  // isDisplay
-
 #if defined sendSERIAL || defined receiveSERIAL
   #define RXD2 16
   #define TXD2 17
@@ -223,7 +202,32 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   char logfilename[80];
 #endif
 
-// for LCD dsisplay 4 rows, 20 characters
+#ifdef isDisplay
+  // for OLED Display
+  #include <SPI.h>
+  #include <Wire.h>
+  #include <Adafruit_GFX.h>
+  #include <Adafruit_SSD1306.h>
+  // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins)
+  #define OLED_RESET     4 // Reset pin # (or -1 if sharing Arduino reset pin)
+  // Stuff for OLED Display
+  #define SCREEN_WIDTH 128 // OLED display width, in pixels
+  #define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+  volatile int displayMode = 1;  // determines mode for display. volatile since change by interrupt
+  volatile int displayDone = 0;  // zum Entprellen des Interrupthandlers
+  volatile bool displayDimmed = false; // wenn true ist das display aus
+  volatile unsigned long lastButtonTime = 0; // time when button was last pressed, for dimming of display
+  unsigned int displayOffDelay = 30000; // time delay in ms after which the display is switched off
+                                        // on again with next button press
+  int maxDisplayMode = 1;
+
+  // timer for oled_handler, and interval for it
+  #define oledHandlerInterval 300L
+  //BlynkTimer oledHandlerTimer;
+#endif  // isDisplay
+
+// for LCD display 4 rows, 20 characters
 #ifdef isLCD
   #include <LiquidCrystal_I2C.h>
   #include "LCDFunctions.h"
@@ -256,6 +260,7 @@ void checkBlynk();
 void restartBlynk();
 void main_handler();
 void lcd_handler();
+void oled_handler();
 
 //*** specific forward declarations
 #ifdef getNTPTIME

@@ -662,6 +662,9 @@ void setup()
     #if defined isMHZ14A || defined isSENSEAIR_S8 || defined receiveSERIAL
       maxDisplayMode =5;
     #endif
+    // set timer for oled_handler()
+    //oledHandlerTimer.setInterval(lcdHandlerInterval, oled_handler);
+    MyBlynkTimer.setInterval(oledHandlerInterval, oled_handler);
   #endif  // isDisplay
 
   // setup functions for LCD display 4 rows 20 characters
@@ -1616,7 +1619,8 @@ void getAirQuality()
 //*****************************************************************************
 void main_handler() 
 {
-  char printstring[180]="", printstring1[80]="", printstring2[80]="", printstring3[80]="";
+  char printstring[180]="";
+  // char printstring1[80]="", printstring2[80]="", printstring3[80]="";
   float time_sec;
 
   // float time_sec;
@@ -1814,7 +1818,9 @@ void main_handler()
 
   #ifdef isDisplay
     // clear the display - only once!
+  /*  
     display.clearDisplay(); 
+  */  
   #endif
 
   // DS18B20 Data are received in parallel running procedure "GetOneDS18B20Temperature()"
@@ -1838,6 +1844,7 @@ void main_handler()
     //   calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
     //logOut(printstring);
     #ifdef isDisplay
+    /*
     if(displayMode == 1)
     {
       display.setCursor(0, 36);
@@ -1854,7 +1861,8 @@ void main_handler()
       display.setCursor(80, 48);
       sprintf(printstring,"1W.R: %d",noDS18B20Restarts);
       display.println(printstring);
-    }  
+    } 
+    */ 
     #endif  
     
     #ifdef isBLYNK
@@ -1907,6 +1915,7 @@ void main_handler()
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
     } // if start_loop_time  
     #ifdef isDisplay
+    /*
       if(displayMode == 1)
       {
         sprintf(printstring,"ESP32-EnvMonitor");
@@ -1922,6 +1931,7 @@ void main_handler()
         display.setCursor(0, 24);
         display.println(printstring);
       }  
+    */
     #endif
   #endif  // isBME680
 
@@ -1941,6 +1951,7 @@ void main_handler()
     #endif
 
     #ifdef isDisplay
+    /*
       if(displayMode == 1)
       {
         sprintf(printstring,"EnvMonitor680 %s", PROGVERSION);
@@ -1956,6 +1967,7 @@ void main_handler()
         display.setCursor(0, 24);
         display.println(printstring);
       }  
+    */  
     #endif
 
     vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
@@ -1973,6 +1985,7 @@ void main_handler()
         timer1 = millis();
       }
       #ifdef isDisplay
+      /*
         if(displayMode == 1)
         {
           display.setCursor(0, 48);
@@ -1980,6 +1993,7 @@ void main_handler()
           sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
           display.println(printstring);  
         }  
+      */  
       #endif  
       #ifdef isBLYNK 
         Blynk.virtualWrite(V9, CO2ppm);
@@ -1997,6 +2011,7 @@ void main_handler()
     CO2ppm = get_Value(7);
     Serial.printf("\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
     #ifdef isDisplay
+    /*
       if(displayMode == 1)
       {
         display.setCursor(0, 48);
@@ -2004,6 +2019,7 @@ void main_handler()
         sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
         display.println(printstring);  
       }  
+    */  
     #endif  // display
     
     #ifdef isBLYNK 
@@ -2012,6 +2028,7 @@ void main_handler()
   #endif    // SENSEAIR
 
   #ifdef isDisplay
+  /*
     if(displayMode > 1)
       specialDisplay(displayMode);
 
@@ -2034,6 +2051,7 @@ void main_handler()
     // transfer buffer to display  
     display.display();
     displayDone = 1;
+  */  
   #endif  // isDisplay
 
   // loop timing - no more needed, with main_handler controlled by timer
@@ -2053,6 +2071,7 @@ void main_handler()
 } // main_handler
 
 // handler for LCD display functions, called via timer
+#ifdef isLCD
 void lcd_handler()
 {
   if(lcdDisplayMode==0)
@@ -2078,6 +2097,114 @@ void lcd_handler()
     lcdDisplayDone = 1; // makes ready to receive button press again
   }  
 }
+#endif //#ifdef isLCD
+
+// handler for OLED display functions, called via timer
+#ifdef isDisplay
+  void oled_handler()
+  {
+    // clear the display - only once!
+    display.clearDisplay(); 
+
+    #ifdef isOneDS18B20
+      if(displayMode == 1)
+      {
+        display.setCursor(0, 36);
+        display.setTextSize(1);
+        if (DS18B20Temperature[0]>=-110)
+          sprintf(printstring1, "T1:%3.1f", calDS18B20Temperature[0]);
+        if (DS18B20Temperature[1]>=-110)
+          sprintf(printstring2, "2:%3.1f", calDS18B20Temperature[1]); 
+        if (DS18B20Temperature[2]>=-110)
+          sprintf(printstring3, "3:%3.1f\n", calDS18B20Temperature[2]);   
+        sprintf(printstring,"%s %s %s ", printstring1, printstring2, printstring3);
+        display.println(printstring);
+
+        display.setCursor(80, 48);
+        sprintf(printstring,"1W.R: %d",noDS18B20Restarts);
+        display.println(printstring);
+      }  
+    #endif  //isOneDS18B20
+
+    #ifdef isBME680
+    if(displayMode == 1)
+    {
+      sprintf(printstring,"ESP32-EnvMonitor");
+      //Display(printstring, 1,0,0,true);
+      display.setCursor(0, 0);
+      display.setTextSize(1);
+      display.println(printstring);
+
+      sprintf(printstring,"%3.1f mB %3.1f C",pressure,temperature);
+      display.setCursor(0, 12);
+      display.println(printstring);
+      sprintf(printstring,"%3.1f%% Q:%3.1f %s",humidity,air_quality_score, air_quality_shortstring);
+      display.setCursor(0, 24);
+      display.println(printstring);
+    }  
+    #endif  //isBME680
+
+    #ifdef isBME280
+      if(displayMode == 1)
+      {
+        sprintf(printstring,"EnvMonitor680 %s", PROGVERSION);
+        //Display(printstring, 1,0,0,true);
+        display.setCursor(0, 0);
+        display.setTextSize(1);
+        display.println(printstring);
+        sprintf(printstring,"%3.1f mB %3.1f C",Pressure,Temperature);
+        display.setCursor(0, 12);
+        display.println(printstring);
+        sprintf(printstring,"%3.1f %%",Humidity);
+        display.setCursor(0, 24);
+        display.println(printstring);
+      }  
+    #endif //#ifdef isBME280
+  
+    #ifdef isMHZ14A
+      if(displayMode == 1)
+      {
+        display.setCursor(0, 48);
+        display.setTextSize(1);
+        sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
+        display.println(printstring);  
+      }  
+    #endif //#ifdef isMHZ14A
+
+    #ifdef isSENSEAIR_S8
+      if(displayMode == 1)
+      {
+        display.setCursor(0, 48);
+        display.setTextSize(1);
+        sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
+        display.println(printstring);  
+      } 
+    #endif // #ifdef isSENSEAIR_S8
+
+    if(displayMode > 1)
+        specialDisplay(displayMode);
+
+    // clear display in mode 0
+    if(displayMode == 0)
+      display.clearDisplay(); 
+
+    // dim display 10 sec after last button push  
+    if(millis() > lastButtonTime + displayOffDelay)
+    {
+      display.dim(true);
+      displayDimmed = true;
+    }  
+    else
+    {
+      display.dim(false);  
+      displayDimmed = false;
+    }  
+
+    // transfer buffer to display  
+    display.display();
+    displayDone = 1;
+  }
+#endif // isDisplay
 
 //*****************************************************************************
 // main loop
