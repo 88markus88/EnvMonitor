@@ -1,25 +1,25 @@
 # EnvMonitor - ESP32
+This project aims to create an environmental monitoring system, using ESP32 and multiple environmental sensors and make the data visible using <B>Blynk</B> (https://blynk.io/)
 
-This project aims to create a flexible software for ESP32 to use multiple environmental sensors and make the data visible using <B>Blynk</B> (https://blynk.io/)
-
-The project consists of both code and the hardware description as KiCad and Fritzing files.
+The project consists of both siftware code and the hardware description as KiCad and Fritzing files.
 
 It is presently work in progress, but already functional. Development is being done using Platformio with the Arduino platform. 
-
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
 
 ## Visualization:
-- via Blynk, a commercial service that can also be used with a local server, e.g. on a Raspberry Pi
+Visualization is done via Blynk, a commercial service that can also be used with a local server, e.g. on a Raspberry Pi
+All data that the EnvMonitor provides can be shown via the Blynk App - very simple and powerful. Since the service is cloud based, the data can be viewed at every location.
+Blynk also supports a local server (e.g. on a Raspberry) - this eliminates the costs for the Blynk service.
 
 ## Sensors:
 So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in *GlobalDefines.h*:
 - BME280 (Temperature / Humidity / Pressure) via I2C
 - BME680 (Temperature / Humidity / Pressure / Air Quality) via I2C
-- DS18B20 (Temperature, up to 10 sensors) via OneWire
+- DS18B20 (Temperature, up to 3 sensors) via OneWire
 - MH-Z14A (CO2) via Serial2
 - SenseAir S8 (CO2) via Serial2
-- External temperature and humidity data from an Infactory NV5849 connected to an Arduino via Serial2
-- Infactory NV5849 (433 MHz Temperature / Humidity sender) via GPIO 33 
+- External temperature and humidity data from an Infactory NV5849 433MHz transmitter connected to an Arduino via Serial2
+- Infactory NV5849 (433 MHz Temperature / Humidity sender) directly received via 433MHz receiver at GPIO 33. This option is supported by the software, ut not implemented on the board. 
 
 ## Devices:
 - Relays / Transistor switches (2)
@@ -28,39 +28,60 @@ So far the following sensors and devices on the following list can be included. 
 - Button to be able to switch content of displays, or mute display light
 - SD card reader via SPI
 
-## Hardware
-It is also possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). (The serial port is not included in the Fritzing drawing.) 
-The Arduino board is described below.
+## ESP32 Hardware
+The main component is an ESP32 with various peripherals attached. Communication to the peripherals is done via 
+- 1Wire (DS180B20 temperature sensors)
+- I2C (OLE or LCD displays, BME280 or BME 680 environment sensors
+- SPI (SD card drive)
+- Serial (CO2 sensors, external sensors via Arduino)
+- GPIOs (button, transistor or relais)
 
-The Fritzing files does not contain the option to connect a 433 MHz transmitter. It also does not contain the external power supply that has been included in KiCad, and the option to power the DS18B20 sensors via digital output 32 (Jumper on J9) as an alternative to 3.3V. This may be necessary if the sensors are too unstable for continued operation, they can then optionally be reset by switching their power supply. May be necessary since most available DS18B20s are fake and prone to unstability (no data for longer periods). First option in this case is the reduction of the pulllup resistor R2 to 2.5K.
+All components are optional. They can be used in a large varity of combinations, providing that there are no confliting requirements
+- Multiple devices can be combined on the I2C interface. E.g. BME280 and OLED display can be used together. Or LCD display and BME680. Or BME280 and no display.
+- Up to 3 DS18B20 temperature sensors are supported. 3 connectors are provided, where they are connected in parallel. 
+- Only one serial port (Serial2) is supported. Therefore only one CO2 sensor, or alternatively one Arduino, can be connected.
+- Running a fan etc. via BC547 transistor, or other devices via relay, is supported by the hardware. Could also be used for a buzzer.
+- An internal power source can be used, which requires 7V-36V input from an external power supply.
+Components that are not used do not have to be placed on the board. They can be configured out in the software via #defines
 
-The board can be powered via USB. However, the USB power is relatively unstable. Most USB power supplies are not stabilized and should not be used. Raspberry Pi power supplies are better. Best is to use the option to add an internal DCDC converter <I>Traco TSR 1-2450E</I> that can be driven with 7-36V and provides excellent power conditioning. If this is not used, just leave the comoponents (DCDC converter, capacitor, diode, terminal block) out.
+The board can be powered via USB. However, the USB power is relatively unstable. Most USB power supplies are not stabilized and should not be used, at least with multiple components connected - this can lead to brownouts and system failure. Raspberry Pi power supplies are better suited. 
+Best is to use the option to add an internal DCDC converter <I>Traco TSR 1-2450E</I> that can be driven with 7-36V and provides excellent power conditioning. If this is not chosen, just leave the comoponents (DCDC converter, capacitor, diode, terminal block) out.
+
+It is possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). (The serial port is not included in the Fritzing drawing.) 
+The Arduino board, as well as it's software are described in a separate section. 
+
+The board allows power selection for the 1Wire bus: either directly from 3.3V, or via GPIO32 of the ESP32. (In default configuration each GPIO can drive 20 mA).
+This is useful to be able to completely reset the 1Wire bus - often necessary if cheap DS18B20 ("fake sesnors") are being used. These have a tendency to hang after extended use, the only viable option is then to completely cut the power.
+
+KiCad files are provided for the electrical schemas and the PCB boards. 
+
+There is also a Fritzing file for illustration, however it is not complete: it does not contain the option to connect a 433 MHz transmitter. It also does not contain the external power supply that has been included in KiCad, and the option to power the DS18B20 sensors via digital output 32 (Jumper on J9) as an alternative to 3.3V. This may be necessary if the sensors are too unstable for continued operation, they can then optionally be reset by switching their power supply. May be necessary since most available DS18B20s are fake and prone to unstability (no data for longer periods). First option in this case is the reduction of the pulllup resistor R2 to 2.5K.
 
 ![Fritzing](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Fritzing%20V0.3.jpg)
 ![Schema](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20Schematic%20V0.4.jpg)
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%20PCB%20V0.6.jpg)
 
 ## ESP32 Code
-The code is written in C##. It is intended to be flexible, to allow almost any combination of sensors and displays on the ESP32 device itself. 
-All data are sent to a Blynk server.
+The code is written in C++. It is intended to be flexible, to allow almost any combination of sensors and displays on the board. 
+All data are sent to a Blynk server, provided that *#define isBlynk* is set.
 
-Development platform is Platformio, but the code should also compile - with minimum adaptations - on the Arduino IDE.
+Development platform is Platformio. The code should also compile - with minimum adaptations - on the Arduino IDE. However, Platformio is much more flexible, compile times much faster due to more efficient built. It is well worth to switch to Platformio!
 
 In order to compile the code, the following adaptations have to be made:
-1. Get the required libraries, adjust the library path in platformio.ini to point to your library directory
-2. create your own "Credentials.h" file. A template file is provided. You need to put in the name and password for your Wifi network, this is a must to allow the ESP32 to access the network. Then insert the auth code, temperature correction data and device info strings for each device you want to use. This file can contain many of these device definitions, each within a #ifdef /#endif construct
+1. Get the required libraries, adjust the library path in *platformio.ini* to point to your library directory
+2. create your own *Credentials.h* file. A template file is provided. You need to put in the name and password for your Wifi network, this is a must to allow the ESP32 to access the network. Then insert the auth code, temperature correction data and device info strings for each device you want to use. This file can contain any number of these device definitions, each within a #ifdef /#endif construct.
 3. Adapt "GlobalDefines.h" to your hardware.  
   - enter the IP address of your local Blynk server
   - set one #define for the name of the hardware configuration you want to use (one of those in the "credentials.h" file)
-  - set the actual hardware definitions: use of Blynk, use of sensors, use of display etc.
+  - set the actual hardware definitions: use of Blynk, use of sensors, use of display etc. These hardware definitions must fit the ones set in *credentials.h*
   - determine if you want to log to a SD card and / or to the serial port
   - determine if OTA (over the air) updates shall be used
- 4. modify platformio.ini as needed: set _default_envs_ to determine which environment is to be used. This is largely required to determine if USB  upload or OTA upload to a given IP are to be used.
+ 4. modify *platformio.ini* as needed: set _default_envs_ to determine which environment is to be used. This is largely required to determine if USB  upload or OTA upload to a given IP are to be used.
 
 # Arduino
 PCB and Code for the Arduino Nano that can provide the data from an external 433MHz sensor is also included.
 Why using and Arduino? It turns out that the Wifi used by the ESP32 interferes with the 433 MHz reception when an ESP32 is used directly. The signals are disturbed by the 100 ms heartbeat of the Wifi that cannot be changed easily. 
-So a small arduino PCB and sketch have been developed to still be able to use external sensors. This arduino needs to be connected via cable to the ESP32. Pins used for this are +5V, GND, RxD and TxD (the latter switched between ESP32 and arduino)
+So a small arduino PCB and sketch have been developed to still be able to use external 433MHz sensors. This Arduino needs to be connected via cable to the ESP32. Pins used for this are +5V, GND, RxD and TxD (the latter switched between ESP32 and Arduino)
 No special libraries are needed for the Arduino Sketch. 
 
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Arduino%20Hardware/Pictures/Arduino433Receiver%203D%20V0.2.jpg)
@@ -71,6 +92,8 @@ No special libraries are needed for the Arduino Sketch.
 See [Parts List](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/Partslist.md)
 
 ## Blynk Virtual Pins
+Blynk uses the concept of __Virtual Pins__ for communication between the hardware devices and App (via the server). The list of virtual pins in actual use depends on the sensors that are implemented on a specific devices. They need to be known in order to connect the Widgets within the App to specific sensors.
+
 See [List of Virtual Pins](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/BlynkVirtualPins.md)
 
 ## Credits
