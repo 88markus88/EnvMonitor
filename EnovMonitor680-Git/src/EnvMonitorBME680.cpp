@@ -609,6 +609,10 @@ void setup()
   sprintf(printstring,"NoReboots=%d\n", NoReboots);
   logOut(printstring);
   
+  // set timer for main_handler()
+  //mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
+  MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+
   #ifdef isSD
     // Create a file on the SD card and write the data labels
     sprintf(logfilename,"/log%04d.txt",NoReboots);
@@ -670,6 +674,10 @@ void setup()
     maxLcdisplayMode = 5;
     initLCD();                  // initialize the LCD
     displayLCDProgInfo(infoStringShort);  // and display program Info
+
+    // set timer for lcd_handler()
+    //lcdHandlerTimer.setInterval(lcdHandlerInterval, lcd_handler);
+    MyBlynkTimer.setInterval(lcdHandlerInterval, lcd_handler);
   #endif // isLCD
 
   // Program Info to serial port
@@ -895,13 +903,15 @@ void setup()
     #endif
 
     #ifdef blynkRegularCheck
-      MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+      // MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+      MyBlynkTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
     #endif  
     // Serial.println("B");
     #ifdef blynkRestartHouly
-      MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
+      // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
+      MyBlynkTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
     #endif  
-    // MyBlynkRestartTimer.setInterval(1*60*1000L, restartBlynk); // attempt to restart Blynk every 1 minute
+    // MyBlynkTimer.setInterval(1*60*1000L, restartBlynk); // attempt to restart Blynk every 1 minute
   #endif
 
   #ifdef isOneDS18B20
@@ -1602,9 +1612,9 @@ void getAirQuality()
 #endif // serial stuff  
 
 //*****************************************************************************
-// main loop
+// main handler, was loop
 //*****************************************************************************
-void loop() 
+void main_handler() 
 {
   char printstring[180]="", printstring1[80]="", printstring2[80]="", printstring3[80]="";
   float time_sec;
@@ -2026,64 +2036,74 @@ void loop()
     displayDone = 1;
   #endif  // isDisplay
 
-  #ifdef isLCD
-    if(lcdDisplayMode==0)
-    {
-      sprintf(printstring,"\ndisplayLCD Mode  is zero: %d\n", lcdDisplayMode);
-      logOut(printstring);
-      lcd.clear();
-      lcd.noBacklight();
-      lcdDisplayDone = 1;   // makes ready to receive button press again
-    }
-    if(lcdDisplayMode > 0)
-    {
-      sprintf(printstring,"\ndisplayLCD Mode %d\n", lcdDisplayMode);
-      logOut(printstring);
-      printLocalTime(printstring, 6);
-      displayLCD(lcdDisplayMode, 
-        Pressure, Temperature, Humidity, 
-        calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2],
-        1234, // CO2ppm,
-        InfactoryT[0], InfactoryH[0],InfactoryT[1], InfactoryH[1],
-        printstring, infoStringShort
-      );
-      lcdDisplayDone = 1; // makes ready to receive button press again
-    }  
-  #endif // isLCD
-
-  //*** Blynk communication
-  #ifdef isBLYNK
-    Blynk.run(); 
-  #endif  
-
-  #ifdef isInfactory433
-  // makes no sense in every loop
-  // xxxx test  getInfactoryData();
-  #endif
-
-  // loop timing
+  // loop timing - no more needed, with main_handler controlled by timer
+  /*
   end_loop_time= millis();
   int delaytime= 2000-(end_loop_time-start_loop_time);
   // Serial.printf(".%ld %ld %d|",interruptCount, interruptFlagger, delaytime);
   if (delaytime < 0) delaytime = 0;
   if (delaytime > 2000) delaytime = 2000;
   vTaskDelay(delaytime/ portTICK_PERIOD_MS); // delay for 100 ms, non-blocking
+  */
 
-  // loop successfully finished, reset watchdog
+  // main handler successfully finished, reset watchdog
   esp_task_wdt_reset();
 
-  // handle OTA over the air Updates 
-  #ifdef isOTA
-    ArduinoOTA.handle();
+  // Serial.printf("End main_handler\n");
+} // main_handler
+
+// handler for LCD display functions, called via timer
+void lcd_handler()
+{
+  if(lcdDisplayMode==0)
+  {
+    sprintf(printstring,"\ndisplayLCD Mode  is zero: %d\n", lcdDisplayMode);
+    logOut(printstring);
+    lcd.clear();
+    lcd.noBacklight();
+    lcdDisplayDone = 1;   // makes ready to receive button press again
+  }
+  if(lcdDisplayMode > 0)
+  {
+    sprintf(printstring,"\ndisplayLCD Mode %d\n", lcdDisplayMode);
+    logOut(printstring);
+    printLocalTime(printstring, 6);
+    displayLCD(lcdDisplayMode, 
+      Pressure, Temperature, Humidity, 
+      calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2],
+      1234, // CO2ppm,
+      InfactoryT[0], InfactoryH[0],InfactoryT[1], InfactoryH[1],
+      printstring, infoStringShort
+    );
+    lcdDisplayDone = 1; // makes ready to receive button press again
+  }  
+}
+
+//*****************************************************************************
+// main loop
+//*****************************************************************************
+void loop()
+{
+  //mainHandlerTimer.run();   // timer for main handler
+  MyBlynkTimer.run();
+  
+  #ifdef isLCD
+    //lcdHandlerTimer.run();  // timer for LCD display functions
   #endif
 
+  //*** Blynk communication
   #ifdef isBLYNK
+    Blynk.run(); 
     // check if Blynk is connected
     #ifdef blynkRegularCheck
-      MyBlynkCheckTimer.run();
+      //MyBlynkCheckTimer.run();
     #endif
     // and restart it every 3 hours, since after 200 min M5Stack stops sending data
-    MyBlynkRestartTimer.run();
+    //MyBlynkRestartTimer.run();
   #endif  
-  // Serial.printf("End loop\n");
+ 
+  // handle OTA over the air Updates 
+   #ifdef isOTA
+    ArduinoOTA.handle();
+  #endif
 }

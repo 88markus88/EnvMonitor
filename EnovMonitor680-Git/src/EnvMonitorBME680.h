@@ -58,17 +58,6 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
 #endif  // isDisplay
 
-// for LCD dsisplay 4 rows, 20 characters
-#ifdef isLCD
-  #include <LiquidCrystal_I2C.h>
-  #include "LCDFunctions.h"
-
-  volatile int lcdDisplayMode = 1;
-    
-  volatile int lcdDisplayDone = 0;
-  static int maxLcdisplayMode = 3;
-#endif
-
 #if defined sendSERIAL || defined receiveSERIAL
   #define RXD2 16
   #define TXD2 17
@@ -140,8 +129,6 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
     float Temperature, Humidity, Pressure, Altitude; // converted values in °C, %, mbar
 #endif
 
-
-
 #ifdef isBLYNK
   // Stuff for Blynk
   #define BLYNK_PRINT Serial
@@ -150,13 +137,13 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   #include <WiFiClient.h>
   #include <BlynkSimpleEsp32.h>
 
-// credentials information: Blynk Auth tokens, wifi credentials etc.
-#include "Credentials.h"
-
+  // credentials information: Blynk Auth tokens, wifi credentials etc.
+  #include "Credentials.h"
 
   // timer for blynk check and restart
-  SimpleTimer MyBlynkCheckTimer;
-  SimpleTimer MyBlynkRestartTimer;
+  BlynkTimer MyBlynkTimer;
+  //BlynkTimer MyBlynkCheckTimer;
+  //BlynkTimer MyBlynkRestartTimer;
   int restartCount = 0;
 
   // terminal object
@@ -236,6 +223,26 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   char logfilename[80];
 #endif
 
+// for LCD dsisplay 4 rows, 20 characters
+#ifdef isLCD
+  #include <LiquidCrystal_I2C.h>
+  #include "LCDFunctions.h"
+
+  volatile int lcdDisplayMode = 1;
+    
+  volatile int lcdDisplayDone = 0;
+  static int maxLcdisplayMode = 3;
+
+  // timer for lcd_handler, and interval for it
+  #define lcdHandlerInterval 300L
+  //BlynkTimer lcdHandlerTimer;
+#endif
+
+//** global stuff 
+// timer for main_handler, and interval for it
+#define mainHandlerInterval 2000L
+// BlynkTimer mainHandlerTimer;
+
 /************************************************************
 * Forward declarations
 *************************************************************/
@@ -247,6 +254,8 @@ void CalculateIAQ(float score, char* printstring, char* shortstring);
 void getBME680SensorData(); 
 void checkBlynk();
 void restartBlynk();
+void main_handler();
+void lcd_handler();
 
 //*** specific forward declarations
 #ifdef getNTPTIME
