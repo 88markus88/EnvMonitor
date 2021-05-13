@@ -3,8 +3,8 @@
 *******************************************************/
 
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.42"
-#define PROGDATE "2021-05-12"
+#define PROGVERSION "V0.43"
+#define PROGDATE "2021-05-13"
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
@@ -16,9 +16,9 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
- #define blynkBME680Kueche
+ // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
- // #define blynkEnvLocal2Bad
+  #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1
@@ -111,7 +111,7 @@
 #endif
 
 #ifdef  blynkEnvLocal2Bad // Bad: small box, no display
-    #undef isOTA           // allow OTA over te air updates    
+    #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
@@ -132,7 +132,7 @@
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
-    #undef isOTA           // allow OTA over te air updates    
+    #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present

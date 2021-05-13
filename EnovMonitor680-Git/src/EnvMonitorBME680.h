@@ -225,7 +225,7 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   int maxDisplayMode = 1;
 
   // timer for oled_handler, and interval for it
-  #define oledHandlerInterval 300L
+  #define oledHandlerInterval 400L
   //BlynkTimer oledHandlerTimer;
 #endif  // isDisplay
 
@@ -240,7 +240,7 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   static int maxLcdisplayMode = 3;
 
   // timer for lcd_handler, and interval for it
-  #define lcdHandlerInterval 300L
+  #define lcdHandlerInterval 400L
   //BlynkTimer lcdHandlerTimer;
 #endif
 

@@ -1643,9 +1643,6 @@ void main_handler()
   // Serial.printf(" ******* Main Loop start at %3.1f sec ********** \n",time_sec);
   sprintf(printstring, "M %3.1f ",time_sec);
   logOut(printstring);
-  //sprintf(printstring,"\n");
-  //if(((int)(time_sec+0.5))%10 == 0)
-  //  logOut(printstring);
 
   #ifdef isInfactory433
     // if( (millis() > lastInfactoryReception + 45000) || (lastInfactoryReception < 1))
@@ -1827,13 +1824,6 @@ void main_handler()
     #endif  // serialReceived
   #endif  //receiveSERIAL
 
-  #ifdef isDisplay
-    // clear the display - only once!
-  /*  
-    display.clearDisplay(); 
-  */  
-  #endif
-
   // DS18B20 Data are received in parallel running procedure "GetOneDS18B20Temperature()"
   #ifdef isOneDS18B20
     // check state of parallel task
@@ -1868,27 +1858,6 @@ void main_handler()
     //sprintf(printstring,"Cal. DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f \n", 
     //   calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
     //logOut(printstring);
-    #ifdef isDisplay
-    /*
-    if(displayMode == 1)
-    {
-      display.setCursor(0, 36);
-      display.setTextSize(1);
-      if (DS18B20Temperature[0]>=-110)
-        sprintf(printstring1, "T1:%3.1f", calDS18B20Temperature[0]);
-      if (DS18B20Temperature[1]>=-110)
-        sprintf(printstring2, "2:%3.1f", calDS18B20Temperature[1]); 
-      if (DS18B20Temperature[2]>=-110)
-        sprintf(printstring3, "3:%3.1f\n", calDS18B20Temperature[2]);   
-      sprintf(printstring,"%s %s %s ", printstring1, printstring2, printstring3);
-      display.println(printstring);
-
-      display.setCursor(80, 48);
-      sprintf(printstring,"1W.R: %d",noDS18B20Restarts);
-      display.println(printstring);
-    } 
-    */ 
-    #endif  
     
     #ifdef isBLYNK
       if(DS18B20Temperature[0] > -110)
@@ -1911,7 +1880,6 @@ void main_handler()
       notChangedCount = 0;  // reset the counter
       manualDS18B20Restart = 0; // reset the manual switch
     }
-
   #endif  // isOneDS18B20
 
   //*** get sensor data from BME680 P/T/%/Gas sensor
@@ -1939,25 +1907,6 @@ void main_handler()
       // delay(300); // give blynk time to send the stuff
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
     } // if start_loop_time  
-    #ifdef isDisplay
-    /*
-      if(displayMode == 1)
-      {
-        sprintf(printstring,"ESP32-EnvMonitor");
-        //Display(printstring, 1,0,0,true);
-        display.setCursor(0, 0);
-        display.setTextSize(1);
-        display.println(printstring);
-
-        sprintf(printstring,"%3.1f mB %3.1f C",pressure,temperature);
-        display.setCursor(0, 12);
-        display.println(printstring);
-        sprintf(printstring,"%3.1f%% Q:%3.1f %s",humidity,air_quality_score, air_quality_shortstring);
-        display.setCursor(0, 24);
-        display.println(printstring);
-      }  
-    */
-    #endif
   #endif  // isBME680
 
   #ifdef isBME280
@@ -1974,27 +1923,6 @@ void main_handler()
       Blynk.virtualWrite(V7, Humidity); 
       // Blynk.virtualWrite(V8, Altitude); 
     #endif
-
-    #ifdef isDisplay
-    /*
-      if(displayMode == 1)
-      {
-        sprintf(printstring,"EnvMonitor680 %s", PROGVERSION);
-        //Display(printstring, 1,0,0,true);
-        display.setCursor(0, 0);
-        display.setTextSize(1);
-        display.println(printstring);
-
-        sprintf(printstring,"%3.1f mB %3.1f C",Pressure,Temperature);
-        display.setCursor(0, 12);
-        display.println(printstring);
-        sprintf(printstring,"%3.1f %%",Humidity);
-        display.setCursor(0, 24);
-        display.println(printstring);
-      }  
-    */  
-    #endif
-
     vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
   #endif  // isBME280
 	
@@ -2008,18 +1936,7 @@ void main_handler()
         getCO2Data();
         Serial.printf("\n %3.1f MH-Z14A CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
         timer1 = millis();
-      }
-      #ifdef isDisplay
-      /*
-        if(displayMode == 1)
-        {
-          display.setCursor(0, 48);
-          display.setTextSize(1);
-          sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
-          display.println(printstring);  
-        }  
-      */  
-      #endif  
+      } 
       #ifdef isBLYNK 
         Blynk.virtualWrite(V9, CO2ppm);
       #endif  
@@ -2035,49 +1952,10 @@ void main_handler()
     read_Response(7);                      // receive the response from the Sensor
     CO2ppm = get_Value(7);
     Serial.printf("\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
-    #ifdef isDisplay
-    /*
-      if(displayMode == 1)
-      {
-        display.setCursor(0, 48);
-        display.setTextSize(1);
-        sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
-        display.println(printstring);  
-      }  
-    */  
-    #endif  // display
-    
     #ifdef isBLYNK 
       Blynk.virtualWrite(V9, CO2ppm);
     #endif  // Blynk
   #endif    // SENSEAIR
-
-  #ifdef isDisplay
-  /*
-    if(displayMode > 1)
-      specialDisplay(displayMode);
-
-    // clear display in mode 0
-    if(displayMode == 0)
-       display.clearDisplay(); 
-
-    // dim display 10 sec after last button push  
-    if(millis() > lastButtonTime + displayOffDelay)
-    {
-      display.dim(true);
-      displayDimmed = true;
-    }  
-    else
-    {
-      display.dim(false);  
-      displayDimmed = false;
-    }  
-
-    // transfer buffer to display  
-    display.display();
-    displayDone = 1;
-  */  
-  #endif  // isDisplay
 
   // loop timing - no more needed, with main_handler controlled by timer
   /*
@@ -2091,7 +1969,6 @@ void main_handler()
 
   // main handler successfully finished, reset watchdog
   esp_task_wdt_reset();
-
   // Serial.printf("End main_handler\n");
 } // main_handler
 
@@ -2119,6 +1996,7 @@ void lcd_handler()
       InfactoryT[0], InfactoryH[0],InfactoryT[1], InfactoryH[1],
       printstring, infoStringShort
     );
+    vTaskDelay(300 / portTICK_PERIOD_MS); // delay for 200 ms, to avoid double button presses
     lcdDisplayDone = 1; // makes ready to receive button press again
   }  
 }
@@ -2131,9 +2009,12 @@ void lcd_handler()
     // clear the display - only once!
     display.clearDisplay(); 
 
-    #ifdef isOneDS18B20
-      if(displayMode == 1)
-      {
+    if(displayMode == 0)  // clear display in mode 0
+      display.clearDisplay(); 
+
+    if(displayMode == 1)
+    {
+      #ifdef isOneDS18B20
         display.setCursor(0, 36);
         display.setTextSize(1);
         if (DS18B20Temperature[0]>=-110)
@@ -2144,34 +2025,26 @@ void lcd_handler()
           sprintf(printstring3, "3:%3.1f\n", calDS18B20Temperature[2]);   
         sprintf(printstring,"%s %s %s ", printstring1, printstring2, printstring3);
         display.println(printstring);
-
         display.setCursor(80, 48);
         sprintf(printstring,"1W.R: %d",noDS18B20Restarts);
+        display.println(printstring);  
+      #endif  //isOneDS18B20
+
+      #ifdef isBME680
+        sprintf(printstring,"ESP32-EnvMonitor");
+        //Display(printstring, 1,0,0,true);
+        display.setCursor(0, 0);
+        display.setTextSize(1);
         display.println(printstring);
-      }  
-    #endif  //isOneDS18B20
+        sprintf(printstring,"%3.1f mB %3.1f C",pressure,temperature);
+        display.setCursor(0, 12);
+        display.println(printstring);
+        sprintf(printstring,"%3.1f%% Q:%3.1f %s",humidity,air_quality_score, air_quality_shortstring);
+        display.setCursor(0, 24);
+        display.println(printstring);
+      #endif //isBME680
 
-    #ifdef isBME680
-    if(displayMode == 1)
-    {
-      sprintf(printstring,"ESP32-EnvMonitor");
-      //Display(printstring, 1,0,0,true);
-      display.setCursor(0, 0);
-      display.setTextSize(1);
-      display.println(printstring);
-
-      sprintf(printstring,"%3.1f mB %3.1f C",pressure,temperature);
-      display.setCursor(0, 12);
-      display.println(printstring);
-      sprintf(printstring,"%3.1f%% Q:%3.1f %s",humidity,air_quality_score, air_quality_shortstring);
-      display.setCursor(0, 24);
-      display.println(printstring);
-    }  
-    #endif  //isBME680
-
-    #ifdef isBME280
-      if(displayMode == 1)
-      {
+      #ifdef isBME280
         sprintf(printstring,"EnvMonitor680 %s", PROGVERSION);
         //Display(printstring, 1,0,0,true);
         display.setCursor(0, 0);
@@ -2183,35 +2056,25 @@ void lcd_handler()
         sprintf(printstring,"%3.1f %%",Humidity);
         display.setCursor(0, 24);
         display.println(printstring);
-      }  
-    #endif //#ifdef isBME280
+      #endif //#ifdef isBME280
   
-    #ifdef isMHZ14A
-      if(displayMode == 1)
-      {
+      #ifdef isMHZ14A
         display.setCursor(0, 48);
         display.setTextSize(1);
         sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
         display.println(printstring);  
-      }  
-    #endif //#ifdef isMHZ14A
+      #endif //#ifdef isMHZ14A
 
-    #ifdef isSENSEAIR_S8
-      if(displayMode == 1)
-      {
+      #ifdef isSENSEAIR_S8
         display.setCursor(0, 48);
         display.setTextSize(1);
         sprintf(printstring, "CO2 %d ppm \n", CO2ppm);
         display.println(printstring);  
-      } 
-    #endif // #ifdef isSENSEAIR_S8
+      #endif // #ifdef isSENSEAIR_S8
+    } // if(displayMode == 1)
 
     if(displayMode > 1)
         specialDisplay(displayMode);
-
-    // clear display in mode 0
-    if(displayMode == 0)
-      display.clearDisplay(); 
 
     // dim display 10 sec after last button push  
     if(millis() > lastButtonTime + displayOffDelay)
@@ -2227,6 +2090,7 @@ void lcd_handler()
 
     // transfer buffer to display  
     display.display();
+    vTaskDelay(300 / portTICK_PERIOD_MS); // delay for 200 ms, to avoid double presses
     displayDone = 1;
   }
 #endif // isDisplay
@@ -2239,19 +2103,9 @@ void loop()
   //mainHandlerTimer.run();   // timer for main handler
   MyBlynkTimer.run();
   
-  #ifdef isLCD
-    //lcdHandlerTimer.run();  // timer for LCD display functions
-  #endif
-
   //*** Blynk communication
   #ifdef isBLYNK
     Blynk.run(); 
-    // check if Blynk is connected
-    #ifdef blynkRegularCheck
-      //MyBlynkCheckTimer.run();
-    #endif
-    // and restart it every 3 hours, since after 200 min M5Stack stops sending data
-    //MyBlynkRestartTimer.run();
   #endif  
  
   // handle OTA over the air Updates 
