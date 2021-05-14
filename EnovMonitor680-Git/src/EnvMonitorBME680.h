@@ -90,9 +90,55 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 #endif  
 
 #ifdef isBME680
-  // Include files for BME280
+  // Include files for BME280 using Zanshin Lib, available as source code
   #include <SPI.h>              // < Include the SPI standard library
   #include "Zanshin_BME680.h"   // < The BME680 sensor library
+
+  float air_quality_score;
+  char air_quality_string[80];
+  char air_quality_shortstring[80];
+#endif  
+
+#ifdef isBME680_BSECLib
+  // Include files for BME280 using BSEC original lib, available as object code only
+  #include <SPI.h>              // < Include the SPI standard library
+  #include "bsec.h"   // < The BME680 sensor library
+
+  float air_quality_score;
+  char air_quality_string[80];
+  char air_quality_shortstring[80];
+
+  /* Configure the BSEC library with information about the sensor
+    18v/33v = Voltage at Vdd. 1.8V or 3.3V
+    3s/300s = BSEC operating mode, BSEC_SAMPLE_RATE_LP or BSEC_SAMPLE_RATE_ULP
+    4d/28d = Operating age of the sensor in days
+    generic_18v_3s_4d
+    generic_18v_3s_28d
+    generic_18v_300s_4d
+    generic_18v_300s_28d
+    generic_33v_3s_4d
+    generic_33v_3s_28d
+    generic_33v_300s_4d
+    generic_33v_300s_28d
+  */
+  const uint8_t bsec_config_iaq[] = {
+    #include "config/generic_33v_3s_4d/bsec_iaq.txt"
+  };
+
+  // #define STATE_SAVE_PERIOD	UINT32_C(360 * 60 * 1000) // 360 minutes - 4 times a day
+  #define STATE_SAVE_PERIOD	UINT32_C(120 * 60 * 1000) // 120 minutes - 12 times a day
+
+  // Create an object of the class Bsec
+  Bsec iaqSensor;
+  uint8_t bsecState[BSEC_MAX_STATE_BLOB_SIZE] = {0};
+  uint16_t stateUpdateCounter = 0;
+
+  Preferences permstorage;    // permanent storage object for BSEC BME 680 sensor parameter
+
+  // Helper functions declarations for BSEC library handling
+  void checkIaqSensorStatus(void);
+  void loadBsecState(void);
+  void updateBsecState(void);
 #endif  
 
 #ifdef isBME280

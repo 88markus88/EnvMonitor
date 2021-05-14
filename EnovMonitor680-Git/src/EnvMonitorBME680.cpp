@@ -520,7 +520,7 @@ void outputProgramInfo()
     strcat(printstring, " DS18B20 (T) -");
     // strcat(printstring2, "DS18B20-");
   #endif
-  #ifdef isBME680  
+  #if defined  isBME680  || defined isBME680_BSECLib
     strcat(printstring, " BME680 (P/T/H/G) -");
     // strcat(printstring2, "BME680-");
   #endif
@@ -664,7 +664,7 @@ void setup()
     displayDone = 1;
 
     // set the maximum display Mode for use in switchDisplay(), depending on sensors present
-    #if defined isBME280 || defined isBME680
+    #if defined isBME280 || defined isBME680 || defined isBME680_BSECLib
       maxDisplayMode =3;
     #endif
     #if defined isOneDS18B20
@@ -773,14 +773,19 @@ void setup()
   #endif
 
   #ifdef isBME680
-    Serial.print("- Initializing BME680 sensor\n");
+    sprintf(printstring,"- Initializing BME680 sensor with Zanshin Library\n");
+    logOut(printstring);
     while (!BME680.begin(I2C_STANDARD_MODE, 0x77)) {  // Start using I2C, use address 0x77 (could also be 0x76)
-      Serial.print("-  Unable to find BME680. Trying again in 5 seconds.\n");
+      sprintf(printstring,"-  Unable to find BME680. Trying again in 5 seconds.\n");
+      logOut(printstring);
       delay(5000);
     }  // of loop until device is located
-    Serial.print("- Setting 16x oversampling for all sensors\n");
-    Serial.print("- Setting IIR filter to a value of 4 samples\n");
-    Serial.print("- Turning on gas measurements\n");
+    sprintf(printstring,"- Setting 16x oversampling for all sensors\n");
+    logOut(printstring);
+    sprintf(printstring,"- Setting IIR filter to a value of 4 samples\n");
+    logOut(printstring);
+    sprintf(printstring,"- Turning on gas measurements\n");
+    logOut(printstring);
     BME680.setOversampling(TemperatureSensor, Oversample16);
     BME680.setOversampling(HumiditySensor, Oversample16);
     BME680.setOversampling(PressureSensor, Oversample16);
@@ -793,6 +798,42 @@ void setup()
     // Now run the sensor for a burn-in period, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
     GetGasReference();
   #endif
+
+  #ifdef isBME680_BSECLib
+    sprintf(printstring,"- Initializing BME680 sensor with BSEC Library\n");
+    logOut(printstring);
+
+    Wire.begin();
+    permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
+
+    iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
+    //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
+    //Serial.println(output);
+    sprintf(printstring,
+      "\nBSEC library version %d.%d.%d.%d", 
+        iaqSensor.version.major, iaqSensor.version.minor, 
+        iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
+    logOut(printstring);
+    checkIaqSensorStatus();
+
+    iaqSensor.setConfig(bsec_config_iaq);
+    checkIaqSensorStatus();
+
+    loadBsecState();
+
+    bsec_virtual_sensor_t sensorList[7] = {
+      BSEC_OUTPUT_RAW_TEMPERATURE,
+      BSEC_OUTPUT_RAW_PRESSURE,
+      BSEC_OUTPUT_RAW_HUMIDITY,
+      BSEC_OUTPUT_RAW_GAS,
+      BSEC_OUTPUT_IAQ,
+      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
+      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
+    };
+
+    iaqSensor.updateSubscription(sensorList, 7, BSEC_SAMPLE_RATE_LP);
+    checkIaqSensorStatus();
+  #endif 
 
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
@@ -960,122 +1001,236 @@ void setup()
 
 #ifdef isBME680
 
-float hum_weighting = 0.25; // so hum effect is 25% of the total air quality score
-float gas_weighting = 0.75; // so gas effect is 75% of the total air quality score
+  float hum_weighting = 0.25; // so hum effect is 25% of the total air quality score
+  float gas_weighting = 0.75; // so gas effect is 75% of the total air quality score
 
-float hum_score, gas_score;
-float gas_reference = 250000;
-float hum_reference = 40;
-int getgasreference_count = 0;
+  float hum_score, gas_score;
+  float gas_reference = 250000;
+  float hum_reference = 40;
+  int getgasreference_count = 0;
 
-float air_quality_score;
-char air_quality_string[80];
-char air_quality_shortstring[80];
-
-void getAirQuality()
-{
-  // char printstring[80];
-  int gas_lower_limit = 5000; // Bad air quality limit
-  int gas_upper_limit = 50000; // Good air quality limit
-  float current_humidity;
-  
-  //Calculate humidity contribution to IAQ index
-  current_humidity = humidity;
-  if (current_humidity >= 38 && current_humidity <= 42)
-    hum_score = 0.25*100; // Humidity +/-5% around optimum
-  else
-  { //sub-optimal
-    if (current_humidity < 38)
-      hum_score = 0.25 / hum_reference * current_humidity * 100;
+  void getAirQuality()
+  {
+    // char printstring[80];
+    int gas_lower_limit = 5000; // Bad air quality limit
+    int gas_upper_limit = 50000; // Good air quality limit
+    float current_humidity;
+    
+    //Calculate humidity contribution to IAQ index
+    current_humidity = humidity;
+    if (current_humidity >= 38 && current_humidity <= 42)
+      hum_score = 0.25*100; // Humidity +/-5% around optimum
     else
+    { //sub-optimal
+      if (current_humidity < 38)
+        hum_score = 0.25 / hum_reference * current_humidity * 100;
+      else
+      {
+        hum_score = ((-0.25/(100-hum_reference)*current_humidity)+0.416666)*100;
+      }
+    }
+
+    //Calculate gas contribution to IAQ index
+    if (gas_reference > gas_upper_limit) gas_reference = gas_upper_limit;
+    if (gas_reference < gas_lower_limit) gas_reference = gas_lower_limit;
+    gas_score = (0.75/(gas_upper_limit-gas_lower_limit)*gas_reference -(gas_lower_limit*(0.75/(gas_upper_limit-gas_lower_limit))))*100;
+    // Serial.printf("gas_reference %f gas_score %f ,gas_lower_limit %d, gas_upper_limit %d\n",
+    //  gas_reference,gas_score,gas_lower_limit,gas_upper_limit);
+
+    //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
+    air_quality_score = hum_score + gas_score;
+
+    // Serial.println("Air Quality = "+String(air_quality_score,1)+"% derived from 25% of Humidity reading and 75% of Gas reading - 100% is good quality air");
+    // Serial.println("Air Quality = "+String(air_quality_score,1)+ 
+    // Serial.println("Humidity element was : "+String(hum_score/100)+" of 0.25");
+    // Serial.println(" Gas element was : "+String(gas_score/100)+" of 0.75");
+    
+    // if (raw_gas < 120000) Serial.println("***** Poor air quality *****");
+    // if ((getgasreference_count++)%10==0) GetGasReference();
+    GetGasReference();
+    // Serial.println(CalculateIAQ(air_quality_score));
+    CalculateIAQ(air_quality_score, air_quality_string, air_quality_shortstring);
+    Serial.printf("Air Quality: %3.1f %s (Humidity: %3.1f, Gas: %3.1f)\n",
+        air_quality_score, air_quality_string, hum_score, gas_score);
+  }
+
+    // Now run the sensor for a burn-in period, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
+    void GetGasReference()
     {
-      hum_score = ((-0.25/(100-hum_reference)*current_humidity)+0.416666)*100;
+      int readings = 3;
+      Serial.printf("============================================================\n");
+      Serial.printf("Getting a new gas reference value. Before: %3.1f ", gas_reference);
+      for (int i = 1; i <= readings; i++)   // read gas for 10 x 0.150mS = 1.5secs
+      { 
+        getBME680SensorData(); 
+        gas_reference += raw_gas;
+      }
+      gas_reference = gas_reference / readings;  // mean of old value plus new values
+      Serial.printf(" --- after: %3.1f \n", gas_reference);
+    }
+
+    void CalculateIAQ(float score, char* printstring, char* shortstring)
+    {
+      strcpy(printstring, "Air quality is ") ;
+
+      if (score<=40){
+        strcat(printstring, "Hazardous");
+        strcpy(shortstring,"Hazard");
+      }
+      if(score> 40 && score<=60){    // 40..60
+        strcat(printstring, "Very Unhealthy");
+        strcpy(shortstring,"VeryUnhy");
+      }
+      if( score>60 && score<=65){    // 60..65
+        strcat(printstring, "Unhealthy");
+        strcpy(shortstring,"Unhealthy");
+      }
+      if(score>65 && score<=70){    // 65..70
+        strcat(printstring, "Unhealthy for Sensitive Groups");
+        strcpy(shortstring,"Unh Sensi");
+      }
+      if(score > 70 && score<=90){    // 70..90
+        strcat(printstring, "Moderate");
+        strcpy(shortstring,"Moderate");
+      }
+      if(score > 90){     // > 90
+        strcat(printstring, "Good");
+        strcpy(shortstring,"Good");                   
+      }  
+    }
+
+    /**************************************************!
+      @brief    Function to read the BME680 data 
+      @details  The BME680 data is read in 
+      @return   void
+    ***************************************************/
+    void getBME680SensorData() 
+    {
+      BME680.getSensorData(raw_temperature, raw_humidity, raw_pressure, raw_gas);  // Get readings
+      temperature = raw_temperature/100.0;
+      pressure = raw_pressure/100.0;
+      altitude = 44330.0 * (1.0 - pow((pressure) / SEA_LEVEL_PRESSURE, 0.1903));
+      humidity = raw_humidity/1000.0;
+      gas = raw_gas/1000.0;
+    }  // of method "getSensorData()"
+#endif
+
+#ifdef isBME680_BSECLib
+  // check the status if the iaq (internal air quality) sensor
+  void checkIaqSensorStatus(void)
+  {
+    if (iaqSensor.status != BSEC_OK) {
+      if (iaqSensor.status < BSEC_OK) {
+        sprintf(printstring,"BSEC error code : %d\n", iaqSensor.status);
+        logOut(printstring);
+        //for (;;)  // we do not want to halt this program, just log output
+        //  errLeds(); /* Halt in case of failure */
+      } else {
+        sprintf(printstring,"BSEC warning code : %d\n", iaqSensor.status);
+        logOut(printstring);
+      }
+    }
+
+    if (iaqSensor.bme680Status != BME680_OK) {
+      if (iaqSensor.bme680Status < BME680_OK) {
+        // output = "BME680 error code : " + String(iaqSensor.bme680Status);
+        // Serial.println(output);
+        sprintf(printstring,"BME680 error code : %d\n", iaqSensor.bme680Status);
+        logOut(printstring);
+        //for (;;)  // we do not want to halt this program, just log output
+        //  errLeds(); /* Halt in case of failure */
+      } else {
+        // output = "BME680 warning code : " + String(iaqSensor.bme680Status);
+        // Serial.println(output);
+        sprintf(printstring,"BME680 warning code : %d\n", iaqSensor.bme680Status);
+        logOut(printstring);
+      }
+    }
+    iaqSensor.status = BSEC_OK;
+  }
+
+  // read the state of the BSEC sensor from permanent storage. 139 Bytes in char field.
+  void loadBsecState(void)
+  {
+    // besser als mit EEPROM: preferences. https://randomnerdtutorials.com/esp32-save-data-permanently-preferences/
+    size_t storesize = permstorage.getBytesLength("bsecstate");
+    if (storesize == BSEC_MAX_STATE_BLOB_SIZE) {
+      // Existing state in permstorage
+      sprintf(printstring,"Reading BME680 state from permstorage");
+      logOut(printstring);
+
+      size_t readsize = permstorage.getBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
+      Serial.printf("bsecstate expected: %d read: %d\n", storesize, readsize);
+      for (uint8_t i = 0; i < BSEC_MAX_STATE_BLOB_SIZE; i++) {
+        sprintf(printstring, " %3d 0x%02X  ",i, bsecState[i]);
+        logOut(printstring);
+        if((i+1)%10==0) {
+          sprintf(printstring,"\n");
+          logOut(printstring);
+        }  
+      }
+      sprintf(printstring,"\n");
+      logOut(printstring);
+
+      iaqSensor.setState(bsecState);
+      checkIaqSensorStatus();
+    } else {
+      // Erase the key "bsecstate" 
+      sprintf(printstring,"Erasing bsecstate");
+      logOut(printstring);
+      permstorage.remove("bsecstate");  // remove the key
+      // permstorage.clear(); // erase the whole namespace
     }
   }
 
-  //Calculate gas contribution to IAQ index
-  if (gas_reference > gas_upper_limit) gas_reference = gas_upper_limit;
-  if (gas_reference < gas_lower_limit) gas_reference = gas_lower_limit;
-  gas_score = (0.75/(gas_upper_limit-gas_lower_limit)*gas_reference -(gas_lower_limit*(0.75/(gas_upper_limit-gas_lower_limit))))*100;
-  // Serial.printf("gas_reference %f gas_score %f ,gas_lower_limit %d, gas_upper_limit %d\n",
-  //  gas_reference,gas_score,gas_lower_limit,gas_upper_limit);
-
-  //Combine results for the final IAQ index value (0-100% where 100% is good quality air)
-  air_quality_score = hum_score + gas_score;
-
-  // Serial.println("Air Quality = "+String(air_quality_score,1)+"% derived from 25% of Humidity reading and 75% of Gas reading - 100% is good quality air");
-  // Serial.println("Air Quality = "+String(air_quality_score,1)+ 
-  // Serial.println("Humidity element was : "+String(hum_score/100)+" of 0.25");
-  // Serial.println(" Gas element was : "+String(gas_score/100)+" of 0.75");
-  
-  // if (raw_gas < 120000) Serial.println("***** Poor air quality *****");
-  // if ((getgasreference_count++)%10==0) GetGasReference();
-  GetGasReference();
-  // Serial.println(CalculateIAQ(air_quality_score));
-  CalculateIAQ(air_quality_score, air_quality_string, air_quality_shortstring);
-  Serial.printf("Air Quality: %3.1f %s (Humidity: %3.1f, Gas: %3.1f)\n",
-      air_quality_score, air_quality_string, hum_score, gas_score);
-}
-
-  // Now run the sensor for a burn-in period, then use combination of relative humidity and gas resistance to estimate indoor air quality as a percentage.
-  void GetGasReference()
+  // write the state of the BSEC sensor to permanent storage if required
+  void updateBsecState(void)
   {
-    int readings = 3;
-    Serial.printf("============================================================\n");
-    Serial.printf("Getting a new gas reference value. Before: %3.1f ", gas_reference);
-    for (int i = 1; i <= readings; i++)   // read gas for 10 x 0.150mS = 1.5secs
-    { 
-      getBME680SensorData(); 
-      gas_reference += raw_gas;
+    char outstring[100];
+
+    bool update = false, printflag = false;
+    /* Set a trigger to save the state. Here, the state is saved every STATE_SAVE_PERIOD with the first state being saved once the algorithm achieves full calibration, i.e. iaqAccuracy = 3 */
+    if (stateUpdateCounter == 0) {
+      if (iaqSensor.iaqAccuracy >= 3) {
+        update = true;
+        stateUpdateCounter++;
+      }
+    } else {
+      /* Update every STATE_SAVE_PERIOD milliseconds */
+      if ((stateUpdateCounter * STATE_SAVE_PERIOD) < millis()) {
+        update = true;
+        stateUpdateCounter++;
+      }
     }
-    gas_reference = gas_reference / readings;  // mean of old value plus new values
-    Serial.printf(" --- after: %3.1f \n", gas_reference);
+
+    if (update) {
+      iaqSensor.getState(bsecState);
+      checkIaqSensorStatus();
+
+      sprintf(printstring,"Writing state to permstorage");
+      logOut(printstring);
+      // use preferences instead of deprecated eeprom method
+      sprintf(printstring,"Writing state into permstorage. Size: %d \n", BSEC_MAX_STATE_BLOB_SIZE);
+      logOut(printstring);
+      for (uint8_t i = 0; i < BSEC_MAX_STATE_BLOB_SIZE ; i++) {
+        sprintf(outstring," %3d 0x%02X  ",i, bsecState[i]);
+        strcat(printstring, outstring);
+        // Serial.printf(" %3d ",i);
+        // Serial.print(bsecState[i], HEX);
+        if((i+1)%10==0) {
+          strcat(printstring,"\n");
+          logOut(printstring);
+          strcpy(printstring,"");
+          printflag = true;
+        }  
+      }
+      if(!printflag) 
+        logOut(printstring);
+      permstorage.putBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
+      sprintf(printstring,"\npermstorage length after writing %d\n",permstorage.getBytesLength("bsecstate"));
+      logOut(printstring);
+    }
   }
-
-  void CalculateIAQ(float score, char* printstring, char* shortstring)
-  {
-    strcpy(printstring, "Air quality is ") ;
-
-    if (score<=40){
-      strcat(printstring, "Hazardous");
-      strcpy(shortstring,"Hazard");
-    }
-    if(score> 40 && score<=60){    // 40..60
-      strcat(printstring, "Very Unhealthy");
-      strcpy(shortstring,"VeryUnhy");
-    }
-    if( score>60 && score<=65){    // 60..65
-      strcat(printstring, "Unhealthy");
-      strcpy(shortstring,"Unhealthy");
-    }
-    if(score>65 && score<=70){    // 65..70
-      strcat(printstring, "Unhealthy for Sensitive Groups");
-      strcpy(shortstring,"Unh Sensi");
-    }
-    if(score > 70 && score<=90){    // 70..90
-      strcat(printstring, "Moderate");
-      strcpy(shortstring,"Moderate");
-    }
-    if(score > 90){     // > 90
-      strcat(printstring, "Good");
-      strcpy(shortstring,"Good");                   
-    }  
-  }
-
-  /**************************************************!
-    @brief    Function to read the BME680 data 
-    @details  The BME680 data is read in 
-    @return   void
-  ***************************************************/
-  void getBME680SensorData() 
-  {
-    BME680.getSensorData(raw_temperature, raw_humidity, raw_pressure, raw_gas);  // Get readings
-    temperature = raw_temperature/100.0;
-    pressure = raw_pressure/100.0;
-    altitude = 44330.0 * (1.0 - pow((pressure) / SEA_LEVEL_PRESSURE, 0.1903));
-    humidity = raw_humidity/1000.0;
-    gas = raw_gas/1000.0;
-  }  // of method "getSensorData()"
 #endif
 
 #ifdef isMHZ14A
@@ -1227,7 +1382,7 @@ void getAirQuality()
     display.clearDisplay(); 
     switch (displayMode)
     {
-      #ifdef isBME680 
+      #if defined isBME680 || defined isBME680_BSECLib
       case 2:
         sprintf(printstring,"Pressure [mbar]");
         display.setTextSize(1);
@@ -1882,7 +2037,7 @@ void main_handler()
     }
   #endif  // isOneDS18B20
 
-  //*** get sensor data from BME680 P/T/%/Gas sensor
+  //*** get sensor data from BME680 P/T/%/Gas sensor using Zanshin Library
   #ifdef isBME680
     // measure only every 60 seconds
     if(start_loop_time > lastBME680Time + 60000)
@@ -1905,7 +2060,100 @@ void main_handler()
       #endif
       
       // delay(300); // give blynk time to send the stuff
-      vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
+      vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
+    } // if start_loop_time  
+  #endif  // isBME680
+
+  //*** get sensor data from BME680 P/T/%/Gas sensor using BSEC Library
+  #ifdef isBME680_BSECLib
+    // measure only every 60 seconds
+    if(start_loop_time > lastBME680Time + 60000)
+    {
+      lastBME680Time = start_loop_time;
+      /*
+      getBME680SensorData();
+      // correct with compensation factors which are specific to each sensor module, defined near auth codes
+      temperature += corrBME680Temp;
+      getAirQuality();    // get air quality index
+      Serial.printf(" %3.1f Temp %3.1f Humid %3.1f Pressure %3.1f Gas %5.0f (Alt %3.1f) Air %f %s \n", 
+                    time_sec, temperature, humidity, pressure, gas, altitude, air_quality_score, air_quality_string);
+      */
+      char iaqString[10];
+      if (iaqSensor.run()) { // If new data is available
+        switch(iaqSensor.iaqAccuracy)
+        {
+          case 0:
+            sprintf(iaqString,"Start");
+            break;
+          case 1:
+            sprintf(iaqString,"Uncrt");
+            break;
+          case 2:
+            sprintf(iaqString,"CalON");
+            break;
+          case 3:
+            sprintf(iaqString,"CalOK");
+            break;
+          default:
+            sprintf(iaqString,"-----");
+            break;
+        }
+        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f",
+            time_sec,iaqSensor.rawTemperature,iaqSensor.pressure, iaqSensor.rawHumidity, 
+            iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity);
+        logOut(printstring);  
+        sprintf(printstring," ||");
+        for (int i=1;i<iaqSensor.iaq/10;i++)
+          strcat(printstring,"=");
+        strcat(printstring,"\n");  
+        logOut(printstring);  
+
+        updateBsecState();    // write sensor date to preferences, if time
+      } else {
+          checkIaqSensorStatus();
+      }
+
+      temperature = iaqSensor.temperature;    // sensor temperature in C
+      pressure    = iaqSensor.pressure / 100; // sensor air pressure in mbar
+      humidity    = iaqSensor.humidity;       // humidity in %
+      air_quality_score = iaqSensor.iaq;      // air quality score. here 0(perfect)..500(worst)
+      
+      if(air_quality_score <= 50){
+        strcpy(air_quality_string," Air quality is good");
+        strcpy(air_quality_shortstring,"Good");
+      }
+      if(air_quality_score > 50 && air_quality_score <= 100){
+        strcpy(air_quality_string," Air quality is average");
+        strcpy(air_quality_shortstring,"Average");
+      }
+      if(air_quality_score > 100 && air_quality_score <= 150){
+        strcpy(air_quality_string," Air quality is a little bad");
+        strcpy(air_quality_shortstring,"LittleBad");
+      }
+      if(air_quality_score > 150 && air_quality_score <= 200){
+        strcpy(air_quality_string," Air quality is bad");
+        strcpy(air_quality_shortstring,"Bad");
+      }
+      if(air_quality_score > 200 && air_quality_score <= 300){
+        strcpy(air_quality_string," Air quality is worse");
+        strcpy(air_quality_shortstring,"Worse");
+      }
+      if(air_quality_score > 300 && air_quality_score <= 100){
+        strcpy(air_quality_string," Air quality is very bad");
+        strcpy(air_quality_shortstring,"Very Bad");
+      }
+
+      #ifdef isBLYNK
+        // get the data to blynk
+        Blynk.virtualWrite(V5, temperature); 
+        Blynk.virtualWrite(V6, pressure); 
+        Blynk.virtualWrite(V7, humidity); 
+        Blynk.virtualWrite(V8, air_quality_score); 
+        Blynk.virtualWrite(V12, air_quality_string); 
+      #endif
+      
+      // delay(300); // give blynk time to send the stuff
+      vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
     } // if start_loop_time  
   #endif  // isBME680
 
@@ -2030,7 +2278,7 @@ void lcd_handler()
         display.println(printstring);  
       #endif  //isOneDS18B20
 
-      #ifdef isBME680
+      #if defined isBME680 && defined isBME680_BSECLib
         sprintf(printstring,"ESP32-EnvMonitor");
         //Display(printstring, 1,0,0,true);
         display.setCursor(0, 0);

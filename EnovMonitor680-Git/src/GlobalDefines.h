@@ -1,10 +1,10 @@
 /******************************************************
 * Global defines Header file for EnvMonitor680.cpp
 *******************************************************/
-
+ 
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.43"
-#define PROGDATE "2021-05-13"
+#define PROGVERSION "V0.44"
+#define PROGDATE "2021-05-14"
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
@@ -16,9 +16,9 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
- // #define blynkBME680Kueche
+ #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
-  #define blynkEnvLocal2Bad
+ // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1
@@ -31,7 +31,8 @@
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
-    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #define isLCD            // LCD display present
@@ -52,7 +53,8 @@
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
-    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #define isDisplay       // Adafruit SSD 1306 display is present
     #unfine isLCD            // LCD display present
@@ -73,7 +75,8 @@
     #define isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #undef isBME280         // BME 280 Sensor (P, T, %) present
-    #define isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #define isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #define isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
@@ -94,7 +97,8 @@
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #define isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
-    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib   
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #define isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
@@ -115,7 +119,8 @@
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
-    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib   
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
@@ -136,7 +141,8 @@
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
-    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #define isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
