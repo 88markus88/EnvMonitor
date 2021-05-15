@@ -1085,7 +1085,7 @@ void setup()
 
     void CalculateIAQ(float score, char* printstring, char* shortstring)
     {
-      strcpy(printstring, "Air quality is ") ;
+      strcpy(printstring, "AQ is ") ;
 
       if (score<=40){
         strcat(printstring, "Hazardous");
@@ -2235,7 +2235,7 @@ void main_handler()
       air_quality_score = iaqSensor.iaq;      // air quality score. here 0(perfect)..500(worst)
       
       if(air_quality_score <= 50){
-        strcpy(air_quality_string," Air quality is good");
+        strcpy(air_quality_string," Air Quality is good");
         strcpy(air_quality_shortstring,"Good");
       }
       if(air_quality_score > 50 && air_quality_score <= 100){
@@ -2243,19 +2243,19 @@ void main_handler()
         strcpy(air_quality_shortstring,"Moderate");
       }
       if(air_quality_score > 100 && air_quality_score <= 150){
-        strcpy(air_quality_string," Air quality is unhealthy for Sensitive Groups");
+        strcpy(air_quality_string," AQ unhealthy for Sensitive Groups");
         strcpy(air_quality_shortstring,"UnhSensi");
       }
       if(air_quality_score > 150 && air_quality_score <= 200){
-        strcpy(air_quality_string," Air quality is unhealthy");
+        strcpy(air_quality_string," AQ is unhealthy");
         strcpy(air_quality_shortstring,"Unhelthy");
       }
       if(air_quality_score > 200 && air_quality_score <= 300){
-        strcpy(air_quality_string," Air quality is very unhealthy");
+        strcpy(air_quality_string," AQ is very unhealthy");
         strcpy(air_quality_shortstring,"VeryUnhy");
       }
       if(air_quality_score > 300 && air_quality_score <= 500){
-        strcpy(air_quality_string," Air quality is hazardous");
+        strcpy(air_quality_string," Air quality is hazardous!");
         strcpy(air_quality_shortstring,"Hazard!");
       }
 
