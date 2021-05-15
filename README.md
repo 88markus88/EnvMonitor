@@ -1,7 +1,7 @@
 # EnvMonitor - ESP32
 This project aims to create an environmental monitoring system, using ESP32 and multiple environmental sensors and make the data visible using <B>Blynk</B> (https://blynk.io/)
 
-The project consists of both siftware code and the hardware description as KiCad and Fritzing files.
+The project consists of both software code and the hardware description as KiCad and (partly) Fritzing files.
 
 It is presently work in progress, but already functional. Development is being done using Platformio with the Arduino platform. 
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
@@ -100,6 +100,7 @@ See [List of Virtual Pins](https://github.com/88markus88/EnvMonitor/blob/main/En
 - Blynk Library from here: https://blynk.io/. Using <i>Wifi, WifiClient</i> and <i>BlynkSimpleEsp32</i> libraries
 - BME 280: <i>Wire</i>, <i>Adafruit_Sensor</i> and <i>Adafruit_BME280</i> libraries
 - BME 680: using <i>Zanshin_BME680</i> and <i>SPI</i> libraries by Arnd SV Zanshin, https://github.com/Zanduino/BME680  and Information from this Article https://wiki.dfrobot.com/Gravity__I2C_BME680_Environmental_Sensor__VOC,_Temperature,_Humidity,_Barometer__SKU__SEN0248 
+  BME 680 using the manufacturer supplied __BSEC__ library by Bosch Sensortec. This library is only available as pre-compiled object code. https://platformio.org/lib/show/6979/BSEC%20Software%20Library 
 - NTP time using info from: https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/ 
 - OLED display: using <i>Adafruit_GFX</i> and <i>Adafruit_SSD1306</i> libraries
 - DS18B20: using <i>OneWire</i> and <i>DallasTemperature</i> libraries
