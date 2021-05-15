@@ -16,12 +16,16 @@
     lcd.backlight();
   }
 
-  // Function to scroll text
-  // The function accepts the following arguments:
-  // row: row number where the text will be displayed
-  // message: message to scroll
-  // delayTime: delay between each character shifting
-  // lcdColumns: number of columns of your LCD
+  /**************************************************!
+  @brief    Function to display a string as scrolled text on LCD
+  @details  Takes LCD row, message, delay time and number of columns as paramters
+   The function accepts the following arguments:
+  @param row: row number where the text will be displayed
+  @param message: message to scroll
+  @param delayTime: delay between each character shifting
+  @param lcdColumns: number of columns of your LCD
+  @return   void
+  ***************************************************/
   void scrollText(int row, String message, int delayTime, int lcdColumns) 
   {
     for (int i=0; i < lcdColumns; i++) {
@@ -35,6 +39,14 @@
     }
   }
 
+  /**************************************************!
+  @brief    Function to display a string on LCD
+  @details  Takes LCD row, message, delay time and number of columns as paramters
+  @param x: row number where the text will be displayed (0..3, 0 = top)
+  @param y: column number where the text will be displayed (0..20, 0 = right)
+  @param printstring: text to display. Should be max 20 characters.
+  @return   void
+  ***************************************************/
   void outLCD(int x, int y, char* printstring)
   {
     char outstring[40]="                    ";
@@ -45,12 +57,17 @@
     lcd.print(outstring);
   }
 
-  // display program info
+  /**************************************************!
+  @brief    Function to display the program information on LCD
+  @details  outputs constants PROGNAME, PROGVERSION, PROGDATE as well as paramter infoStringShort
+  @param infoStringShort: displayed in row 3 (lowest). Short Info about the Box, from credentials.h
+  @return   void
+  ***************************************************/
   void displayLCDProgInfo(char *infoStringShort)
   {
     char printstring[40];
-    lcd.clear();  
-    lcd.backlight();
+    // lcd.clear();  
+    // lcd.backlight();
     
     sprintf(printstring,"* EnvMonitor by MP *");          outLCD(0,0,printstring);
     sprintf(printstring,"%s",PROGNAME);                   outLCD(0,1,printstring);
@@ -60,7 +77,25 @@
     sprintf(printstring,"%s",PROGDATE);  outLCD(0,3,infoStringShort);
   }
 
-  // display data for various sensors on LCD display
+  /**************************************************!
+  @brief    Function to display data for various sensors on LCD display
+  @details  outputs data based on lcdDisplayMode, and for sensors actually present
+  @param int lcdDisplayMode
+  @param float p  : BME280 air pressure
+  @param float t  : BME280 
+  @param float h  : BME280 
+  @param float T1  : DS18B20 temperature 1
+  @param float T2  : DS18B20 temperature 2
+  @param float T3  : DS18B20 temperature 3 (not used)
+  @param int CO2ppm : CO2 concentration in ppm (not used)
+  @param float iT0  : Infactory 433 MHz temperature Channel 1
+  @param float iH0  : Infactory 433 MHz humidity Channel 1
+  @param float iT1  : Infactory 433 MHz temperature Channel 2
+  @param float iH1  : Infactory 433 MHz humidity Channel 2
+  @param char* timestring : present local time 
+  @param char* infoStringShort : short information about the hardware device, the box.
+  @return   void
+  ***************************************************/
   void displayLCD(int lcdDisplayMode,float p, float t, float h, 
     float T1, float T2, float T3, 
     int CO2ppm,
@@ -68,12 +103,10 @@
     char* timestring, char* infoStringShort)
   {
     char printstring[40];
-    // lcd.clear();  
-    // lcd.backlight();
 
     switch (lcdDisplayMode)
     {
-      case 1:
+      case 1: // mode 1: all info in condensed form
         //lcd.clear(); 
         lcd.backlight();
         #if defined getNTPTIME
@@ -104,11 +137,11 @@
           outLCD(0,3,printstring); 
         #endif
         break;
-      case 2:
+      case 2: // BME 280 or 680 data: pressure, temperature, himidity
         //lcd.clear(); 
         lcd.backlight();
         #if defined isBME680 || defined isBME280
-          sprintf(printstring,"%s- BME280   ",timestring);                outLCD(0,0,printstring);
+          sprintf(printstring,"%s- BME280   ",timestring);     outLCD(0,0,printstring);
           sprintf(printstring,"Luftdruck : %4.1f mbar", p);    outLCD(0,1,printstring);
           sprintf(printstring,"Temperatur: %3.1f%c C", t, 223);outLCD(0,2,printstring);    
           sprintf(printstring,"Luftfeucht: %3.1f%% " ,h);      outLCD(0,3,printstring);     
@@ -117,7 +150,7 @@
           outLCD(0,0,printstring); 
         #endif
         break;
-      case 3:
+      case 3: // DS18B20 temperature data
         //lcd.clear(); 
         lcd.backlight();
           #ifdef isOneDS18B20
@@ -130,7 +163,7 @@
             outLCD(0,0,printstring); 
           #endif
         break;  
-        case 4:
+        case 4: // info provided by external 433 MHz radio sensors
           //lcd.clear(); 
           lcd.backlight();
           #if defined receiveSERIAL
@@ -143,7 +176,9 @@
             outLCD(0,0,printstring); 
           #endif
         break;   
-        case 5:
+        case 5: // program info
+          //lcd.clear(); 
+          lcd.backlight();
           displayLCDProgInfo(infoStringShort);
         break;   
       default:

@@ -694,7 +694,7 @@ void setup()
     MyBlynkTimer.setInterval(lcdHandlerInterval, lcd_handler);
   #endif // isLCD
 
-  // Program Info to serial port
+  // Program Info to serial Monitor
   outputProgramInfo(); 
 
   #ifdef isRelay
@@ -838,29 +838,44 @@ void setup()
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
     logOut(printstring);
+
     // Blynk initialization for Blynk web account - MP internet
+    // Original example, never use in reality: You can also specify server:
+    // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
+    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
     #ifdef blynkCloud
       Blynk.begin(auth, ssid, pass);
     #else
       // Blynk initialization for local blynk server on raspi - MP Home
-      // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,31), 8080);
-      // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,64), 8080);
-      Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+      // original approach, does not always work
+      // Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+      // alternate approach to start Blynk
+      if(WiFi.status() != WL_CONNECTED)
+        Blynk.connectWiFi(ssid,pass);
+      Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+      Blynk.connect();
     #endif  
-
-    // Original example, never use in reality: You can also specify server:
-    // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
-    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
 
     #ifdef blynkTerminal
       myBlynkTerminal.clear();
     #endif  
-    sprintf(printstring,"Blynk connected\n");
-    logOut(printstring);
-    #ifdef isDisplay
-      sprintf(printstring,"Blynk connected");
-      Display(printstring, 1,0,48,false); // string, size, x,y,clear
-    #endif  
+    if(Blynk.connected()){
+      sprintf(printstring,"Blynk connected\n");
+      logOut(printstring);
+      #ifdef isDisplay
+        sprintf(printstring,"Blynk connected");
+        Display(printstring, 1,0,48,false); // string, size, x,y,clear
+      #endif  
+      Blynk.syncAll();  // synchronize device with server
+    }
+    else{
+      sprintf(printstring,"Blynk NOT connected\n");
+      logOut(printstring);
+      #ifdef isDisplay
+        sprintf(printstring,"Blynk NOT connected");
+        Display(printstring, 1,0,48,false); // string, size, x,y,clear
+      #endif  
+    }
 
     #if defined sendSERIAL || defined receiveSERIAL
       Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
@@ -964,9 +979,8 @@ void setup()
     // Serial.println("B");
     #ifdef blynkRestartHouly
       // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
-      MyBlynkTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
+      MyBlynkTimer.setInterval(3*3600L*1000L, restartBlynk); // attempt to restart Blynk every 3 hours
     #endif  
-    // MyBlynkTimer.setInterval(1*60*1000L, restartBlynk); // attempt to restart Blynk every 1 minute
   #endif
 
   #ifdef isOneDS18B20
@@ -1550,7 +1564,62 @@ void setup()
   // function to check if blynk is still connected
   void checkBlynk()
   {  // called every 3 seconds by SimpleTimer MyBlynkCheckTimer
-    bool isconnected = Blynk.connected();
+    bool isconnected;
+    isconnected = Blynk.connected();
+    
+    if(WL_CONNECTED != WiFi.status())
+    {   
+      sprintf(printstring,"checkBlynk 5: Resetting - no Blynk connection %d %d\n", isconnected,  WiFi.status());
+      logOut(printstring);
+      isconnected = false;
+    }
+
+    if (isconnected == false)
+    {
+      blynkDisconnects++;  
+
+      if(blynkDisconnects > 5)   
+      {
+        sprintf(printstring,"checkBlynk 1a: Restart Blynk - no Blynk connection %d %d\n", isconnected, blynkDisconnects);
+        logOut(printstring);
+        restartBlynk();
+      }  
+      if(blynkDisconnects > 10)   
+      {
+        sprintf(printstring,"checkBlynk 1b: Resetting - no Blynk connection %d %d\n", isconnected, blynkDisconnects);
+        logOut(printstring);
+        resetFunc();
+      }  
+
+      sprintf(printstring,"checkBlynk 2: Reconnecting Blynk %d %d\n", isconnected, blynkDisconnects);
+      logOut(printstring);  
+      if(WiFi.status() != WL_CONNECTED)  
+      {
+        sprintf(printstring,"checkBlynk 3: Reconnecting Wifi %d\n", WiFi.status());
+        logOut(printstring);  
+        Blynk.connectWiFi(ssid,pass);
+        Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+      }  
+      sprintf(printstring,"checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) %d\n", WiFi.status());
+      logOut(printstring);  
+      Blynk.connect();
+      Blynk.syncAll();
+      sprintf(printstring,"checkBlynk 6: After Blynk.connect. Wifi: %d Blynk: %d\n", WiFi.status(), Blynk.connected() );
+      logOut(printstring);  
+    }
+    else
+    {
+      blynkDisconnects = 0;
+      sprintf(printstring,"checkBlynk 0: Blynk is connected %d %d\n", isconnected, blynkDisconnects);
+      logOut(printstring);      
+    }
+  }
+
+  /* outdated version
+  void checkBlynk()
+  { // called every 3 seconds by SimpleTimer MyBlynkCheckTimer
+    bool isconnected;
+    isconnected = Blynk.connected();
     if (isconnected == false)
     {
       blynkDisconnects++;  
@@ -1571,22 +1640,43 @@ void setup()
       logOut(printstring);       
     }
   }
-  /*
-  void checkBlynk()
-  {  // called every 3 seconds by SimpleTimer MyBlynkCheckTimer
-    bool isconnected = Blynk.connected();
-    if (isconnected == false)
-      disconnects++;         
-    if(disconnects > 0)
-    {
-      Serial.printf("Resetting since not connection to Blynk %d\n", isconnected); 
-      resetFunc();
-    }
-  }
-  */
+  */ 
 
   // function to stop and then restart Blynk
-  // intended as workaround, since after a few hours no data are transmitted. 
+  // intended as workaround, since often after a few hours no data are transmitted. 
+  void restartBlynk()
+  {
+    // logics to check if a reboot has been done
+    if (restartCount == 0) {            
+      NoReboots ++;                     // Increment number of reboots
+      preferences.begin("nvs", false);  // Save changed NoReboots to NVS memory
+      preferences.putInt("NoReboots", NoReboots);
+      preferences.end();
+      sprintf(printstring,"restartBlynk 1: Incremented Number of Reboots to: %d\n", NoReboots);
+      logOut(printstring); 
+    }
+    restartCount ++;
+    sprintf(printstring, "restartBlynk 2: Restart Blynk No %d. Reboots: %d  ", restartCount, NoReboots);
+    logOut(printstring); 
+
+    Blynk.disconnect();
+    delay(1500);
+    if(WiFi.status() != WL_CONNECTED)
+    {
+      sprintf(printstring,"restartBlynk 3: Reconnecting Wifi %d\n", WiFi.status());
+      logOut(printstring);  
+      Blynk.connectWiFi(ssid,pass);
+      Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+    }  
+    sprintf(printstring,"restartBlynk 4: Blynk.connect() %d\n", WiFi.status());
+    logOut(printstring); 
+    Blynk.connect();
+    delay(600);
+    Blynk.virtualWrite(V12, restartCount); 
+    Blynk.syncAll();
+  }
+  // outdated version
+  /*
   void restartBlynk()
   {
     char printstring[80];
@@ -1613,6 +1703,7 @@ void setup()
     delay(600);
     Blynk.virtualWrite(V12, restartCount); 
   }
+  */ 
 
   #ifdef isRelay
   // Relay 1 is switched via virtual Pin 18
@@ -1624,7 +1715,6 @@ void setup()
       digitalWrite(RELAYPIN1, HIGH);
     else  
       digitalWrite(RELAYPIN1, LOW);
-
   }
 
 // Relay 2 is switched via virtual Pin 19
@@ -1638,6 +1728,17 @@ void setup()
       digitalWrite(RELAYPIN2, LOW);
   }
   #endif  // relay
+
+  // this function is called every time that blynk connection is established, and re-syncs widgets if first connection
+  bool isFirstConnect = true;
+  BLYNK_CONNECTED()
+  {
+    sprintf(printstring,"Blynk detected connection %d \n", isFirstConnect);
+    logOut(printstring); 
+    if(isFirstConnect)
+      Blynk.syncAll();
+    isFirstConnect = false;
+  }  
 #endif  //blynk
 
 #if defined sendSERIAL || defined receiveSERIAL
@@ -1733,7 +1834,15 @@ void setup()
     return true;
   }
 
-  // process a set of serial data from Infactory433 sensor connected to an arduino
+  /**************************************************!
+   @brief    handles date received via serial2 from Infactory 433 sensor attached to Aruino
+   @details  gets data from "receiveSerial(), parses them and returns temp/humidity/channel via parameters
+   @param sTempC returned temperature in Celsius
+   @param sHumidity returned humidity in %
+   @param sChannel returned  channel for which temp and humidity have been received
+   @param numCharsReceived  returned number of characters received
+   @return   boolean. true if data received, otherwise false
+  ***************************************************/
   boolean processSerialData(float* sTempC, float* sHumidity, int* sChannel, int* numCharsReceived)
   {
     char tempChars[80];
@@ -1783,9 +1892,11 @@ void setup()
 
 #endif // serial stuff  
 
-//*****************************************************************************
-// main handler, was loop
-//*****************************************************************************
+/**************************************************!
+  @brief    main handler, was loop. Handles all sensors, called via timer
+  @details  called via timer, does measurements and output for all sensors actually present
+  @return   void
+***************************************************/
 void main_handler() 
 {
   char printstring[180]="";
@@ -2003,13 +2114,14 @@ void main_handler()
     if(GetOneDS18B20Counter <= previousGetOneDS18B20Counter)  // DS18B20 routine not counting
     {
       notMeasuredDS18B20 ++;
-      sprintf(printstring,"!!!! DS18B20 not measuring !!! %ld %ld %ld \n",GetOneDS18B20Counter, previousGetOneDS18B20Counter, notMeasuredDS18B20);
+      sprintf(printstring,"!!!! DS18B20 not measuring !!! %ld %ld %ld \n",
+        GetOneDS18B20Counter, previousGetOneDS18B20Counter, notMeasuredDS18B20);
       logOut(printstring);  
     }  
     else
       notMeasuredDS18B20 = 0;
-    if (notMeasuredDS18B20 > 5)
-      restartDS18B20MeasurementFunction();
+    //if (notMeasuredDS18B20 > 5)
+    //  restartDS18B20MeasurementFunction();
 
     previousGetOneDS18B20Counter = GetOneDS18B20Counter;
 
@@ -2030,13 +2142,14 @@ void main_handler()
     // checks for problems with measurements of DS18B20
     if(notMeasuredCount > DS18B20RestartLimit || notChangedCount > 3*DS18B20RestartLimit || manualDS18B20Restart >= 1)  // in GetOneDS18B20Temperature this count is handled if faulty checksum
     {
-      sprintf(printstring,"\nRestarting DS18B20 Sensors since not measurement taken in %d %d cycles \n",
-        notMeasuredCount, notChangedCount);
+      sprintf(printstring,"\nRestarting DS18B20 Sensors since not measurement taken in %d %d cycles - counter not incr: %ld\n",
+        notMeasuredCount, notChangedCount, notMeasuredDS18B20);
       logOut(printstring);
       restartDS18B20MeasurementFunction();
       notMeasuredCount = 0; // reset the counter
       notChangedCount = 0;  // reset the counter
       manualDS18B20Restart = 0; // reset the manual switch
+      notMeasuredDS18B20 = 0; // reset the counter for activity of the detached, parallel measurement function
     }
   #endif  // isOneDS18B20
 
@@ -2223,8 +2336,12 @@ void main_handler()
   // Serial.printf("End main_handler\n");
 } // main_handler
 
-// handler for LCD display functions, called via timer
 #ifdef isLCD
+/**************************************************!
+  @brief    Function to handle LCD display data for various sensors on LCD display
+  @details  called via timer, outputs data based on lcdDisplayMode, and for sensors actually present
+  @return   void
+  ***************************************************/
 void lcd_handler()
 {
   if(lcdDisplayMode==0)
@@ -2239,7 +2356,7 @@ void lcd_handler()
   {
     sprintf(printstring,"\ndisplayLCD Mode %d\n", lcdDisplayMode);
     logOut(printstring);
-    printLocalTime(printstring, 6);
+    printLocalTime(printstring, 6); // local time into printstring for display on LCD
     displayLCD(lcdDisplayMode, 
       Pressure, Temperature, Humidity, 
       calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2],
@@ -2253,8 +2370,12 @@ void lcd_handler()
 }
 #endif //#ifdef isLCD
 
-// handler for OLED display functions, called via timer
 #ifdef isDisplay
+  /**************************************************!
+  @brief    Function to handle OLED display data for various sensors on OLED display
+  @details  called via timer, outputs data based on displayMode, and for sensors actually present
+  @return   void
+  ***************************************************/
   void oled_handler()
   {
     // clear the display - only once!
@@ -2346,9 +2467,9 @@ void lcd_handler()
   }
 #endif // isDisplay
 
-//*****************************************************************************
-// main loop
-//*****************************************************************************
+/*****************************************************************************
+ @brief main loop
+*****************************************************************************/
 void loop()
 {
   //mainHandlerTimer.run();   // timer for main handler
