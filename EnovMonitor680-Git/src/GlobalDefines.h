@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.44"
-#define PROGDATE "2021-05-14"
+#define PROGVERSION "V0.45"
+#define PROGDATE "2021-05-15"
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled

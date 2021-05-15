@@ -806,7 +806,7 @@ void setup()
     Wire.begin();
     permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
 
-    iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
+    iaqSensor.begin(BME680_I2C_ADDR_SECONDARY, Wire);
     //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
     //Serial.println(output);
     sprintf(printstring,
@@ -1414,7 +1414,7 @@ void setup()
         display.setTextSize(1);
         display.setCursor(0, 32);
         display.println(printstring);  
-        sprintf(printstring,"%3.1f %% ",air_quality_score);
+        sprintf(printstring,"%3.1f  ",air_quality_score);
         display.setTextSize(2);
         display.setCursor(0, 44);
         display.println(printstring);  
@@ -2067,7 +2067,7 @@ void main_handler()
   //*** get sensor data from BME680 P/T/%/Gas sensor using BSEC Library
   #ifdef isBME680_BSECLib
     // measure only every 60 seconds
-    if(start_loop_time > lastBME680Time + 60000)
+    if(start_loop_time > lastBME680Time + 1000)   // was 60000. now essentially disabled
     {
       lastBME680Time = start_loop_time;
       /*
@@ -2123,24 +2123,24 @@ void main_handler()
         strcpy(air_quality_shortstring,"Good");
       }
       if(air_quality_score > 50 && air_quality_score <= 100){
-        strcpy(air_quality_string," Air quality is average");
-        strcpy(air_quality_shortstring,"Average");
+        strcpy(air_quality_string," Air quality is moderate");
+        strcpy(air_quality_shortstring,"Moderate");
       }
       if(air_quality_score > 100 && air_quality_score <= 150){
-        strcpy(air_quality_string," Air quality is a little bad");
-        strcpy(air_quality_shortstring,"LittleBad");
+        strcpy(air_quality_string," Air quality is unhealthy for Sensitive Groups");
+        strcpy(air_quality_shortstring,"Unh Sensi");
       }
       if(air_quality_score > 150 && air_quality_score <= 200){
-        strcpy(air_quality_string," Air quality is bad");
-        strcpy(air_quality_shortstring,"Bad");
+        strcpy(air_quality_string," Air quality is unhealthy");
+        strcpy(air_quality_shortstring,"Unhealthy");
       }
       if(air_quality_score > 200 && air_quality_score <= 300){
-        strcpy(air_quality_string," Air quality is worse");
-        strcpy(air_quality_shortstring,"Worse");
+        strcpy(air_quality_string," Air quality is very unhealthy");
+        strcpy(air_quality_shortstring,"VeryUnhy");
       }
-      if(air_quality_score > 300 && air_quality_score <= 100){
-        strcpy(air_quality_string," Air quality is very bad");
-        strcpy(air_quality_shortstring,"Very Bad");
+      if(air_quality_score > 300 && air_quality_score <= 500){
+        strcpy(air_quality_string," Air quality is hazardous");
+        strcpy(air_quality_shortstring,"Hazard");
       }
 
       #ifdef isBLYNK
@@ -2278,7 +2278,7 @@ void lcd_handler()
         display.println(printstring);  
       #endif  //isOneDS18B20
 
-      #if defined isBME680 && defined isBME680_BSECLib
+      #if defined isBME680 || defined isBME680_BSECLib
         sprintf(printstring,"ESP32-EnvMonitor");
         //Display(printstring, 1,0,0,true);
         display.setCursor(0, 0);
