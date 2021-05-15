@@ -1161,6 +1161,7 @@ void setup()
 
       size_t readsize = permstorage.getBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
       Serial.printf("bsecstate expected: %d read: %d\n", storesize, readsize);
+      /*
       for (uint8_t i = 0; i < BSEC_MAX_STATE_BLOB_SIZE; i++) {
         sprintf(printstring, " %3d 0x%02X  ",i, bsecState[i]);
         logOut(printstring);
@@ -1171,7 +1172,7 @@ void setup()
       }
       sprintf(printstring,"\n");
       logOut(printstring);
-
+      */
       iaqSensor.setState(bsecState);
       checkIaqSensorStatus();
     } else {
@@ -1212,6 +1213,7 @@ void setup()
       // use preferences instead of deprecated eeprom method
       sprintf(printstring,"Writing state into permstorage. Size: %d \n", BSEC_MAX_STATE_BLOB_SIZE);
       logOut(printstring);
+      /*
       for (uint8_t i = 0; i < BSEC_MAX_STATE_BLOB_SIZE ; i++) {
         sprintf(outstring," %3d 0x%02X  ",i, bsecState[i]);
         strcat(printstring, outstring);
@@ -1226,6 +1228,7 @@ void setup()
       }
       if(!printflag) 
         logOut(printstring);
+      */  
       permstorage.putBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
       sprintf(printstring,"\npermstorage length after writing %d\n",permstorage.getBytesLength("bsecstate"));
       logOut(printstring);
@@ -2128,11 +2131,11 @@ void main_handler()
       }
       if(air_quality_score > 100 && air_quality_score <= 150){
         strcpy(air_quality_string," Air quality is unhealthy for Sensitive Groups");
-        strcpy(air_quality_shortstring,"Unh Sensi");
+        strcpy(air_quality_shortstring,"UnhSensi");
       }
       if(air_quality_score > 150 && air_quality_score <= 200){
         strcpy(air_quality_string," Air quality is unhealthy");
-        strcpy(air_quality_shortstring,"Unhealthy");
+        strcpy(air_quality_shortstring,"Unhelthy");
       }
       if(air_quality_score > 200 && air_quality_score <= 300){
         strcpy(air_quality_string," Air quality is very unhealthy");
@@ -2140,7 +2143,7 @@ void main_handler()
       }
       if(air_quality_score > 300 && air_quality_score <= 500){
         strcpy(air_quality_string," Air quality is hazardous");
-        strcpy(air_quality_shortstring,"Hazard");
+        strcpy(air_quality_shortstring,"Hazard!");
       }
 
       #ifdef isBLYNK
