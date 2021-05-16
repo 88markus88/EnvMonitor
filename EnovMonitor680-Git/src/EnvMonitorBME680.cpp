@@ -328,10 +328,14 @@ void logOut(char* printstring)
 #endif
 
 #ifdef getNTPTIME
-  /****************************************************************************************/
-  /* get and print local time, once obtained from time server */
-  /* http://www.cplusplus.com/reference/ctime/strftime/ */
-  /****************************************************************************************/
+  /**************************************************!
+  @brief    get local system date/time and convert it to proper string format
+  @details  gets local time, and converts it to strings using "strftime"
+  @details  http://www.cplusplus.com/reference/ctime/strftime/
+  @param    printstring returned string with the date/time info
+  @param    mode  deterines format to be returned. 1: only print
+  @return   void
+  ***************************************************/
   void printLocalTime(char* printstring, int mode)
   {
     char timeHour[3];
@@ -426,9 +430,13 @@ void logOut(char* printstring)
     */
   }
 
-
-  // get time from NTP server
-  // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
+  /**************************************************!
+  @brief    getNTPTime: start WLAN and get time from NTP server
+  @details  routine to get time from an network time server via NTP protocol. Set system time.
+  @details  https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
+  @param    none
+  @return   void
+  ***************************************************/
   void getNTPTime()
   {
     char printstring[80];
@@ -464,9 +472,14 @@ void logOut(char* printstring)
 #endif
 
 #ifdef serialMonitor
-// routine to read all characters on the serial input and display it, later to write to SD
   #define serBufSize 1024
 
+  /**************************************************!
+  @brief    monitorSerial
+  @details  routine to monitor ALL characters on the serial input and display it, later to write to SD
+  @param none
+  @return   void
+  ***************************************************/
   void monitorSerial()
   {
     
@@ -507,11 +520,12 @@ void logOut(char* printstring)
 
 #endif //serial monitor
 
-//*****************************************************************************
-// outputProgramInfo 
-// helper function to output all infos about the program, at startup
-//*****************************************************************************
-
+/**************************************************!
+ @brief    outputProgramInfo
+ @details  helper function to output all infos about the program, at startup
+ @param none
+ @return   void
+***************************************************/
 void outputProgramInfo()
 {
   sprintf(printstring,"\n with ");
@@ -569,7 +583,12 @@ void outputProgramInfo()
 }
 
 #ifdef isLCD
-  // interrupt handler for PushButton pressed. only needed for LCD display
+   /**************************************************!
+   @brief    interrupt handler for PushButton pressed. needed for LCD display
+   @details  interrupt handler for PushButton pressed. only needed for LCD display
+   @param none
+   @return   void
+  ***************************************************/
   void lcdChangeDisplayMode(void)
   {
     // Serial.printf("************** LCD Button Pressed before ********************** %d %d \n",  
@@ -587,9 +606,12 @@ void outputProgramInfo()
   }
 #endif
 
-//*****************************************************************************
-// setup function
-//*****************************************************************************
+ /**************************************************!
+   @brief    setup function
+   @details  main setup for all functions of the software
+   @param none
+   @return   void
+  ***************************************************/
 void setup() 
 {
   // Init USB serial port
@@ -651,22 +673,14 @@ void setup()
     if(Blynk.connected()){
       sprintf(printstring,"Blynk connected\n");
       logOut(printstring);
-      #ifdef isDisplay
-        sprintf(printstring,"Blynk connected");
-        Display(printstring, 1,0,48,false); // string, size, x,y,clear
-      #endif  
       Blynk.syncAll();  // synchronize device with server
     }
     else{
       sprintf(printstring,"Blynk NOT connected\n");
       logOut(printstring);
-      #ifdef isDisplay
-        sprintf(printstring,"Blynk NOT connected");
-        Display(printstring, 1,0,48,false); // string, size, x,y,clear
-      #endif  
     }
   #endif // isBLYNK  
-  
+
   // log number of reboots. Do this here, after SD opened and Blynk connection operational (no reboots make up logfilename...)
   sprintf(printstring,"NoReboots=%d\n", NoReboots);
   logOut(printstring);
@@ -694,6 +708,14 @@ void setup()
     sprintf(printstring,"Date:    %s",PROGDATE);
     display.setCursor(0, 36);
     display.println(printstring);
+    if(Blynk.connected()){
+      sprintf(printstring,"Blynk connected");
+      Display(printstring, 1,0,48,false); // string, size, x,y,clear
+    }else
+    {
+      sprintf(printstring,"Blynk NOT connected");
+      Display(printstring, 1,0,48,false); // string, size, x,y,clear
+    }
 
     display.display();          // transfer buffer content to display
     // Display(printstring, 1,0,0,true);
@@ -741,6 +763,8 @@ void setup()
 
   // Program Info to serial Monitor
   outputProgramInfo(); 
+
+
 
   #ifdef isRelay
     pinMode(RELAYPIN1,OUTPUT);
@@ -2110,7 +2134,7 @@ void main_handler()
     for(int iii=0; iii<noDS18B20Connected; iii++)
       calDS18B20Temperature[iii] = DS18B20Temperature[iii] + corrDS18B20[iii];
       
-    sprintf(printstring,"Base DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f %d %d %d - %d %ld\n", 
+    sprintf(printstring,"BaseDS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f %d %d %d - %d %ld\n", 
       DS18B20Temperature[0], DS18B20Temperature[1], DS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
      logOut(printstring);
@@ -2129,7 +2153,7 @@ void main_handler()
 
     previousGetOneDS18B20Counter = GetOneDS18B20Counter;
 
-    sprintf(printstring,"Cal. DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f \n", 
+    sprintf(printstring,"Cal.DS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f \n", 
        calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
     logOut(printstring);
     

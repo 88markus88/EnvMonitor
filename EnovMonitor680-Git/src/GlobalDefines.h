@@ -18,10 +18,10 @@
  // #define blynkWebHinkelhurz
  // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
-  #define blynkEnvLocal2Bad
+ // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
- // #define blynkKombinsensor1
+  #define blynkKombinsensor1
 
 //***********************************************
 // hardware configurations defined here
@@ -57,7 +57,7 @@
     #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
     #define isDisplay       // Adafruit SSD 1306 display is present
-    #unfine isLCD            // LCD display present
+    #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
