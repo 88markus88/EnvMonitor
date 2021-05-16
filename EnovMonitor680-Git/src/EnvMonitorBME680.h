@@ -297,7 +297,7 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
 
 #if defined isLCD || defined isDisplay
   // timer for darkening display, and interval for it
-  #define displayOffTimerInterval 60000L // 600000 ms= 600 sec
+  #define displayOffTimerInterval 600000L // 600000 ms= 600 sec
   int displayOffTimerHandle;
 #endif
 

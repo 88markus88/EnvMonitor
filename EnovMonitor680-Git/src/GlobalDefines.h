@@ -19,9 +19,9 @@
  // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
- // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
-  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+ // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
 
 //***********************************************
 // hardware configurations defined here
