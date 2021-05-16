@@ -302,8 +302,38 @@ void logOut(char* printstring)
 
 #endif  // DS18B20
 
+#if defined isLCD || defined isDisplay
+  // handler for timer displayOffTimerHandle. If triggered, switch display off
+  /**************************************************!
+  @brief    Timer Handler Function to set display modes for both OLED and LCD to switch display off
+  @details  called via timer, sets for OLED: displayMode =1 for LCD: lcdDisplayMode = 0
+  @param    none
+  @return   void
+  ***************************************************/
+  void displayoff_handler(void)
+  {
+    #ifdef isDisplay  
+      displayMode = 0;  // for OLED
+      sprintf(printstring, "Switching off OLED display since no button pressed. %d\n", displayMode);
+      logOut(printstring);
+    #endif
+    #ifdef isLCD
+      lcdDisplayMode = 0; // for LCD
+      sprintf(printstring, "Switching off LCD display since no button pressed. %d\n", lcdDisplayMode);
+      logOut(printstring);
+    #endif
+
+  }
+#endif  
+
 #ifdef isDisplay
   // interrupt handler for PushButton pressed. only needed for display
+  /**************************************************!
+  @brief    interrupt handler for PushButton pressed. needed for OLED display
+  @details  interrupt handler for PushButton pressed. only needed for OLED display
+  @param none
+  @return   void
+  ***************************************************/
   void changeDisplayMode(void)
   {
     if(displayDone ==1 )
@@ -323,7 +353,36 @@ void logOut(char* printstring)
         lastButtonTime = millis();   
       }
     }  
+    // restart display off timer
+    MyBlynkTimer.restartTimer(displayOffTimerHandle);
+    
     // Serial.printf("************** Button Pressed %d *************************%d %d \n",  displayMode, displayDone);  
+  }
+#endif
+
+#ifdef isLCD
+   /**************************************************!
+   @brief    interrupt handler for PushButton pressed. needed for LCD display
+   @details  interrupt handler for PushButton pressed. only needed for LCD display
+   @param none
+   @return   void
+  ***************************************************/
+  void lcdChangeDisplayMode(void)
+  {
+    // Serial.printf("************** LCD Button Pressed before ********************** %d %d \n",  
+    //   lcdDisplayMode, lcdDisplayDone);  
+    if(lcdDisplayDone ==1 )
+    {
+      lcdDisplayMode ++;
+      if (lcdDisplayMode > maxLcdisplayMode)    // tbd: variable adaptation to number of sensors
+         lcdDisplayMode = 0;
+      lcdDisplayDone=0;    
+      //lastButtonTime = millis();   
+    }  
+    // Serial.printf("************** LCD Button Pressed after ********************** %d %d \n", lcdDisplayMode, lcdDisplayDone);  
+    
+    // restart display off timer
+    MyBlynkTimer.restartTimer(displayOffTimerHandle);
   }
 #endif
 
@@ -582,30 +641,6 @@ void outputProgramInfo()
   delay(200);
 }
 
-#ifdef isLCD
-   /**************************************************!
-   @brief    interrupt handler for PushButton pressed. needed for LCD display
-   @details  interrupt handler for PushButton pressed. only needed for LCD display
-   @param none
-   @return   void
-  ***************************************************/
-  void lcdChangeDisplayMode(void)
-  {
-    // Serial.printf("************** LCD Button Pressed before ********************** %d %d \n",  
-    //   lcdDisplayMode, lcdDisplayDone);  
-    if(lcdDisplayDone ==1 )
-    {
-      lcdDisplayMode ++;
-      if (lcdDisplayMode > maxLcdisplayMode)    // tbd: variable adaptation to number of sensors
-         lcdDisplayMode = 0;
-      lcdDisplayDone=0;    
-      //lastButtonTime = millis();   
-    }  
-    // Serial.printf("************** LCD Button Pressed after ********************** %d %d \n",  
-    //  lcdDisplayMode, lcdDisplayDone);  
-  }
-#endif
-
  /**************************************************!
    @brief    setup function
    @details  main setup for all functions of the software
@@ -692,7 +727,9 @@ void setup()
 
   // set timer for main_handler()
   //mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
-  MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+  mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+  sprintf(printstring, "mainHandlerTimerHandle: %d\n", mainHandlerTimerHandle);
+  logOut(printstring);
 
   #ifdef isDisplay
     // Start the display
@@ -747,7 +784,9 @@ void setup()
     #endif
     // set timer for oled_handler()
     //oledHandlerTimer.setInterval(lcdHandlerInterval, oled_handler);
-    MyBlynkTimer.setInterval(oledHandlerInterval, oled_handler);
+    oledTimerHandle = MyBlynkTimer.setInterval(oledHandlerInterval, oled_handler);
+    sprintf(printstring, "oledTimerHandle: %d\n", oledTimerHandle);
+    logOut(printstring);
   #endif  // isDisplay
 
   // setup functions for LCD display 4 rows 20 characters
@@ -763,8 +802,17 @@ void setup()
 
     // set timer for lcd_handler()
     //lcdHandlerTimer.setInterval(lcdHandlerInterval, lcd_handler);
-    MyBlynkTimer.setInterval(lcdHandlerInterval, lcd_handler);
+    lcdTimerHandle = MyBlynkTimer.setInterval(lcdHandlerInterval, lcd_handler);
+    sprintf(printstring, "lcdTimerHandle: %d\n", lcdTimerHandle);
+    logOut(printstring);
   #endif // isLCD
+
+  #if defined isLCD || defined isDisplay
+    // this timer is triggered when display is to go off. restarted every time a button is pressed
+    displayOffTimerHandle = MyBlynkTimer.setInterval(displayOffTimerInterval, displayoff_handler);
+    sprintf(printstring, "displayOffTimerHandle: %d\n", displayOffTimerHandle);
+    logOut(printstring);
+  #endif
 
   // Program Info to serial Monitor
   outputProgramInfo(); 
@@ -1007,12 +1055,16 @@ void setup()
 
     #ifdef blynkRegularCheck
       // MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
-      MyBlynkTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+      checkTimerHandle = MyBlynkTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+      sprintf(printstring, "checkTimerHandle: %d\n", checkTimerHandle);
+      logOut(printstring);
     #endif  
     // Serial.println("B");
     #ifdef blynkRestartHouly
       // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
-      MyBlynkTimer.setInterval(3*3600L*1000L, restartBlynk); // attempt to restart Blynk every 3 hours
+      restartTimerHandle = MyBlynkTimer.setInterval(3*3600L*1000L, restartBlynk); // attempt to restart Blynk every 3 hours
+      sprintf(printstring, "restartTimerHandle: %d\n", restartTimerHandle);
+      logOut(printstring);
     #endif  
   #endif
 
@@ -2379,7 +2431,7 @@ void main_handler()
   ***************************************************/
 void lcd_handler()
 {
-  if(lcdDisplayMode==0)
+  if(lcdDisplayMode == 0)
   {
     sprintf(printstring,"\ndisplayLCD Mode  is zero: %d\n", lcdDisplayMode);
     logOut(printstring);
@@ -2484,7 +2536,7 @@ void lcd_handler()
         specialDisplay(displayMode);
 
     // dim display 10 sec after last button push  
-    if(millis() > lastButtonTime + displayOffDelay)
+    if(millis() > lastButtonTime + displayDimmDelay)
     {
       display.dim(true);
       displayDimmed = true;

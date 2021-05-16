@@ -19,9 +19,9 @@
  // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
-  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+ // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
- // #define blynkKombinsensor1
+  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
 
 //***********************************************
 // hardware configurations defined here
@@ -48,7 +48,7 @@
     #define logSerial       // logging to serial enabled
 #endif
 
-#ifdef blynkKombinsensor1  // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 3 DS18B20 
+#ifdef blynkKombinsensor1  // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2

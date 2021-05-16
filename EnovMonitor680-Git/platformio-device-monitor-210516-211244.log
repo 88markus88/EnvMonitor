@@ -1,0 +1,4279 @@
+Connecting to Fritz7390-MP2.4
+...............................................................................E (40220) task_wdt: Task watchdog got triggered. The following tasks did not reset the watchdog in time:
+E (40220) task_wdt:  - loopTask (CPU 1)
+E (40220) task_wdt: Tasks currently running:
+E (40220) task_wdt: CPU 0: IDLE0
+E (40220) task_wdt: CPU 1: IDLE1
+E (40220) task_wdt: Aborting.
+abort() was called at PC 0x400dddbf on core 0
+
+Backtrace: 0x4008d0f8:0x3ffbe170 0x4008d329:0x3ffbe190 0x400dddbf:0x3ffbe1b0 0x40085361:0x3ffbe1d0 0x40152827:0x3ffbbff0 0x400df0d6:0x3ffbc010 0x4008b001:0x3ffbc030 0x4008976d:0x3ffbc050
+
+Rebooting...
+Connecting to Fritz7390-MP2.4
+...........
+WiFi connected.
+WiFi connected.
+Failed to obtain time
+<?time?>Failed to obtain time
+Blynk setup section entered
+[15685] Connecting to Fritz7390-MP2.4
+[16198] Connected to WiFi
+[16198] IP: 192.168.178.66
+[16198] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[16205] Connecting to 192.168.178.64
+[16709] Ready (ping: 51ms).
+Blynk detected connection 1 
+Blynk connected
+NoReboots=4036
+mainHandlerTimerHandle: 0
+oledTimerHandle: 1
+displayOffTimerHandle: 2
+
+******************************************************************************
+ This is EnvMonitorBME680.cpp 
+ KombiSensorExt: Black Velleman Box with OLED. Ext433 via serial, BME280, 2 DS18B20
+ with  DS18B20 (T) - BME280 (P/T/H) - Sensors , BLYNK +Display 
+ Blynk Auth Code: y0-EGVY3VrsFBP01ogXI_wcBb4aDwNvQ 
+ Blynk Server IP: blynkLocalIP 
+ EnvMonitorBME680.cpp  V0.46  2021-05-16 
+******************************************************************************
+-- Weather Station Scenario --
+forced mode, 1x temperature / 1x humidity / 1x pressure oversampling,
+filter off
+[24241] Disconnected
+Blynk disconnected
+checkTimerHandle: 3
+Found 0 Devices 
+Sensor 0 had a resolution of 12
+Sensor 1 had a resolution of 12
+
+Found 0 sensors
+Searching 1-Wire-Devices...
+1-Wire-Device 0 found with Adress:
+28 DE EC 75 D0 01 3C DB
+1-Wire-Device 1 found with Adress:
+28 65 E7 75 D0 01 3C 54
+0 0 0 0 0 0 0 0 Found 1-Wire-Devices: 2 
+end setup
+M 26.5 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[26462] Connecting to 192.168.178.64
+[26519] Ready (ping: 39ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 0)
+:1 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 0)
+01 - Serial read: 'Fail Conv sI1 229 sI2 16 Damage 7-21' 
+>>>>> Ds18B20 Temp's: T1: -111.1 T2: -111.1 T3: -111.1
+[28514] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 3
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.9 m
+01M 29.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 6
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.9 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[31520] Connecting to 192.168.178.64
+[31604] Ready (ping: 59ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 31.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 1 11
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.4 % 986.7 mBar 223.1 m
+:1M 33.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 1 11
+!!!! DS18B20 not measuring !!! 11 11 1 
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.1 % 986.9 mBar 222.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 35.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 18
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.2 m
+01M 37.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 2 27
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.6 m
+10M 39.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 1 34
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.5 m
+:101checkBlynk 0: Blynk is connected 1 0
+M 41.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 2 36
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.8 m
+01M 43.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 5 0 - 2 45
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 45.2 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[46884] Connecting to 192.168.178.64
+101[47026] Ready (ping: 59ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 1)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 1)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 1)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+01[50019] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 15 0 - 2 66
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.9 m
+01M 50.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 17 0 - 2 69
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.3 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[52027] Connecting to 192.168.178.64
+0[52150] Ready (ping: 77ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 52.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 1 74
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:01BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.9 m
+M 53.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 78
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.4 m
+M 55.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 83
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+checkBlynk 0: Blynk is connected 1 0
+01M 57.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 91
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.4 m
+01M 59.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 100
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.3 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 61.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 13 0 - 1 109
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.5 % 986.9 mBar 222.1 m
+01M 63.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 2 115
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.2 m
+01checkBlynk 0: Blynk is connected 1 0
+M 65.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 0 - 2 123
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+01M 67.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 1 132
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.2 m
+01M 69.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 2 0 - 2 139
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.6 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 71.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 6 0 - 2 147
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.9 mBar 222.0 m
+01M 73.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 8 0 - 1 155
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 75.3 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[75376] Connecting to 192.168.178.64
+01010101[81076] Ready (ping: 23ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 1)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 1)
+ - Serial read: 'Fail Conv sI1 156 sI2 199 Damage 9-23' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 20.9 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.9 m
+01[83541] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 192
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 38.9 % 986.8 mBar 222.6 m
+01M 84.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 195
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.3 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[86077] Connecting to 192.168.178.64
+[86161] Ready (ping: 51ms).
+0Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 86.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 9 0 - 1 200
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.6 m
+01M 87.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 201
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.4 m
+M 89.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 207
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.9 m
+checkBlynk 0: Blynk is connected 1 0
+01M 91.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 0 - 2 216
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.5 m
+101M 93.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 10 0 - 2 224
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.3 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 95.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 13 0 - 1 233
+1Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.3 m
+01M 97.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 16 0 - 2 240
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+0:M 99.1 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[101457] Connecting to 192.168.178.64
+0[101534] Ready (ping: 43ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 2)
+:01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 2)
+ - Serial read: 'Fail Rng sI1 67 sI2 154 Damage 5-49' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+01[103998] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 255
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.6 m
+01M 104.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 258
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.8 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[106535] Connecting to 192.168.178.64
+[106607] Ready (ping: 44ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 106.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 1 263
+0Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.6 m
+01M 108.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 264
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+01M 109.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 269
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 111.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 275
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.8 m
+101M 113.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 284
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 115.3 
+1 - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 293
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.2 m
+01M 117.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 302
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.0 m
+01M 119.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 310
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 121.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 2 318
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.0 m
+010M 123.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 25 0 - 1 327
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.6 m
+0:checkBlynk 0: Blynk is connected 1 0
+01M 125.4 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[128076] Connecting to 192.168.178.64
+[128388] Ready (ping: 284ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 3)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 3)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 3)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.6 m
+01[131375] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 340
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.3 m
+M 131.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 342
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[133389] Connecting to 192.168.178.64
+[133470] Ready (ping: 49ms).
+Blynk detected connection 0 
+0checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 133.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 1 346
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.7 m
+01M 135.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 347
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 137.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 356
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.2 m
+01M 139.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 2 365
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.1 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 141.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 11 0 - 2 374
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.9 m
+01M 143.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 13 0 - 2 383
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.2 m
+checkBlynk 0: Blynk is connected 1 0
+01M 145.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 17 0 - 2 389
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.2 m
+010M 147.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 0 - 1 399
+1Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.6 m
+01M 149.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 23 0 - 2 408
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.7 m
+01checkBlynk 0: Blynk is connected 1 0
+M 151.3 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[151508] Connecting to 192.168.178.64
+[154125] Ready (ping: 2592ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 3)
+:1 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 3)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 3)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 3)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.7 m
+01[157669] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 428
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 38.9 % 986.8 mBar 222.4 m
+M 158.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 431
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 223.0 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[159165] Connecting to 192.168.178.64
+[159212] Ready (ping: 21ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 159.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 0 - 2 437
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+:1BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 161.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 441
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.7 m
+01M 163.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 451
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 165.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 460
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.9 m
+01M 167.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 468
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01M 169.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 477
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.2 m
+01checkBlynk 0: Blynk is connected 1 0
+M 171.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 485
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01M 173.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 2 495
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.1 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 175.3 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[175351] Connecting to 192.168.178.64
+0101[178148] Ready (ping: 14ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 3)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 3)
+ - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 3)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.1 m
+01[181148] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 36 0 - 2 527
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+M 181.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 36 0 - 2 530
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.2 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[183149] Connecting to 192.168.178.64
+0[183407] Ready (ping: 218ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 183.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 39 0 - 1 535
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:01BME280 Sensor values: 21.3 °C 39.2 % 986.9 mBar 221.9 m
+M 185.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 539
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.2 m
+checkBlynk 0: Blynk is connected 1 0
+01M 187.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 547
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.2 m
+101M 189.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 555
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 191.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 564
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.7 m
+01M 193.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 573
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 195.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 582
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.2 m
+01M 197.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 2 591
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.7 m
+1M 199.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 0 - 2 597
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.8 m
+01checkBlynk 0: Blynk is connected 1 0
+M 201.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 28 0 - 2 605
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.4 m
+01M 203.2 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[203262] Connecting to 192.168.178.64
+[203574] Ready (ping: 248ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 3)
+:1 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 3)
+01 - Serial read: 'Fail Rng sI1 16 sI2 101 Damage 6-47' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.4 m
+01[206048] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 622
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+M 206.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 1 625
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[208575] Connecting to 192.168.178.64
+01[211661] Login timeout
+[213661] Connecting to 192.168.178.64
+0[213755] Ready (ping: 44ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 214.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 7 0 - 1 631
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+101BME280 Sensor values: 21.3 °C 39.5 % 986.7 mBar 223.2 m
+checkBlynk 0: Blynk is connected 1 0
+M 215.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 10 0 - 2 635
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.2 m
+checkBlynk 0: Blynk is connected 1 0
+01M 217.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 14 0 - 2 642
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.9 m
+01M 219.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 16 0 - 1 651
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.8 m
+checkBlynk 0: Blynk is connected 1 0
+01M 221.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 2 0 - 2 658
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.9 m
+01M 223.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 6 0 - 2 667
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 225.1 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[229307] Connecting to 192.168.178.64
+[229360] Ready (ping: 26ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 4)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 4)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 20.9 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+01[231837] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 14 0 - 2 682
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.4 m
+M 232.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 14 0 - 2 686
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[234361] Connecting to 192.168.178.64
+0[234425] Ready (ping: 25ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 234.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 17 0 - 1 690
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+:BME280 Sensor values: 21.3 °C 39.7 % 986.8 mBar 222.5 m
+:1checkBlynk 0: Blynk is connected 1 0
+M 236.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 1 690
+!!!! DS18B20 not measuring !!! 690 690 1 
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+M 237.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 694
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.1 m
+01M 239.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 700
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.7 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 241.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 0 - 2 709
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.3 m
+01M 243.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 10 0 - 2 718
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+checkBlynk 0: Blynk is connected 1 0
+01M 245.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 14 0 - 2 724
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.7 m
+01M 247.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 16 0 - 1 733
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.6 m
+01M 249.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 739
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 251.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 5 0 - 1 748
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01M 253.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 755
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 255.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 763
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.8 m
+01M 257.3 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[257330] Connecting to 192.168.178.64
+[257659] Ready (ping: 261ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 4)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 4)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 4)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 4)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.8 m
+01[261188] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 2 787
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.9 m
+01M 261.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 0 - 2 790
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.2 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[262684] Connecting to 192.168.178.64
+0101[265733] Ready (ping: 43ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 266.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 1 805
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 267.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 2 807
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.2 m
+10M 269.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 1 815
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.6 m
+checkBlynk 0: Blynk is connected 1 0
+01M 271.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 823
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.9 m
+01M 273.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 832
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+1checkBlynk 0: Blynk is connected 1 0
+M 275.1 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[275193] Connecting to 192.168.178.64
+01[275460] Ready (ping: 192ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 4)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 4)
+ - Serial read: 'Fail Conv sI1 209 sI2 252 Damage 7-22' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+01[277918] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 851
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.2 m
+01M 278.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 2 854
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.9 m
+M 279.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 2 858
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[280461] Connecting to 192.168.178.64
+[283222] Ready (ping: 2743ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 283.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 1 863
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 285.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 5 0 - 2 869
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.7 m
+01M 287.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 1 878
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.8 m
+01M 289.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 11 0 - 2 883
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.1 m
+01checkBlynk 0: Blynk is connected 1 0
+M 291.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 13 0 - 2 892
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.7 m
+:101M 293.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 2 895
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 295.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 5 0 - 2 904
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+01M 297.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 1 913
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 223.0 m
+01M 299.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 11 0 - 2 920
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 301.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 1 928
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.5 m
+01M 303.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 17 0 - 2 936
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.6 m
+checkBlynk 0: Blynk is connected 1 0
+01M 305.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 21 0 - 2 944
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+0:M 307.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 952
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.1 m
+01M 309.4 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[312105] Connecting to 192.168.178.64
+01[312250] Ready (ping: 57ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 5)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 5)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 5)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 5)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: -111.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.1 m
+0[315731] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 9 0 - 1 975
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.0 % 986.7 mBar 223.4 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[317251] Connecting to 192.168.178.64
+0[317464] Ready (ping: 156ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+1M 317.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 12 0 - 2 977
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.1 m
+checkBlynk 0: Blynk is connected 1 0
+M 319.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 14 0 - 2 984
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 321.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 18 0 - 2 992
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.7 m
+01M 323.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 22 0 - 2 1001
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 325.4 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+1[325505] Connecting to 192.168.178.64
+[325637] Ready (ping: 38ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 5)
+ - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 5)
+:1 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 5)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 5)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01[329217] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 1022
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.6 % 986.7 mBar 223.1 m
+M 329.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 1024
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.6 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[330638] Connecting to 192.168.178.64
+[330715] Ready (ping: 43ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+01M 331.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1030
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+01M 333.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 1 1039
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.5 m
+checkBlynk 0: Blynk is connected 1 0
+01M 335.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 1044
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.5 m
+01M 337.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 1 1053
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.2 m
+01M 339.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 1060
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.5 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 341.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 2 1069
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.0 % 986.8 mBar 222.4 m
+01M 343.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 0 - 1 1077
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.8 m
+01checkBlynk 0: Blynk is connected 1 0
+M 345.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 28 0 - 2 1084
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 223.0 m
+:01M 347.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 1 1092
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.9 m
+01M 349.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 1099
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 223.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 351.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1105
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.5 m
+01M 353.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 1114
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 223.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 355.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 1123
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.5 m
+01M 357.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 1 1132
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.2 m
+01M 359.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 0 - 2 1139
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.8 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 361.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 23 0 - 1 1147
+1Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.3 m
+01M 363.4 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[366947] Connecting to 192.168.178.64
+0[367211] Ready (ping: 212ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 5)
+1 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 5)
+01 - Serial read: 'Fail Rng sI1 68 sI2 155 Damage 5-49' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.3 m
+01[369677] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 32 0 - 2 1163
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.8 m
+M 370.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 32 0 - 2 1165
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[372212] Connecting to 192.168.178.64
+[372290] Ready (ping: 21ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 372.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 34 0 - 1 1169
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.3 °C 39.7 % 986.8 mBar 222.7 m
+:1M 374.1 
+ - Serial read: 'Fail Rng sI1 155 sI2 246 Damage 1-80' 
+faulty data received, Total Count: 7
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 1 1169
+!!!! DS18B20 not measuring !!! 1169 1169 1 
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.6 m
+01M 375.5 
+ - Serial read: 'Fail Rng sI1 246 sI2 83 Damage 3-81' 
+faulty data received, Total Count: 8
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 0 - 2 1173
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 223.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 377.3 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[377343] Connecting to 192.168.178.64
+[377454] Ready (ping: 32ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+:1 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 223.0 m
+01[379940] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 0 - 2 1188
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.4 m
+M 380.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 0 - 2 1192
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.8 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[382455] Connecting to 192.168.178.64
+0101[385334] Ready (ping: 37ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 385.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 1 1206
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+:1checkBlynk 0: Blynk is connected 1 0
+01M 387.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 1206
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 223.0 m
+01M 389.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1214
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 391.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 0 - 2 1223
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.2 m
+01M 393.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 10 0 - 2 1233
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.7 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 395.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 14 0 - 2 1242
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.7 m
+01M 397.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 16 0 - 1 1251
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.4 m
+01M 399.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 1258
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 401.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1266
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.1 m
+01M 403.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 1 1275
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.4 m
+checkBlynk 0: Blynk is connected 1 0
+01M 405.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 1281
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.1 % 986.7 mBar 223.1 m
+01M 407.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 1288
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.9 m
+01M 409.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 1297
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.4 m
+0checkBlynk 0: Blynk is connected 1 0
+:M 411.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 1305
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 223.0 m
+01M 413.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1312
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+0checkBlynk 0: Blynk is connected 1 0
+:M 415.2 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[415237] Connecting to 192.168.178.64
+01[415346] Ready (ping: 40ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.4 m
+01[418921] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 5 0 - 2 1335
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.4 m
+M 419.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 5 0 - 2 1339
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.7 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[420419] Connecting to 192.168.178.64
+[420522] Ready (ping: 57ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+01M 421.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 9 0 - 2 1346
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.9 m
+01M 423.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 11 0 - 1 1355
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 223.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 425.3 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[425523] Connecting to 192.168.178.64
+[425650] Ready (ping: 110ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+:1 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 223.0 m
+01[428658] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1371
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.8 m
+01M 429.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 1374
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.4 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[430651] Connecting to 192.168.178.64
+0[430773] Ready (ping: 68ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+1M 431.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 1379
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.7 % 986.8 mBar 223.0 m
+01M 433.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 1388
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.4 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 435.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 1397
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.8 m
+01M 437.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 1406
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 223.0 m
+01M 439.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 1414
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 441.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 1424
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.7 % 986.8 mBar 222.8 m
+M 443.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 0 - 2 1431
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 445.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 0 - 2 1439
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.5 m
+01M 447.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 28 0 - 2 1448
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.9 m
+01M 449.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 30 0 - 1 1457
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 223.0 m
+checkBlynk 0: Blynk is connected 1 0
+01M 451.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 1464
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.3 m
+101M 453.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 2 1472
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 455.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 1 1481
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.1 m
+01M 457.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 13 0 - 2 1487
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.8 mBar 222.6 m
+01M 459.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 17 0 - 2 1495
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.8 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 461.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 0 - 1 1504
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+01M 463.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 23 0 - 2 1511
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 465.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 27 0 - 2 1519
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.7 mBar 223.3 m
+01M 467.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 31 0 - 2 1528
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.4 m
+01M 469.3 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[469367] Connecting to 192.168.178.64
+01[469489] Ready (ping: 41ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.4 m
+01[472495] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 1548
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.7 % 986.9 mBar 222.1 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[474490] Connecting to 192.168.178.64
+01[474605] Ready (ping: 52ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 474.9 
+ - Serial read: '0,10.3,83.0' 
+converted Infactory (Ch: 0) T: 10.3 83.0 %
+[479606] Connecting to 192.168.178.64
+[479671] Ready (ping: 30ms).
+Blynk detected connection 0 
+0Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+: - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+01 - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+ - Serial read: '0,10.3,83.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 83.0 Ch: 0 (fail: 8)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.7 % 986.9 mBar 222.1 m
+01[483218] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 1565
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.1 % 986.8 mBar 222.8 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[484672] Connecting to 192.168.178.64
+0101[487638] Ready (ping: 32ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 488.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 1 1580
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.3 °C 39.9 % 986.8 mBar 222.8 m
+01checkBlynk 0: Blynk is connected 1 0
+M 489.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 1 0 - 2 1582
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.6 % 986.8 mBar 222.8 m
+1checkBlynk 0: Blynk is connected 1 0
+M 491.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 0 - 2 1589
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.3 % 986.7 mBar 223.5 m
+01M 493.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 7 0 - 2 1597
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+01checkBlynk 0: Blynk is connected 1 0
+M 495.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 11 0 - 2 1607
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+101M 497.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 15 0 - 2 1615
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.8 m
+01M 499.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 17 0 - 1 1624
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.5 % 986.7 mBar 223.2 m
+checkBlynk 0: Blynk is connected 1 0
+01M 501.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 1631
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.5 m
+101M 503.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1639
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.2 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 505.4 
+1 - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 1648
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.5 % 986.8 mBar 222.9 m
+01M 507.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 1655
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.5 m
+01M 509.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 2 1664
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.6 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 511.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 19 0 - 1 1673
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.8 m
+0:01M 513.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 1678
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.4 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 515.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 1686
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.8 mBar 222.9 m
+01M 517.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 0 - 1 1695
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.3 °C 39.4 % 986.9 mBar 222.1 m
+01M 519.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 20.9 Tmp3 -111.1 0 2 0 - 2 1701
+Cal.DS18B20 Tmp1 21.3 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.0 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 521.4 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[521458] Connecting to 192.168.178.64
+[521538] Ready (ping: 46ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+:1 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 8)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 8)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 8)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 20.9 T3: -111.1
+>>>>> BME280 Sensor values: 21.3 °C 39.2 % 986.7 mBar 223.0 m
+01[526731] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1730
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.3 m
+M 527.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1732
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.3 °C 39.4 % 986.8 mBar 222.7 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[527895] Connecting to 192.168.178.64
+[527983] Ready (ping: 47ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+01M 529.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 1742
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 986.8 mBar 222.9 m
+checkBlynk 0: Blynk is connected 1 0
+0:M 531.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 1750
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.8 m
+:101M 533.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 1 0 - 2 1752
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.7 mBar 223.0 m
+checkBlynk 0: Blynk is connected 1 0
+0:M 535.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 1760
+Cal.DS18B20 Tmp1 21.3 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.7 mBar 223.0 m
+01M 537.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1767
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.9 m
+0:M 539.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 1775
+Cal.DS18B20 Tmp1 21.3 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.8 m
+checkBlynk 0: Blynk is connected 1 0
+01M 541.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1782
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.7 mBar 223.2 m
+0:M 543.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 1790
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 545.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 1797
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.3 m
+01M 547.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1806
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.6 m
+010M 549.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 9 0 - 1 1815
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.4 % 986.7 mBar 223.0 m
+0checkBlynk 0: Blynk is connected 1 0
+:01M 551.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 2 1818
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.6 m
+01M 553.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 1 1827
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 555.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 1833
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.6 m
+0101M 558.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 2 1843
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.9 m
+01M 559.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 1848
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 561.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 1 1857
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 222.1 m
+01M 563.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 9 0 - 2 1863
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.5 % 986.8 mBar 223.0 m
+:01checkBlynk 0: Blynk is connected 1 0
+0M 565.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 1 1871
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:01BME280 Sensor values: 21.4 °C 39.5 % 986.8 mBar 222.4 m
+01M 567.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 1878
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.7 m
+10:M 569.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 0 - 1 1886
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.4 m
+:101checkBlynk 0: Blynk is connected 1 0
+M 571.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 1888
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 986.8 mBar 222.3 m
+01M 573.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 1898
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.3 m
+:01checkBlynk 0: Blynk is connected 1 0
+0M 575.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 1 0 - 1 1906
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 222.1 m
+01M 577.3 
+ - Serial read: '1,10.1,84.0' 
+converted Infactory (Ch: 1) T: 10.1 84.0 %
+[577353] Connecting to 192.168.178.64
+0[577447] Ready (ping: 38ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+:01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 222.1 m
+01[579372] Disconnected
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1919
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.6 m
+M 580.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 1923
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.9 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[582448] Connecting to 192.168.178.64
+01010101checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 0
+M 589.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 0 - 1 1946
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 38.9 % 986.9 mBar 221.9 m
+checkBlynk 2: Reconnecting Blynk 0 2
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[593062] Connecting to 192.168.178.64
+[593115] Ready (ping: 28ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 593.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 1 1951
+0Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.7 m
+01checkBlynk 0: Blynk is connected 1 0
+M 595.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 1954
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.7 m
+01M 597.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 1962
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.7 mBar 223.0 m
+01M 599.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 8 0 - 2 1971
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 601.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 11 0 - 1 1980
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.5 m
+01M 603.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 14 0 - 2 1986
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 605.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 18 0 - 2 1995
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.9 m
+101M 607.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 22 0 - 2 2003
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.3 m
+01M 609.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 24 0 - 1 2012
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.3 m
+01checkBlynk 0: Blynk is connected 1 0
+M 611.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 2019
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.8 m
+101M 613.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 2028
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.3 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 615.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 2037
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.7 mBar 223.0 m
+01M 617.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 2046
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 986.9 mBar 221.9 m
+01M 619.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 2 2053
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 621.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 19 0 - 1 2062
+1Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 986.8 mBar 222.4 m
+01Switching off display since no button pressedM 623.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 22 0 - 2 2070
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.7 m
+01checkBlynk 0: Blynk is connected 1 0
+M 625.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[625284] Connecting to 192.168.178.64
+[625386] Ready (ping: 59ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 8)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 8)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 8)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+01 - Serial read: '1,10.1,84.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 84.0 Ch: 1 (fail: 8)
+ - Serial read: 'Fail Rng sI1 69 sI2 154 Damage 6-47' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.7 m
+01[630008] Disconnected
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 34 0 - 2 2098
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.7 mBar 223.1 m
+01M 630.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 36 0 - 2 2101
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.4 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[631507] Connecting to 192.168.178.64
+01010101[637576] Ready (ping: 44ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 637.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 1 2126
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.2 m
+01checkBlynk 0: Blynk is connected 1 0
+M 639.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 2128
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.7 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 641.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 4 0 - 2 2136
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.7 m
+01M 643.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 6 0 - 2 2143
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 645.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 10 0 - 2 2152
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.7 mBar 223.1 m
+01M 647.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 14 0 - 2 2162
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 222.1 m
+:01M 649.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 1 2170
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.7 m
+01checkBlynk 0: Blynk is connected 1 0
+M 651.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 2176
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.5 m
+01M 653.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 1 2185
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 655.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 2192
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.7 m
+01M 657.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 2201
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.4 m
+01M 659.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 2 2208
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 661.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 2217
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 222.1 m
+:01M 663.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 1 2225
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 222.1 m
+01checkBlynk 0: Blynk is connected 1 0
+M 665.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 2 2232
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 222.0 m
+:01M 667.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 0 - 1 2240
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.7 m
+01M 669.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 2247
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.5 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 671.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 1 2255
+1Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.4 m
+01M 673.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 0 - 2 2263
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.2 m
+01checkBlynk 0: Blynk is connected 1 0
+M 675.4 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[677636] Connecting to 192.168.178.64
+01[680583] Ready (ping: 2817ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+:1 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.2 m
+01[685737] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 2 2290
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.7 m
+M 686.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 0 - 2 2292
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 222.1 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[686903] Connecting to 192.168.178.64
+[687016] Ready (ping: 50ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 687.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 9 0 - 1 2298
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.7 m
+01M 689.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 13 0 - 2 2303
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.9 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 691.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 0 - 1 2312
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.4 m
+01M 693.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 19 0 - 2 2319
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 695.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 23 0 - 2 2327
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 222.0 m
+01M 697.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 27 0 - 2 2336
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.6 m
+01M 699.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 29 0 - 1 2345
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.4 m
+checkBlynk 0: Blynk is connected 1 0
+01M 701.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 33 0 - 2 2352
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.8 mBar 222.2 m
+01M 703.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 37 0 - 2 2361
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 222.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 705.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 40 0 - 1 2370
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.2 % 986.8 mBar 222.2 m
+01M 707.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 43 0 - 2 2375
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 222.0 m
+01M 709.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 47 0 - 2 2384
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 222.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 711.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 50 0 - 1 2393
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.9 m
+01M 713.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 53 0 - 2 2400
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 715.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 57 0 - 2 2408
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.2 m
+01M 717.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 61 0 - 2 2417
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.7 m
+010M 719.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 64 0 - 1 2426
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 221.7 m
+0checkBlynk 0: Blynk is connected 1 0
+:01M 721.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 2429
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 221.8 m
+01M 723.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 1 2438
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.7 m
+01checkBlynk 0: Blynk is connected 1 0
+M 725.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[726769] Connecting to 192.168.178.64
+0[726862] Ready (ping: 54ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+:01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.7 m
+01[730408] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 2457
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 221.7 m
+01M 731.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 2460
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.6 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[731904] Connecting to 192.168.178.64
+0101[734727] Ready (ping: 86ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 735.1 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[739728] Connecting to 192.168.178.64
+:10101Blynk Connected, serialReceived: 1 
+checkBlynk 2: Reconnecting Blynk 0 2
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[747690] Connecting to 192.168.178.64
+0[747948] Ready (ping: 211ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+:01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 986.8 mBar 222.6 m
+01[751566] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 2497
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.6 m
+01checkBlynk 2: Reconnecting Blynk 0 3
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[752949] Connecting to 192.168.178.64
+[753058] Ready (ping: 51ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 753.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 1 2502
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.7 m
+:1checkBlynk 0: Blynk is connected 1 0
+01checkBlynk 0: Blynk is connected 1 0
+M 755.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 1 0 - 2 2503
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.8 mBar 222.2 m
+01M 757.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 0 - 1 2512
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.4 m
+01M 759.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 7 0 - 2 2519
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.9 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 761.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 11 0 - 2 2527
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 222.0 m
+01M 763.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 13 0 - 2 2536
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 38.9 % 986.9 mBar 221.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 765.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 17 0 - 2 2542
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.9 m
+01M 767.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 19 0 - 1 2552
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.9 m
+01M 769.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 2 0 - 2 2558
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 222.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 771.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 5 0 - 1 2567
+1Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 222.0 m
+01M 773.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 8 0 - 2 2576
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.8 m
+01checkBlynk 0: Blynk is connected 1 0
+M 775.4 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[778470] Connecting to 192.168.178.64
+[778539] Ready (ping: 52ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+:1 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 9)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 20.9 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.8 m
+0[782070] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 1 2596
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.0 m
+M 782.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 0 - 2 2597
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.5 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[783540] Connecting to 192.168.178.64
+[786195] Ready (ping: 2602ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 786.5 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[791196] Connecting to 192.168.178.64
+[791262] Ready (ping: 44ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+:>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+: - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 9)
+01 - Serial read: 'Fail Rng sI1 169 sI2 254 Damage 7-31' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.5 m
+01[793725] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 2607
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 221.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[796263] Connecting to 192.168.178.64
+[796343] Ready (ping: 48ms).
+0Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 796.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 0 - 1 2612
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.4 °C 39.5 % 986.9 mBar 221.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 798.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 0 - 2 2614
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.7 m
+1M 799.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 0 - 2 2619
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.2 m
+checkBlynk 0: Blynk is connected 1 0
+01M 801.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 0 - 2 2626
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.6 m
+01M 803.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 0 - 1 2636
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 805.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 0 - 2 2642
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.4 m
+0101M 807.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 0 - 2 2651
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.4 m
+01M 809.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 0 - 2 2660
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.6 m
+checkBlynk 0: Blynk is connected 1 0
+01M 811.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 0 - 2 2667
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.9 m
+01M 813.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 0 - 1 2676
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 815.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 0 - 2 2683
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+01M 817.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 0 - 1 2691
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.2 m
+01M 819.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 0 - 2 2698
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.6 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 821.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 28 0 - 2 2706
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.9 m
+01M 823.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 30 0 - 1 2715
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.6 m
+checkBlynk 0: Blynk is connected 1 0
+01M 825.1 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[825195] Connecting to 192.168.178.64
+[825256] Ready (ping: 35ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.6 m
+01[828252] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 38 0 - 2 2732
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 221.3 m
+01M 829.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 40 0 - 2 2735
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.8 m
+M 829.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 40 0 - 2 2739
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.2 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[830500] Connecting to 192.168.178.64
+[830581] Ready (ping: 40ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+01M 831.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 44 0 - 2 2746
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+01M 833.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 46 0 - 1 2755
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.3 m
+01checkBlynk 0: Blynk is connected 1 0
+M 835.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 50 0 - 2 2762
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.6 m
+101M 837.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 54 0 - 2 2770
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.4 m
+01M 839.4 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[839488] Connecting to 192.168.178.64
+0[839583] Ready (ping: 47ms).
+1Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.4 m
+0[843130] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 63 0 - 1 2794
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 221.6 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[844584] Connecting to 192.168.178.64
+01[844853] Ready (ping: 48ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 845.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 66 0 - 2 2798
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 847.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 70 0 - 2 2807
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.9 m
+01M 849.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 72 0 - 1 2816
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.9 m
+checkBlynk 0: Blynk is connected 1 0
+01M 851.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 76 0 - 2 2823
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0
+Restarting DS18B20 Sensors since not measurement taken in 0 77 cycles - counter not incr: 0
+XXXX Restarting DS18B20 measuring function XXXX !!! 1 
+Found 0 Devices 
+Sensor 0 had a resolution of 12
+Sensor 1 had a resolution of 12
+
+Found 0 sensors
+Searching 1-Wire-Devices...
+1-Wire-Device 0 found with Adress:
+28 DE EC 75 D0 01 3C DB
+1-Wire-Device 1 found with Adress:
+28 65 E7 75 D0 01 3C 54
+0 0 0 0 0 0 0 0 Found 1-Wire-Devices: 2 
+BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.4 m
+M 856.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 1 - 1 2826
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.6 % 986.9 mBar 221.5 m
+:1checkBlynk 0: Blynk is connected 1 0
+M 858.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.2 Tmp3 -111.1 0 1 1 - 1 2826
+!!!! DS18B20 not measuring !!! 2826 2826 1 
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.2 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+:1M 859.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.2 Tmp3 -111.1 0 1 1 - 1 2826
+!!!! DS18B20 not measuring !!! 2826 2826 2 
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.2 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+checkBlynk 0: Blynk is connected 1 0
+01M 861.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.5 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 2831
+Cal.DS18B20 Tmp1 21.5 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+01M 863.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.5 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 1 2841
+Cal.DS18B20 Tmp1 21.5 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+checkBlynk 0: Blynk is connected 1 0
+01M 865.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 2848
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.4 m
+01M 867.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 2856
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.9 m
+01M 869.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 2865
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 871.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 12 1 - 2 2873
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+01M 873.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 16 1 - 2 2882
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.2 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 875.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[875306] Connecting to 192.168.178.64
+1[875549] Ready (ping: 213ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.4 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.2 m
+01[879097] Disconnected
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 26 1 - 2 2907
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.3 m
+01M 879.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.4 Tmp2 21.1 Tmp3 -111.1 0 28 1 - 2 2910
+Cal.DS18B20 Tmp1 21.4 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.9 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[880593] Connecting to 192.168.178.64
+0101[883346] Ready (ping: 58ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 883.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 0 1 - 1 2925
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 38.9 % 986.9 mBar 221.4 m
+01M 885.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 2 2926
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 887.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 3 1 - 1 2935
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.4 m
+01M 889.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 2942
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 891.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 10 1 - 2 2950
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+:01M 893.2 
+ - Serial read: '1,10.0,85.0' 
+converted Infactory (Ch: 1) T: 10.0 85.0 %
+[893287] Connecting to 192.168.178.64
+[896309] Login timeout
+[898309] Connecting to 192.168.178.64
+0[898379] Ready (ping: 47ms).
+1Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.0 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+01 - Serial read: '1,10.0,85.0' 
+>>>>>> Send TempC 10.0 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+ - Serial read: '1,10.0,85.0' 
+>>>>>> Send TempC 10.0 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+01 - Serial read: '1,10.0,85.0' 
+>>>>>> Send TempC 10.0 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01[901916] Disconnected
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 2970
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.9 m
+01M 902.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 2973
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.8 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[903413] Connecting to 192.168.178.64
+[906451] Login timeout
+[908451] Connecting to 192.168.178.64
+0[908823] Ready (ping: 317ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 909.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 1 2978
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+101BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.7 m
+checkBlynk 0: Blynk is connected 1 0
+01checkBlynk 0: Blynk is connected 1 0
+M 911.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 2985
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.6 m
+101M 913.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 2 2993
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.1 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 915.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 11 1 - 1 3002
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 221.2 m
+01M 917.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 1 - 1 3010
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.8 m
+01M 919.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 3017
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.1 m
+01checkBlynk 0: Blynk is connected 1 0
+M 921.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3023
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.6 m
+01M 923.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 3032
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.8 m
+checkBlynk 0: Blynk is connected 1 0
+01M 925.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[928331] Connecting to 192.168.178.64
+0101[931427] Ready (ping: 74ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+:1 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 10)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.8 m
+01[934418] Disconnected
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 3059
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 38.9 % 987.0 mBar 220.9 m
+01M 935.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3062
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[936428] Connecting to 192.168.178.64
+01[936733] Ready (ping: 36ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 937.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 1 - 2 3071
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+01M 939.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 3079
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.1 m
+checkBlynk 0: Blynk is connected 1 0
+01M 941.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 2 3087
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+01M 943.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 1 - 1 3096
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.1 m
+01checkBlynk 0: Blynk is connected 1 0
+M 945.3 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[945325] Connecting to 192.168.178.64
+0101[948395] Ready (ping: 54ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+:1 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 10)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.1 m
+01[951402] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 3123
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.3 m
+01M 952.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3126
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[953396] Connecting to 192.168.178.64
+[953480] Ready (ping: 52ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+0M 953.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 1 3131
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+:BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+01M 955.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 2 3132
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 957.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 3 1 - 1 3141
+1Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.8 m
+01M 959.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 3149
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.4 m
+checkBlynk 0: Blynk is connected 1 0
+01M 961.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 10 1 - 2 3157
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.9 m
+01M 963.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 14 1 - 2 3166
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.1 mBar 220.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 965.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 16 1 - 2 3173
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.7 m
+01M 967.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 20 1 - 2 3181
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.3 m
+01M 969.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 24 1 - 2 3190
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.7 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 971.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 27 1 - 1 3199
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+01M 973.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 30 1 - 2 3206
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.3 m
+01checkBlynk 0: Blynk is connected 1 0
+M 975.2 
+ - Serial read: 'Fail Rng sI1 211 sI2 42 Damage 3-70' 
+faulty data received, Total Count: 11
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 34 1 - 2 3214
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.3 m
+01M 977.4 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[977462] Connecting to 192.168.178.64
+0101[980460] Ready (ping: 62ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+:1 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.3 m
+01[984556] Disconnected
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3248
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.1 mBar 220.0 m
+M 985.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3250
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.9 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[985722] Connecting to 192.168.178.64
+[985818] Ready (ping: 47ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 986.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 1 3256
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.4 m
+M 987.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 3260
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.1 mBar 220.3 m
+01M 989.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 12 1 - 2 3267
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.1 mBar 220.0 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 991.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 16 1 - 2 3276
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.7 m
+01M 993.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 18 1 - 2 3284
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.6 m
+checkBlynk 0: Blynk is connected 1 0
+01M 995.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 22 1 - 2 3290
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.4 m
+01M 997.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 24 1 - 2 3299
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.9 m
+01M 999.2 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1001463] Connecting to 192.168.178.64
+01[1001594] Ready (ping: 31ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.9 m
+01[1005191] Disconnected
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 36 1 - 2 3323
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.7 m
+M 1005.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 36 1 - 2 3326
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.1 mBar 220.2 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1006690] Connecting to 192.168.178.64
+[1006797] Ready (ping: 71ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1007.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 38 1 - 2 3332
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+01M 1009.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 42 1 - 2 3340
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+0checkBlynk 0: Blynk is connected 1 0
+1M 1011.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 46 1 - 2 3349
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.2 m
+01M 1013.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 48 1 - 1 3358
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1015.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 1 - 2 3365
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+:01M 1017.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 1 3373
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.0 m
+01M 1019.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 3380
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+:01checkBlynk 0: Blynk is connected 1 0
+01M 1021.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 3388
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.8 m
+01M 1023.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 3396
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.2 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1025.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[1026442] Connecting to 192.168.178.64
+0[1026541] Ready (ping: 57ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+:01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 11)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.2 m
+01[1029546] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 3416
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.1 mBar 220.3 m
+M 1030.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 1 3419
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1031542] Connecting to 192.168.178.64
+[1031598] Ready (ping: 41ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1031.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 1 - 1 3424
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.6 % 987.0 mBar 220.6 m
+01M 1033.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 2 3425
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.7 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1035.4 
+1 - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3434
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+01M 1037.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 3441
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.1 m
+01M 1039.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 10 1 - 2 3451
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.7 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 1041.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 14 1 - 2 3460
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+01M 1043.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 16 1 - 1 3469
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1045.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 3476
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+101M 1047.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 6 1 - 2 3484
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.9 m
+01M 1049.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 1 3493
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.7 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1051.4 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1051457] Connecting to 192.168.178.64
+[1051571] Ready (ping: 52ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+:1 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 11)
+ - Serial read: 'Fail Rng sI1 240 sI2 69 Damage 5-31' 
+>>>>> Ds18B20 Temp's: T1: 21.3 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.7 m
+01[1054582] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 1 - 2 3510
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+M 1055.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 1 - 2 3512
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1056572] Connecting to 192.168.178.64
+01[1056897] Ready (ping: 236ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1057.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 1 - 2 3518
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.8 m
+01M 1059.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 11 1 - 2 3527
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 221.0 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1061.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 15 1 - 2 3536
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.1 m
+01M 1063.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 17 1 - 2 3543
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1065.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 21 1 - 2 3552
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.6 m
+01M 1067.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 25 1 - 2 3561
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.2 m
+01M 1069.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 27 1 - 1 3570
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.1 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1071.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 31 1 - 2 3577
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.0 % 987.1 mBar 220.1 m
+101M 1073.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 35 1 - 2 3585
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.4 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1075.3 
+1 - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[1075361] Connecting to 192.168.178.64
+[1075430] Ready (ping: 45ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.4 m
+01[1078974] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 45 1 - 2 3608
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.8 m
+M 1079.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 45 1 - 2 3612
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.7 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1080469] Connecting to 192.168.178.64
+[1080538] Ready (ping: 34ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+01M 1081.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 49 1 - 2 3618
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.4 m
+01M 1083.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 51 1 - 2 3627
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1085.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 55 1 - 2 3635
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+01M 1087.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 59 1 - 2 3644
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.6 m
+01M 1089.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 61 1 - 1 3653
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.1 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1091.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 2 1 - 2 3660
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.5 m
+101M 1093.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 6 1 - 2 3668
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1095.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 9 1 - 1 3676
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.8 m
+01M 1097.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 12 1 - 2 3682
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.5 m
+01M 1099.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 16 1 - 2 3691
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.7 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1101.2 
+1 - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 20 1 - 2 3700
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.8 m
+01M 1103.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 20.9 Tmp3 -111.1 0 22 1 - 2 3709
+Cal.DS18B20 Tmp1 21.2 Tmp2 20.9 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.1 mBar 220.1 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1105.3 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1110275] Connecting to 192.168.178.64
+[1110350] Ready (ping: 45ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 12)
+0: - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 12)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 12)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 12)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 20.9 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 987.1 mBar 220.1 m
+01[1113908] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3729
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.2 m
+M 1114.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3732
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1115405] Connecting to 192.168.178.64
+01010101[1124058] Login timeout
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 0
+M 1124.4 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[1126058] Connecting to 192.168.178.64
+0[1126122] Ready (ping: 31ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+: - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 12)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+01[1129660] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 3767
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1131123] Connecting to 192.168.178.64
+01[1131212] Ready (ping: 23ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1131.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 3773
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 38.9 % 987.0 mBar 220.9 m
+1checkBlynk 0: Blynk is connected 1 0
+M 1133.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 3779
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 1135.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 1 - 2 3785
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.1 mBar 220.2 m
+01M 1137.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 5 1 - 2 3794
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.5 m
+01M 1139.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 9 1 - 2 3801
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.7 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1141.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 12 1 - 1 3810
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01M 1143.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 15 1 - 2 3817
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1145.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 19 1 - 2 3825
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.2 m
+01M 1147.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 23 1 - 2 3834
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.9 m
+01M 1149.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 27 1 - 2 3843
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1151.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 30 1 - 1 3852
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.2 % 987.1 mBar 220.1 m
+01M 1153.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 33 1 - 2 3860
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.8 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1155.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 37 1 - 2 3868
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+01M 1157.4 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1160082] Connecting to 192.168.178.64
+[1160149] Ready (ping: 51ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 12)
+:1 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 12)
+01 - Serial read: 'Fail Rng sI1 207 sI2 36 Damage 7-31' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+01[1162609] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 3884
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.1 mBar 220.4 m
+M 1163.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 3886
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.7 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1165150] Connecting to 192.168.178.64
+[1165245] Ready (ping: 54ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1165.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 1 3890
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.0 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1167.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 2 3896
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+01M 1169.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 1 - 1 3905
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 986.9 mBar 221.4 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1171.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 1 - 2 3912
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.3 m
+:01M 1173.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 0 1 - 2 3918
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1175.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[1175255] Connecting to 192.168.178.64
+[1175481] Ready (ping: 207ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.5 m
+01[1179022] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 1 - 2 3942
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+01M 1179.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 3945
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.1 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1180518] Connecting to 192.168.178.64
+01[1183626] Ready (ping: 2911ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1184.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 1 - 1 3951
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+:1M 1185.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 1 3951
+!!!! DS18B20 not measuring !!! 3951 3951 1 
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.3 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1187.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 3 1 - 2 3958
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+01M 1189.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 7 1 - 2 3966
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.2 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1191.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 9 1 - 2 3975
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.3 m
+01M 1193.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 13 1 - 2 3983
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1195.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 17 1 - 2 3993
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.6 m
+101M 1197.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 21 1 - 2 4002
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.3 m
+01M 1199.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 23 1 - 1 4010
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.3 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1201.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4017
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.5 m
+1M 1203.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 4024
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1205.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 2 4032
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.0 m
+01M 1207.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 4042
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.0 m
+101M 1209.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 1 - 2 4050
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1211.3 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1211346] Connecting to 192.168.178.64
+1[1211608] Ready (ping: 86ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.0 m
+01[1214632] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 26 1 - 2 4073
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.3 m
+M 1215.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 26 1 - 2 4077
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1216609] Connecting to 192.168.178.64
+01[1216752] Ready (ping: 42ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1217.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 30 1 - 2 4084
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.6 m
+01M 1219.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 34 1 - 2 4091
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1221.2 
+1 - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 38 1 - 2 4100
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.4 m
+01M 1223.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 40 1 - 2 4109
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1225.2 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[1225296] Connecting to 192.168.178.64
+[1228169] Ready (ping: 2793ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+:1 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01[1231177] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 1 - 2 4126
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01M 1231.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 5 1 - 2 4129
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.3 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1233170] Connecting to 192.168.178.64
+01[1233487] Ready (ping: 46ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1233.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 1 1 - 2 4137
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.2 m
+M 1235.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 3 1 - 2 4143
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1237.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 7 1 - 2 4151
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.3 m
+0:M 1239.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 1 - 1 4159
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1241.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4166
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.0 m
+01M 1243.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 1 - 2 4175
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 1245.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 1 - 2 4184
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.2 m
+01M 1247.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 4193
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+01M 1249.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 1 - 2 4201
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.4 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 1251.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 1 - 2 4209
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.9 m
+01M 1253.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 1 - 2 4216
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1255.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 26 1 - 2 4225
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01M 1257.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 30 1 - 2 4234
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.0 m
+01M 1259.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 32 1 - 1 4243
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1261.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 36 1 - 2 4250
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.9 m
+101M 1263.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 40 1 - 2 4258
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.6 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 1265.4 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1270387] Connecting to 192.168.178.64
+[1273229] Ready (ping: 2814ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+0>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+: - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 13)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.6 m
+01[1277316] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 4280
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.9 m
+M 1277.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 4282
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1278484] Connecting to 192.168.178.64
+[1278602] Ready (ping: 50ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+01M 1279.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 2 4289
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.3 m
+01checkBlynk 0: Blynk is connected 1 0
+01M 1281.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 4298
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 221.0 m
+01M 1283.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 14 1 - 2 4307
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1285.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 18 1 - 2 4315
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+1M 1287.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 1 - 2 4322
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.8 m
+01M 1289.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 1 - 2 4331
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.8 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1291.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 28 1 - 2 4340
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 986.9 mBar 221.4 m
+01M 1293.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 32 1 - 2 4350
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 986.9 mBar 221.4 m
+checkBlynk 0: Blynk is connected 1 0
+0:M 1295.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 1 - 1 4358
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01M 1297.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4365
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.0 m
+0:M 1299.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 1 - 1 4373
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.9 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1301.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4380
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.9 m
+01M 1303.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 1 - 2 4388
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1305.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 2 4397
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.1 m
+01M 1307.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 4405
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.9 m
+01M 1309.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 16 1 - 2 4414
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+01checkBlynk 0: Blynk is connected 1 0
+0M 1311.3 
+1 - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 20 1 - 2 4423
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 221.3 m
+01M 1313.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 22 1 - 2 4432
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.0 % 986.9 mBar 221.5 m
+checkBlynk 0: Blynk is connected 1 0
+01M 1315.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 26 1 - 2 4440
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.9 m
+0M 1317.1 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1317193] Connecting to 192.168.178.64
+:0101[1319792] Ready (ping: 53ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 13)
+ - Serial read: 'Fail Rng sI1 56 sI2 141 Damage 5-31' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 220.9 m
+01[1322249] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 6 1 - 2 4465
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.2 m
+01M 1323.0 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 4468
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.5 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1324793] Connecting to 192.168.178.64
+01[1327754] Ready (ping: 2902ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1328.1 
+ - Serial read: '0,10.3,84.0' 
+converted Infactory (Ch: 0) T: 10.3 84.0 %
+[1332755] Connecting to 192.168.178.64
+:1[1332877] Ready (ping: 43ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+ - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+01 - Serial read: '0,10.3,84.0' 
+>>>>>> Send TempC 10.3 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+ - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.5 m
+01[1336410] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 4485
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 221.0 m
+01checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1337878] Connecting to 192.168.178.64
+0101[1343763] Login timeout
+[1345763] Connecting to 192.168.178.64
+:checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 0
+M 1346.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.0 Tmp3 -111.1 1 0 1 - 1 4500
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.4 °C 39.7 % 987.0 mBar 220.8 m
+01checkBlynk 2: Reconnecting Blynk 0 2
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1350793] Connecting to 192.168.178.64
+010101checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 0
+M 1355.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 1 4512
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+checkBlynk 2: Reconnecting Blynk 0 3
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1358977] Connecting to 192.168.178.64
+01[1359070] Ready (ping: 20ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1359.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 4519
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+1checkBlynk 0: Blynk is connected 1 0
+M 1361.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 10 1 - 2 4526
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 221.2 m
+01M 1363.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 14 1 - 2 4534
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 986.9 mBar 221.4 m
+0checkBlynk 0: Blynk is connected 1 0
+:M 1365.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 1 - 1 4542
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.9 m
+01M 1367.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4549
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+101M 1369.2 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1369293] Connecting to 192.168.178.64
+[1369375] Ready (ping: 45ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 14)
+01 - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 14)
+ - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 14)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+01[1372381] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 4571
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.1 % 987.0 mBar 221.2 m
+M 1373.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 12 1 - 2 4574
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.6 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1374376] Connecting to 192.168.178.64
+01[1374505] Ready (ping: 67ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+checkBlynk 0: Blynk is connected 1 0
+M 1375.2 
+ - Serial read: '0,10.4,84.0' 
+converted Infactory (Ch: 0) T: 10.4 84.0 %
+[1379506] Connecting to 192.168.178.64
+01[1379608] Ready (ping: 38ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.4 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+ - Serial read: '0,10.4,84.0' 
+>>>>>> Send TempC 10.4 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+01 - Serial read: '0,10.4,84.0' 
+>>>>>> Send TempC 10.4 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+ - Serial read: '0,10.4,84.0' 
+>>>>>> Send TempC 10.4 >>>> Humidity 84.0 Ch: 0 (fail: 14)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.6 m
+01[1383168] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 1 - 2 4597
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+M 1383.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 24 1 - 2 4601
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1384666] Connecting to 192.168.178.64
+[1387698] Login timeout
+[1389698] Connecting to 192.168.178.64
+0[1392324] Ready (ping: 2590ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1392.7 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 27 1 - 1 4606
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.4 °C 39.6 % 987.0 mBar 220.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1394.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 2 4608
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.6 % 987.0 mBar 221.3 m
+01M 1395.5 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 4612
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.6 % 987.0 mBar 220.6 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1397.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 4 1 - 2 4619
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.6 m
+01M 1399.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 8 1 - 2 4628
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.6 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 1401.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 12 1 - 2 4636
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.9 m
+010M 1403.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 15 1 - 1 4645
+1Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.0 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1405.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 18 1 - 2 4654
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.6 m
+01M 1407.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 22 1 - 2 4662
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+101M 1409.4 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 26 1 - 2 4670
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.5 % 987.1 mBar 220.4 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1411.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 28 1 - 2 4677
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 221.3 m
+01M 1413.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 32 1 - 2 4685
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.9 m
+0checkBlynk 0: Blynk is connected 1 0
+:M 1415.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 -111.1 Tmp3 -111.1 1 0 1 - 1 4693
+Cal.DS18B20 Tmp1 21.2 Tmp2 -111.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.6 % 987.0 mBar 220.9 m
+01M 1417.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4700
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.1 m
+01M 1419.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 6 1 - 2 4710
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+0BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 221.1 m
+1checkBlynk 0: Blynk is connected 1 0
+01M 1421.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 10 1 - 2 4719
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.4 m
+01M 1423.3 
+ - Serial read: '1,10.1,85.0' 
+converted Infactory (Ch: 1) T: 10.1 85.0 %
+[1423385] Connecting to 192.168.178.64
+[1423456] Ready (ping: 45ms).
+0Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 14)
+: - Serial read: '1,10.1,85.0' 
+>>>>>> Send TempC 10.1 >>>> Humidity 85.0 Ch: 1 (fail: 14)
+01 - Serial read: 'Fail Rng sI1 114 sI2 200 Damage 6-32' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.0 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.3 % 987.1 mBar 220.4 m
+01[1425913] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.1 Tmp3 -111.1 0 2 1 - 2 4732
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.1 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+M 1426.7 
+ - Serial read: '0,10.4,84.0' 
+converted Infactory (Ch: 0) T: 10.4 84.0 %
+[1428457] Connecting to 192.168.178.64
+[1431385] Ready (ping: 2898ms).
+Blynk detected connection 0 
+Blynk Connected, serialReceived: 1 
+checkBlynk 0: Blynk is connected 1 0
+>>>>>> Send TempC 10.4 >>>> Humidity 84.0 Ch: 0 (fail: 15)
+01 - Serial read: '0,10.4,84.0' 
+>>>>>> Send TempC 10.4 >>>> Humidity 84.0 Ch: 0 (fail: 15)
+01 - Serial read: '' 
+>>>>> Ds18B20 Temp's: T1: 21.2 T2: 21.1 T3: -111.1
+>>>>> BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.8 m
+01[1433840] Disconnected
+BaseDS18B20 Tmp1 22.2 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4742
+Cal.DS18B20 Tmp1 21.2 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.0 % 987.0 mBar 220.6 m
+checkBlynk 2: Reconnecting Blynk 0 1
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1436386] Connecting to 192.168.178.64
+[1439407] Login timeout
+[1441407] Connecting to 192.168.178.64
+:checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 0
+M 1443.6 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 -111.1 Tmp2 21.0 Tmp3 -111.1 1 0 1 - 1 4746
+Cal.DS18B20 Tmp1 -112.1 Tmp2 21.0 Tmp3 -111.1 
+:BME280 Sensor values: 21.4 °C 39.7 % 987.0 mBar 221.2 m
+01checkBlynk 2: Reconnecting Blynk 0 2
+checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) 3
+[1446431] Connecting to 192.168.178.64
+0[1446543] Ready (ping: 59ms).
+Blynk detected connection 0 
+checkBlynk 6: After Blynk.connect. Wifi: 3 Blynk: 1
+M 1446.9 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 1 1 - 1 4748
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+10BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.8 m
+1checkBlynk 0: Blynk is connected 1 0
+M 1448.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 4 1 - 2 4753
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.6 % 987.1 mBar 220.4 m
+M 1449.8 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 6 1 - 2 4758
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+checkBlynk 0: Blynk is connected 1 0
+M 1451.1 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 8 1 - 1 4764
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+:1BME280 Sensor values: 21.4 °C 39.3 % 987.0 mBar 220.8 m
+01M 1453.2 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.1 Tmp3 -111.1 0 0 1 - 1 4769
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.1 Tmp3 -111.1 
+01BME280 Sensor values: 21.4 °C 39.4 % 987.0 mBar 220.7 m
+01checkBlynk 0: Blynk is connected 1 0
+M 1455.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 2 1 - 2 4775
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+BME280 Sensor values: 21.4 °C 39.2 % 987.0 mBar 220.5 m
+010M 1457.3 
+ - Serial read: '' 
+BaseDS18B20 Tmp1 22.3 Tmp2 21.0 Tmp3 -111.1 0 5 1 - 1 4784
+Cal.DS18B20 Tmp1 21.3 Tmp2 21.0 Tmp3 -111.1 
+1BME280 Sensor values: 21.4 °C 39.5 % 987.0 mBar 220.7 m
+01M 1459.4 

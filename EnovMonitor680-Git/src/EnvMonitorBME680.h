@@ -171,6 +171,9 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   BlynkTimer MyBlynkTimer;
   //BlynkTimer MyBlynkCheckTimer;
   //BlynkTimer MyBlynkRestartTimer;
+  int checkTimerHandle;
+  int restartTimerHandle;
+
   int restartCount = 0;
 
   // terminal object
@@ -266,13 +269,14 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   volatile int displayDone = 0;  // zum Entprellen des Interrupthandlers
   volatile bool displayDimmed = false; // wenn true ist das display aus
   volatile unsigned long lastButtonTime = 0; // time when button was last pressed, for dimming of display
-  unsigned int displayOffDelay = 30000; // time delay in ms after which the display is switched off
+  unsigned int displayDimmDelay = 30000; // time delay in ms after which the display is switched off
                                         // on again with next button press
   int maxDisplayMode = 1;
 
   // timer for oled_handler, and interval for it
   #define oledHandlerInterval 400L
   //BlynkTimer oledHandlerTimer;
+  int oledTimerHandle;
 #endif  // isDisplay
 
 // for LCD display 4 rows, 20 characters
@@ -288,12 +292,21 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   // timer for lcd_handler, and interval for it
   #define lcdHandlerInterval 400L
   //BlynkTimer lcdHandlerTimer;
+  int lcdTimerHandle;
 #endif
+
+#if defined isLCD || defined isDisplay
+  // timer for darkening display, and interval for it
+  #define displayOffTimerInterval 60000L // 600000 ms= 600 sec
+  int displayOffTimerHandle;
+#endif
+
 
 //** global stuff 
 // timer for main_handler, and interval for it
 #define mainHandlerInterval 2000L
 // BlynkTimer mainHandlerTimer;
+int mainHandlerTimerHandle=0;
 
 /************************************************************
 * Forward declarations
