@@ -72,9 +72,9 @@
     sprintf(printstring,"* EnvMonitor by MP *");          outLCD(0,0,printstring);
     sprintf(printstring,"%s",PROGNAME);                   outLCD(0,1,printstring);
     // sprintf(printstring,"%s - %s",PROGVERSION,PROGDATE);  outLCD(0,2,printstring);
-    sprintf(printstring,"%s",PROGVERSION);  outLCD(0,2,printstring);
+    sprintf(printstring,"%s     ",PROGVERSION);  outLCD(0,2,printstring);
     sprintf(printstring,"%s",PROGDATE);  outLCD(10,2,printstring);
-    sprintf(printstring,"%s",PROGDATE);  outLCD(0,3,infoStringShort);
+    sprintf(printstring,"%s   ",infoStringShort);  outLCD(0,3,printstring);
   }
 
   /**************************************************!

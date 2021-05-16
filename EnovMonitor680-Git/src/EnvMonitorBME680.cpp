@@ -655,7 +655,12 @@ void setup()
     // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
     // Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
     #ifdef blynkCloud
-      Blynk.begin(auth, ssid, pass);
+      // Blynk.begin(auth, ssid, pass);
+      if(WiFi.status() != WL_CONNECTED)
+        Blynk.connectWiFi(ssid,pass);
+      
+      Blynk.config(auth);   // Blynk.config(auth, "blynk-cloud.com", 80);
+      Blynk.connect();
     #else
       // Blynk initialization for local blynk server on raspi - MP Home
       // original approach, does not always work
