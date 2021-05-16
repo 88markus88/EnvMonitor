@@ -617,18 +617,63 @@ void setup()
     NoReboots = 0;
   preferences.putInt("NoReboots", NoReboots+1);    // and increment it - new start.
   preferences.end();
-  sprintf(printstring,"NoReboots=%d\n", NoReboots);
-  logOut(printstring);
-  
-  // set timer for main_handler()
-  //mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
-  MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
 
   #ifdef isSD
     // Create a file on the SD card and write the data labels
     sprintf(logfilename,"/log%04d.txt",NoReboots);
     initSDCard(logfilename);
   #endif  
+
+  #ifdef isBLYNK
+    sprintf(printstring,"Blynk setup section entered\n");
+    logOut(printstring);
+
+    // Blynk initialization for Blynk web account - MP internet
+    // Original example, never use in reality: You can also specify server:
+    // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
+    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
+    #ifdef blynkCloud
+      Blynk.begin(auth, ssid, pass);
+    #else
+      // Blynk initialization for local blynk server on raspi - MP Home
+      // original approach, does not always work
+      // Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+      // alternate approach to start Blynk
+      if(WiFi.status() != WL_CONNECTED)
+        Blynk.connectWiFi(ssid,pass);
+      Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+      Blynk.connect();
+    #endif  
+
+    #ifdef blynkTerminal
+      myBlynkTerminal.clear();
+    #endif  
+    if(Blynk.connected()){
+      sprintf(printstring,"Blynk connected\n");
+      logOut(printstring);
+      #ifdef isDisplay
+        sprintf(printstring,"Blynk connected");
+        Display(printstring, 1,0,48,false); // string, size, x,y,clear
+      #endif  
+      Blynk.syncAll();  // synchronize device with server
+    }
+    else{
+      sprintf(printstring,"Blynk NOT connected\n");
+      logOut(printstring);
+      #ifdef isDisplay
+        sprintf(printstring,"Blynk NOT connected");
+        Display(printstring, 1,0,48,false); // string, size, x,y,clear
+      #endif  
+    }
+  #endif // isBLYNK  
+  
+  // log number of reboots. Do this here, after SD opened and Blynk connection operational (no reboots make up logfilename...)
+  sprintf(printstring,"NoReboots=%d\n", NoReboots);
+  logOut(printstring);
+
+  // set timer for main_handler()
+  //mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
+  MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
 
   #ifdef isDisplay
     // Start the display
@@ -836,47 +881,6 @@ void setup()
   #endif 
 
   #ifdef isBLYNK
-    sprintf(printstring,"Blynk setup section entered\n");
-    logOut(printstring);
-
-    // Blynk initialization for Blynk web account - MP internet
-    // Original example, never use in reality: You can also specify server:
-    // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
-    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
-    #ifdef blynkCloud
-      Blynk.begin(auth, ssid, pass);
-    #else
-      // Blynk initialization for local blynk server on raspi - MP Home
-      // original approach, does not always work
-      // Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
-      // alternate approach to start Blynk
-      if(WiFi.status() != WL_CONNECTED)
-        Blynk.connectWiFi(ssid,pass);
-      Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
-      Blynk.connect();
-    #endif  
-
-    #ifdef blynkTerminal
-      myBlynkTerminal.clear();
-    #endif  
-    if(Blynk.connected()){
-      sprintf(printstring,"Blynk connected\n");
-      logOut(printstring);
-      #ifdef isDisplay
-        sprintf(printstring,"Blynk connected");
-        Display(printstring, 1,0,48,false); // string, size, x,y,clear
-      #endif  
-      Blynk.syncAll();  // synchronize device with server
-    }
-    else{
-      sprintf(printstring,"Blynk NOT connected\n");
-      logOut(printstring);
-      #ifdef isDisplay
-        sprintf(printstring,"Blynk NOT connected");
-        Display(printstring, 1,0,48,false); // string, size, x,y,clear
-      #endif  
-    }
-
     #if defined sendSERIAL || defined receiveSERIAL
       Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
       #ifdef isBLYNK
@@ -1910,7 +1914,7 @@ void main_handler()
   time_sec = (float)millis()/1000;
   start_loop_time = millis();
   // Serial.printf(" ******* Main Loop start at %3.1f sec ********** \n",time_sec);
-  sprintf(printstring, "M %3.1f ",time_sec);
+  sprintf(printstring, "M %3.1f \n",time_sec);
   logOut(printstring);
 
   #ifdef isInfactory433
@@ -2106,7 +2110,7 @@ void main_handler()
     for(int iii=0; iii<noDS18B20Connected; iii++)
       calDS18B20Temperature[iii] = DS18B20Temperature[iii] + corrDS18B20[iii];
       
-    sprintf(printstring,"\nBase DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f %d %d %d - %d %ld\n", 
+    sprintf(printstring,"Base DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f %d %d %d - %d %ld\n", 
       DS18B20Temperature[0], DS18B20Temperature[1], DS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
      logOut(printstring);
@@ -2125,9 +2129,9 @@ void main_handler()
 
     previousGetOneDS18B20Counter = GetOneDS18B20Counter;
 
-    //sprintf(printstring,"Cal. DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f \n", 
-    //   calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
-    //logOut(printstring);
+    sprintf(printstring,"Cal. DS18B20 Temp1 %3.1f  Temp2 %3.1f Temp3 %3.1f \n", 
+       calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
+    logOut(printstring);
     
     #ifdef isBLYNK
       if(DS18B20Temperature[0] > -110)
@@ -2140,7 +2144,9 @@ void main_handler()
     #endif  
 
     // checks for problems with measurements of DS18B20
-    if(notMeasuredCount > DS18B20RestartLimit || notChangedCount > 3*DS18B20RestartLimit || manualDS18B20Restart >= 1)  // in GetOneDS18B20Temperature this count is handled if faulty checksum
+    if(notMeasuredCount > DS18B20RestartLimit || notChangedCount > 3*DS18B20RestartLimit || // in GetOneDS18B20Temperature this count is handled if faulty checksum
+      manualDS18B20Restart >= 1 ||  // manual restart via Blynk app
+      notMeasuredDS18B20 > 5)       // in GetOneDS18B20Temperature this count isf function is running
     {
       sprintf(printstring,"\nRestarting DS18B20 Sensors since not measurement taken in %d %d cycles - counter not incr: %ld\n",
         notMeasuredCount, notChangedCount, notMeasuredDS18B20);

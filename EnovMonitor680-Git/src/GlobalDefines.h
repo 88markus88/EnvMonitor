@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.45"
-#define PROGDATE "2021-05-15"
+#define PROGVERSION "V0.46"
+#define PROGDATE "2021-05-16"
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
@@ -16,9 +16,9 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
-  #define blynkBME680Kueche
+ // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
- // #define blynkEnvLocal2Bad
+  #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1
