@@ -16,10 +16,10 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
- // #define blynkBME680Kueche
+  #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
-  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+ // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
 

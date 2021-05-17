@@ -2495,7 +2495,7 @@ void lcd_handler()
       #endif  //isOneDS18B20
 
       #if defined isBME680 || defined isBME680_BSECLib
-        sprintf(printstring,"ESP32-EnvMonitor");
+        sprintf(printstring,"ESP32-EnvMonitor %s", PROGVERSION);
         //Display(printstring, 1,0,0,true);
         display.setCursor(0, 0);
         display.setTextSize(1);
