@@ -1475,8 +1475,12 @@ void setup()
 #endif
 
 #ifdef isDisplay
-//--------------- shows data on display in larger print, according to displayMode. 
-//--------------- displayMode can be toggled by a button. 
+  /**************************************************!
+   @brief    Display handing routine for OLED display, based on displayMode
+   @details  determines which exactly is presently visible on the display. displayMode toggled by button
+   @param displayMode determines the present content of the display. 0: off, 1: all
+   @return   void
+  ***************************************************/
   void specialDisplay(int displayMode)
   {
     static float TempC0=-111.11, TempC1 = -111.11, TempC2=-111.11;
@@ -1654,7 +1658,7 @@ void setup()
     
     if(WL_CONNECTED != WiFi.status())
     {   
-      sprintf(printstring,"checkBlynk 5: Resetting - no Blynk connection %d %d\n", isconnected,  WiFi.status());
+      sprintf(printstring,"checkBlynk 5: Resetting - no Blynk connection. isConnected: %d Wifi.Status: %d\n", isconnected,  WiFi.status());
       logOut(printstring);
       isconnected = false;
     }
@@ -1665,37 +1669,37 @@ void setup()
 
       if(blynkDisconnects > 5)   
       {
-        sprintf(printstring,"checkBlynk 1a: Restart Blynk - no Blynk connection %d %d\n", isconnected, blynkDisconnects);
+        sprintf(printstring,"checkBlynk 1a: Restart Blynk - no Blynk connection. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
         logOut(printstring);
         restartBlynk();
       }  
       if(blynkDisconnects > 10)   
       {
-        sprintf(printstring,"checkBlynk 1b: Resetting - no Blynk connection %d %d\n", isconnected, blynkDisconnects);
+        sprintf(printstring,"checkBlynk 1b: Resetting - no Blynk connection. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
         logOut(printstring);
         resetFunc();
       }  
 
-      sprintf(printstring,"checkBlynk 2: Reconnecting Blynk %d %d\n", isconnected, blynkDisconnects);
+      sprintf(printstring,"checkBlynk 2: Reconnecting Blynk. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
       logOut(printstring);  
       if(WiFi.status() != WL_CONNECTED)  
       {
-        sprintf(printstring,"checkBlynk 3: Reconnecting Wifi %d\n", WiFi.status());
+        sprintf(printstring,"checkBlynk 3: Reconnecting Wifi. Wifi.status: %d\n", WiFi.status());
         logOut(printstring);  
         Blynk.connectWiFi(ssid,pass);
         Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
       }  
-      sprintf(printstring,"checkBlynk 4: after Blynk.conectWifi (3:connected, 6: disconnected) %d\n", WiFi.status());
+      sprintf(printstring,"checkBlynk 4: after Blynk.conectWifi. Wifi.status: (3:connected, 6: disconnected) %d\n", WiFi.status());
       logOut(printstring);  
       Blynk.connect();
       Blynk.syncAll();
-      sprintf(printstring,"checkBlynk 6: After Blynk.connect. Wifi: %d Blynk: %d\n", WiFi.status(), Blynk.connected() );
+      sprintf(printstring,"checkBlynk 6: After Blynk.connect. Wifi.status: %d Blynk.connected: %d\n", WiFi.status(), Blynk.connected() );
       logOut(printstring);  
     }
     else
     {
       blynkDisconnects = 0;
-      sprintf(printstring,"checkBlynk 0: Blynk is connected %d %d\n", isconnected, blynkDisconnects);
+      sprintf(printstring,"checkBlynk 0: Blynk is connected. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
       logOut(printstring);      
     }
   }
@@ -1748,12 +1752,12 @@ void setup()
     delay(1500);
     if(WiFi.status() != WL_CONNECTED)
     {
-      sprintf(printstring,"restartBlynk 3: Reconnecting Wifi %d\n", WiFi.status());
+      sprintf(printstring,"restartBlynk 3: Reconnecting Wifi. Status: %d\n", WiFi.status());
       logOut(printstring);  
       Blynk.connectWiFi(ssid,pass);
       Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
     }  
-    sprintf(printstring,"restartBlynk 4: Blynk.connect() %d\n", WiFi.status());
+    sprintf(printstring,"restartBlynk 4: Blynk.connect(). Status: %d\n", WiFi.status());
     logOut(printstring); 
     Blynk.connect();
     delay(600);
@@ -1818,7 +1822,7 @@ void setup()
   bool isFirstConnect = true;
   BLYNK_CONNECTED()
   {
-    sprintf(printstring,"Blynk detected connection %d \n", isFirstConnect);
+    sprintf(printstring,"Blynk detected connection. isFirstConnect: %d \n", isFirstConnect);
     logOut(printstring); 
     if(isFirstConnect)
       Blynk.syncAll();
@@ -2202,6 +2206,7 @@ void main_handler()
       sprintf(printstring,"!!!! DS18B20 not measuring !!! %ld %ld %ld \n",
         GetOneDS18B20Counter, previousGetOneDS18B20Counter, notMeasuredDS18B20);
       logOut(printstring);  
+      vTaskDelay(notMeasuredDS18B20 * 1000 / portTICK_PERIOD_MS); // progressive delay to give the measuring routine more time
     }  
     else
       notMeasuredDS18B20 = 0;
@@ -2433,7 +2438,7 @@ void lcd_handler()
 {
   if(lcdDisplayMode == 0)
   {
-    sprintf(printstring,"\ndisplayLCD Mode  is zero: %d\n", lcdDisplayMode);
+    sprintf(printstring,"displayLCD Mode  is zero: %d\n", lcdDisplayMode);
     logOut(printstring);
     lcd.clear();
     lcd.noBacklight();
@@ -2441,7 +2446,7 @@ void lcd_handler()
   }
   if(lcdDisplayMode > 0)
   {
-    sprintf(printstring,"\ndisplayLCD Mode %d\n", lcdDisplayMode);
+    sprintf(printstring,"displayLCD Mode %d\n", lcdDisplayMode);
     logOut(printstring);
     printLocalTime(printstring, 6); // local time into printstring for display on LCD
     displayLCD(lcdDisplayMode, 
@@ -2549,7 +2554,7 @@ void lcd_handler()
 
     // transfer buffer to display  
     display.display();
-    vTaskDelay(300 / portTICK_PERIOD_MS); // delay for 200 ms, to avoid double presses
+    vTaskDelay(300 / portTICK_PERIOD_MS); // delay for 300 ms, to avoid double presses
     displayDone = 1;
   }
 #endif // isDisplay
