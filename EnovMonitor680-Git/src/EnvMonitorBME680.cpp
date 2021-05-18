@@ -2151,11 +2151,11 @@ void main_handler()
 
           // send data from other sensors before disconnecting Blynk
           #ifdef isOneDS18B20
-            if(calDS18B20Temperature[0] > -110)
+            if((calDS18B20Temperature[0]) > (-110.0))
               Blynk.virtualWrite(V13, calDS18B20Temperature[0]); //sending to Blynk
-            if(calDS18B20Temperature[1] > -110)  
+            if((calDS18B20Temperature[1]) > (-110.0))  
               Blynk.virtualWrite(V10, calDS18B20Temperature[1]); //sending to Blynk
-            if(calDS18B20Temperature[2] > -110)  
+            if((calDS18B20Temperature[2]) > (-110.0))  
               Blynk.virtualWrite(V11, calDS18B20Temperature[2]); //sending to Blynk  
             Blynk.run();  
             sprintf(printstring,">>>>> Ds18B20 Temp's: T1: %3.1f T2: %3.1f T3: %3.1f\n",calDS18B20Temperature[0],calDS18B20Temperature[1],calDS18B20Temperature[2]);
@@ -2195,6 +2195,14 @@ void main_handler()
     for(int iii=0; iii<noDS18B20Connected; iii++)
       calDS18B20Temperature[iii] = DS18B20Temperature[iii] + corrDS18B20[iii];
       
+    // test ONLY!!!
+    /*
+    if((millis()%5) == 0){
+      DS18B20Temperature[0] = -111.11;
+      calDS18B20Temperature[0] = -111.88;
+    }
+    */
+
     sprintf(printstring,"BaseDS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f %d %d %d - %d %ld\n", 
       DS18B20Temperature[0], DS18B20Temperature[1], DS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
@@ -2220,12 +2228,38 @@ void main_handler()
     logOut(printstring);
     
     #ifdef isBLYNK
-      if(DS18B20Temperature[0] > -110)
+
+      double limit = -110.0;
+      sprintf(printstring,"ToBlynk: ");
+      if((calDS18B20Temperature[0]) > (limit)){
         Blynk.virtualWrite(V13, calDS18B20Temperature[0]); //sending to Blynk
-      if(DS18B20Temperature[1] > -110)  
+        sprintf(printstring2,"Tmp1: %5.2f ",calDS18B20Temperature[0]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2,"Tmp1: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if((calDS18B20Temperature[1]) > (limit)){  
         Blynk.virtualWrite(V10, calDS18B20Temperature[1]); //sending to Blynk
-      if(DS18B20Temperature[2] > -110)  
+        sprintf(printstring2,"Tmp2: %5.2f ",calDS18B20Temperature[1]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2,"Tmp2: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if((calDS18B20Temperature[2]) > (limit)){  
         Blynk.virtualWrite(V11, calDS18B20Temperature[2]); //sending to Blynk  
+        sprintf(printstring2,"Tmp3: %5.2f",calDS18B20Temperature[2]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2,"Tmp3: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      strcat(printstring,"\n");
+      logOut(printstring);
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
     #endif  
 
@@ -2495,7 +2529,7 @@ void lcd_handler()
       #endif  //isOneDS18B20
 
       #if defined isBME680 || defined isBME680_BSECLib
-        sprintf(printstring,"ESP32-EnvMonitor %s", PROGVERSION);
+        sprintf(printstring,"EnvMonitor680 %s", PROGVERSION);
         //Display(printstring, 1,0,0,true);
         display.setCursor(0, 0);
         display.setTextSize(1);
