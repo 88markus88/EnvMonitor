@@ -108,4 +108,4 @@ See [List of Virtual Pins](https://github.com/88markus88/EnvMonitor/blob/main/En
 - MH-Z14A_ using code from the contributin by Mitch K https://www.hackster.io/kritch83/getting-started-with-the-mh-z14a-co2-detector-e96234 
 - Infactory NV5849: based on work and code by Ray Wang https://rayshobby.net/reverse-engineer-wireless-temperature-humidity-rain-sensors-part-1/ 
 - Macros for bit field manipulation by Shun Yan Cheung: http://www.mathcs.emory.edu/~cheung/Courses/255/Syllabus/1-C-intro/bit-array.html
-- LCD library: <i>LiquidCrystal_I2C</i> : https://github.com/fdebrabander/Arduino-LiquidCrystal-I2C-library/blob/master/LiquidCrystal_I2C.h
+- LCD library from Marco Schwartz: <i>LiquidCrystal_I2C</i> : https://github.com/marcoschwartz/LiquidCrystal_I2C/archive/master.zip
