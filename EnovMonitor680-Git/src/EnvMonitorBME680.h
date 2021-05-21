@@ -2,7 +2,6 @@
 * Main Header file for EnvMonitor680.cpp
 *******************************************************/
 
-
 //*** global defined constants
 #define WDT_TIMEOUT_SECONDS 40  // 10 seconds watchdog timeout. Not too short, or the chip is dead!
 
@@ -19,7 +18,7 @@ char printstring1[80];
 char printstring2[180];
 char printstring3[80];
 
-//*** module global comeasuringInfactoryOngoingnstants
+//*** module global constants
 const float  SEA_LEVEL_PRESSURE = 1013.25;         ///< Standard atmosphere sea level pressure
 const int PushButton = 15;  // GPIO 15 for Pushbutton
 
@@ -61,9 +60,7 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   // Pass our oneWire reference to Dallas Temperature.
   DallasTemperature sensors(&oneWire);
   
-  // volatile double DS18B20Temperature1 = -111.11;     // Variable to store Temperature
-  // volatile double DS18B20Temperature2 = -111.11;     // Variable to store Temperature
-  // more flexible in Array
+  // more flexible in Array: to store DS18B20 Temperatures
   #define MAX_NO_DS18B20 10
   int noDS18B20Connected = 0;       // number of sensors that are actually connected
   volatile double DS18B20Temperature[MAX_NO_DS18B20] = {-111.11, -111.11,-111.11,-111.11,-111.11,
@@ -169,8 +166,6 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
   // timer for blynk check and restart
   BlynkTimer MyBlynkTimer;
-  //BlynkTimer MyBlynkCheckTimer;
-  //BlynkTimer MyBlynkRestartTimer;
   int checkTimerHandle;
   int restartTimerHandle;
 
@@ -231,7 +226,7 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
   int int01, int02, int03;
   unsigned long ReadCRC;      // CRC Control Return Code 
 
-  // Ausselesen ABC-Periode / FirmWare / SensorID 
+  // Auslesen ABC-Periode / FirmWare / SensorID 
   byte ABCreq[] = {0xFE, 0X03, 0X00, 0X1F, 0X00, 0X01, 0XA1, 0XC3};   // 1f in Hex -> 31 dezimal
   byte FWreq[] = {0xFE, 0x04, 0x00, 0x1C, 0x00, 0x01, 0xE4, 0x03};    // FW      ->       334       1 / 78
   byte ID_Hi[] = {0xFE, 0x04, 0x00, 0x1D, 0x00, 0x01, 0xB5, 0xC3};    // Sensor ID hi    1821       7 / 29
@@ -275,7 +270,6 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
 
   // timer for oled_handler, and interval for it
   #define oledHandlerInterval 400L
-  //BlynkTimer oledHandlerTimer;
   int oledTimerHandle;
 #endif  // isDisplay
 
@@ -291,13 +285,12 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
 
   // timer for lcd_handler, and interval for it
   #define lcdHandlerInterval 400L
-  //BlynkTimer lcdHandlerTimer;
   int lcdTimerHandle;
 #endif
 
 #if defined isLCD || defined isDisplay
   // timer for darkening display, and interval for it
-  #define displayOffTimerInterval 600000L // 600000 ms= 600 sec
+  #define displayOffTimerInterval 900000L // 900000 ms= 900 sec
   int displayOffTimerHandle;
 #endif
 
@@ -305,7 +298,6 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
 //** global stuff 
 // timer for main_handler, and interval for it
 #define mainHandlerInterval 2000L
-// BlynkTimer mainHandlerTimer;
 int mainHandlerTimerHandle=0;
 
 /************************************************************

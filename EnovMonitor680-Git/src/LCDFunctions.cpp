@@ -154,9 +154,14 @@
         //lcd.clear(); 
         lcd.backlight();
           #ifdef isOneDS18B20
+            sprintf(printstring,"%s-InnenTemp  ",timestring);     outLCD(0,0,printstring);
+            sprintf(printstring,"1: Kabel  %3.1f%cC    ",T1,223); outLCD(0,1,printstring);
+            sprintf(printstring,"2: Geraet %3.1f%cC    ",T2,223); outLCD(0,2,printstring);
+            /*
             sprintf(printstring,"%s- DS18B20   ",timestring);     outLCD(0,0,printstring);
             sprintf(printstring,"Sensor 1: %3.1f%cC    ",T1,223); outLCD(0,1,printstring);
             sprintf(printstring,"Sensor 2: %3.1f%cC    ",T2,223); outLCD(0,2,printstring);
+            */
             sprintf(printstring,"                      ");        outLCD(0,3,printstring);
           #else
             sprintf(printstring,"displayLCD Mode %d", lcdDisplayMode);
@@ -167,9 +172,14 @@
           //lcd.clear(); 
           lcd.backlight();
           #if defined receiveSERIAL
+            sprintf(printstring,"%s Funksensor",timestring);                   outLCD(0,0,printstring);
+            sprintf(printstring,"Sensor : CarPt GewHs ");                         outLCD(0,1,printstring);
+            sprintf(printstring,"Temp   : %4.1f%c %4.1f%c   ",iT0,223, iT1,223); outLCD(0,2,printstring);
+            /*
             sprintf(printstring,"%s Ext.433MHz",timestring);                   outLCD(0,0,printstring);
             sprintf(printstring,"Sensor : S1    S2    ");                         outLCD(0,1,printstring);
             sprintf(printstring,"Temp   : %4.1f%c %4.1f%c   ",iT0,223, iT1,223); outLCD(0,2,printstring);
+            */
             sprintf(printstring,"Feuchte:%3.0f%% %4.0f%%    ",iH0,iH1);           outLCD(0,3,printstring);
           #else
             sprintf(printstring,"displayLCD Mode %d", lcdDisplayMode);

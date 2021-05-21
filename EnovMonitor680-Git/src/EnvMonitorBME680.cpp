@@ -55,7 +55,7 @@
   }
 #endif  
 
-// function to handle all logging output. To serial or into file on SD
+// function to handle all logging output. To serial, into file on SD, to Blynk terminal
 void logOut(char* printstring)
   {
     char timestring[50]="";      
@@ -91,6 +91,16 @@ void logOut(char* printstring)
   // Display class based on AdafruitGFX, special type SSD1306
   Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+  /**************************************************!
+  @brief    Display one string on OLED display
+  @details 
+  @param string String to be displayed
+  @param size Text size in multiples of standard. 1: normal, 2: double ....
+  @param x  x-position of text
+  @param y  y-position of text
+  @param clear boolean flag, determines if display is cleared before text output
+  @return   void
+  ***************************************************/
   void Display(char *string, int size, int x, int y, boolean clear)
   {
     if (clear) display.clearDisplay();
@@ -102,15 +112,36 @@ void logOut(char* printstring)
 #endif
 
 #ifdef isOneDS18B20
-  //*****************************************************************************
-  // This task runs isolated on core 0 because sensors.requestTemperatures() is slow and blocking for about 750 ms
-  // gets temperature from DS18B20 via OneWire
+
   volatile unsigned long LastMeasTimer;
   const long ds18b20MeasInterval = 1000; // measure every xxx ms
 
-  // mutex needed for critical section
+  // mutex could be needed for critical section, not implemented
   // static portMUX_TYPE my_mutex = portMUX_INITIALIZER_UNLOCKED;
 
+  /**************************************************!
+  @brief    Function to measure DS18B20 temperatures in endless loop. Designed to run in parallel
+  @details  This task runs isolated on core 0 because sensors.requestTemperatures() is slow and blocking for about 750 ms
+            gets temperature from DS18B20 via OneWire
+            Temperature is measured by address, not by indes. This ensures that there is no mismatch, if a sensor
+            goes temporarily offline (as fake sensors occasionally do)
+            Does some checking. Sensor values indicate errors if out of range:
+              -127: bad reading. 85: no measurement yet (to early after a restart)
+            Uses global variables:
+            - measuringInfactoryOngoing : If this flag is set, no measurements are taken (to not disturb timing)
+            - stopDS18B20MeasureFlag : If this flag is set, no measurements are taken (to not disturb timing)
+
+            - LastMeasTimer : timer mark when last measurement has been done
+            - noDS18B20Connected : Number of DS18B20 which are connected
+            - DS18B20Address[i][j] :  Address of Sensor i, each 8 bytes long (j= 0..7)
+            Returns global variables
+            - DS18B20Temperature[i] : raw measured temperature in °C for each sensor
+            - LastMeasTimer : timer mark when last measurement has been done
+            - notChangedCount : global counter for not changed values. Used to determine if measurements stopped
+            - GetOneDS18B20Counter : global counter for cycles through this procedure. Used to determine if measurements stopped
+  @param    parameter   Task input parameter, not used. Required for starting function
+  @return   void
+  ***************************************************/
   void GetOneDS18B20Temperature( void * parameter) 
   {
     float tmp1 = 0;
@@ -122,7 +153,6 @@ void logOut(char* printstring)
     #ifdef isInfactory433
       localInfactoryFlag = measuringInfactoryOngoing; // if infactory sensor connected, use global flag - otherwise always false
     #endif
-
 
     for (;;) {   // Endless loop
       if(millis()-LastMeasTimer > ds18b20MeasInterval)
@@ -183,6 +213,17 @@ void logOut(char* printstring)
   DeviceAddress tempDeviceAddress;
   #define TEMPERATURE_PRECISION 12   // precision 9..12 Bit
 
+  /**************************************************!
+  @brief    Determine number of DS18B20 sensors on 1Wire Bus and determine their addresses
+  @details  First attempts sensors.getDeviceCount() to determine the number of devices, which does not work presently
+            Then sets temperature precision to 12 bits for 3 devices 
+            Finally uses sensors.getAddress() to count how many devices actually present.
+            Fills the following global variables:
+            noDS18B20Connected                      : Number of DS18B20 actually present
+            DS18B20Address[noDS18B20Connected][i]   : their addresses
+  @param    none
+  @return   void
+  ***************************************************/
    void adresseAusgeben(void) {
     byte i;
     uint8_t addr[8];          // uint8_t = unsigned char, 8 bit integer
@@ -247,8 +288,15 @@ void logOut(char* printstring)
     return;
   }
 
-  // function to stop and restart the task that does DS18B20 measurements in parallel
-  // also toggles power to the 1Wire bus to restart the sensors 
+  /**************************************************!
+  @brief    Complete restart of the DS18B20 measurement function, incl. parallel running meas. function
+  @details  Terminates the detached task (Task1) running to do DS10B20 measurements in parallel
+            Switches power for the 1Wire bus off for 2 seconds, then on again.
+            Then determines the number and addresses of DS18B20 sensors
+            And finally restarts the measuring function running in parallel as Task1 (GetOneDS18B20Temperature)
+  @param    none
+  @return   void
+  ***************************************************/
   void restartDS18B20MeasurementFunction()
   {
     noDS18B20Restarts++;
@@ -273,7 +321,7 @@ void logOut(char* printstring)
     sensors.begin();
     vTaskDelay(700 / portTICK_PERIOD_MS); // delay for 1000 ms
 
-    adresseAusgeben();       // adressen onewire devices ausgeben, devices finden
+    adresseAusgeben();       // find addresses of DS18B20 devices
     esp_task_wdt_reset();    // keep watchdog happy
 
     // Create GetTemperature task for core 0, loop() runs on core 1
@@ -303,10 +351,11 @@ void logOut(char* printstring)
 #endif  // DS18B20
 
 #if defined isLCD || defined isDisplay
-  // handler for timer displayOffTimerHandle. If triggered, switch display off
   /**************************************************!
   @brief    Timer Handler Function to set display modes for both OLED and LCD to switch display off
-  @details  called via timer, sets for OLED: displayMode =1 for LCD: lcdDisplayMode = 0
+  @details  called via timer (displayOffTimerHandle), 
+            If triggered, switch display off. Uses displayMode setting for this.
+            does set for OLED: displayMode =0 for LCD: lcdDisplayMode = 0
   @param    none
   @return   void
   ***************************************************/
@@ -1687,7 +1736,11 @@ void setup()
         sprintf(printstring,"checkBlynk 3: Reconnecting Wifi. Wifi.status: %d\n", WiFi.status());
         logOut(printstring);  
         Blynk.connectWiFi(ssid,pass);
-        Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+        #ifdef blynkCloud
+           Blynk.config(auth);
+        #else
+          Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+        #endif  
       }  
       sprintf(printstring,"checkBlynk 4: after Blynk.conectWifi. Wifi.status: (3:connected, 6: disconnected) %d\n", WiFi.status());
       logOut(printstring);  
@@ -1755,7 +1808,11 @@ void setup()
       sprintf(printstring,"restartBlynk 3: Reconnecting Wifi. Status: %d\n", WiFi.status());
       logOut(printstring);  
       Blynk.connectWiFi(ssid,pass);
-      Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+      #ifdef blynkCloud
+        Blynk.config(auth);
+      #else  
+        Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+      #endif  
     }  
     sprintf(printstring,"restartBlynk 4: Blynk.connect(). Status: %d\n", WiFi.status());
     logOut(printstring); 
@@ -1787,8 +1844,12 @@ void setup()
     logOut(printstring); 
     Blynk.disconnect();
     delay(1500);
-    // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,31), 8080);
-    Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+    #ifdef blynkCloud
+      Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
+    #else
+      // Blynk.begin(auth, ssid, pass, IPAddress(192,168,178,31), 8080);
+      Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+    #endif  
     delay(600);
     Blynk.virtualWrite(V12, restartCount); 
   }
@@ -2223,9 +2284,9 @@ void main_handler()
 
     previousGetOneDS18B20Counter = GetOneDS18B20Counter;
 
-    sprintf(printstring,"Cal.DS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f \n", 
-       calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
-    logOut(printstring);
+  //  sprintf(printstring,"Cal.DS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f \n", 
+  //     calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
+  //  logOut(printstring);
     
     #ifdef isBLYNK
 
@@ -2472,16 +2533,16 @@ void lcd_handler()
 {
   if(lcdDisplayMode == 0)
   {
-    sprintf(printstring,"displayLCD Mode  is zero: %d\n", lcdDisplayMode);
-    logOut(printstring);
+    //sprintf(printstring,"displayLCD Mode  is zero: %d\n", lcdDisplayMode);
+    //logOut(printstring);
     lcd.clear();
     lcd.noBacklight();
     lcdDisplayDone = 1;   // makes ready to receive button press again
   }
   if(lcdDisplayMode > 0)
   {
-    sprintf(printstring,"displayLCD Mode %d\n", lcdDisplayMode);
-    logOut(printstring);
+    //sprintf(printstring,"displayLCD Mode %d\n", lcdDisplayMode);
+    //logOut(printstring);
     printLocalTime(printstring, 6); // local time into printstring for display on LCD
     displayLCD(lcdDisplayMode, 
       Pressure, Temperature, Humidity, 
