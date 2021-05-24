@@ -91,6 +91,10 @@ No special libraries are needed for the Arduino Sketch.
 ## Parts
 See [Parts List](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/Partslist.md)
 
+## GPIO Pins
+A number of ESP32 I/O Pins are used. 
+See  [List of GPIO Pins](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/GPIOs.md)
+
 ## Blynk Virtual Pins
 Blynk uses the concept of __Virtual Pins__ for communication between the hardware devices and App (via the server). The list of virtual pins in actual use depends on the sensors that are implemented on a specific devices. They need to be known in order to connect the Widgets within the App to specific sensors.
 
