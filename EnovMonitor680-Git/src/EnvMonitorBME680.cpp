@@ -61,6 +61,11 @@ void logOut(char* printstring)
     char timestring[50]="";      
     char outstring[120];
 
+    #ifdef isLEDHeartbeat
+      heartbeatStatus = !heartbeatStatus;
+      digitalWrite (HEARTBEATPIN, heartbeatStatus);
+    #endif
+
     #ifdef getNTPTIME
       if(TimeIsInitialized)
       {
@@ -707,6 +712,11 @@ void setup()
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS,true); //Init Watchdog with 10 seconds timeout and panic (hardware rest if watchdog acts)
   esp_task_wdt_add(NULL); //No special task needed
 
+  // Set digital Output 14 as output for LED
+  #ifdef isLEDHeartbeat
+    pinMode(HEARTBEATPIN, OUTPUT); // Digital-Pin 0 as input
+  #endif   
+
   startTime = millis(); // remember the start time
 
   #ifdef getNTPTIME
@@ -977,7 +987,11 @@ void setup()
     Wire.begin();
     permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
 
-    iaqSensor.begin(BME680_I2C_ADDR_SECONDARY, Wire);
+    #ifdef BME_Secondary_Address   // if defined, use secondary address for BME680
+      iaqSensor.begin(BME680_I2C_ADDR_SECONDARY, Wire);
+    #else
+      iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
+    #endif
     //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
     //Serial.println(output);
     sprintf(printstring,

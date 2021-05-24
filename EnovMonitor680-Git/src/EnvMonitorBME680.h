@@ -22,6 +22,11 @@ char printstring3[80];
 const float  SEA_LEVEL_PRESSURE = 1013.25;         ///< Standard atmosphere sea level pressure
 const int PushButton = 15;  // GPIO 15 for Pushbutton
 
+#ifdef isLEDHeartbeat
+  #define HEARTBEATPIN 14
+  int heartbeatStatus = 0;
+#endif
+
 #ifdef isRelay  // relais connected to GPIO 26 (R1) and 27 (R2)
   #define RELAYPIN1 26
   #define RELAYPIN2 27
