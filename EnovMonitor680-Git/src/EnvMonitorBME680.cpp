@@ -63,7 +63,8 @@ void logOut(char* printstring)
 
     #ifdef isLEDHeartbeat
       heartbeatStatus = !heartbeatStatus;
-      digitalWrite (HEARTBEATPIN, heartbeatStatus);
+      // digitalWrite (HEARTBEATPIN, heartbeatStatus);
+      digitalWrite (HEARTBEATPIN, HIGH);
     #endif
 
     #ifdef getNTPTIME
@@ -88,6 +89,11 @@ void logOut(char* printstring)
       strcat(outstring, printstring);
       myBlynkTerminal.print(outstring);
       myBlynkTerminal.flush();
+    #endif
+
+    #ifdef isLEDHeartbeat
+      heartbeatStatus = !heartbeatStatus;
+      digitalWrite (HEARTBEATPIN, LOW);
     #endif
   }
 
@@ -1318,7 +1324,7 @@ void setup()
     size_t storesize = permstorage.getBytesLength("bsecstate");
     if (storesize == BSEC_MAX_STATE_BLOB_SIZE) {
       // Existing state in permstorage
-      sprintf(printstring,"Reading BME680 state from permstorage");
+      sprintf(printstring,"Reading BME680 state from permstorage\n");
       logOut(printstring);
 
       size_t readsize = permstorage.getBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
@@ -1370,8 +1376,6 @@ void setup()
       iaqSensor.getState(bsecState);
       checkIaqSensorStatus();
 
-      sprintf(printstring,"Writing state to permstorage");
-      logOut(printstring);
       // use preferences instead of deprecated eeprom method
       sprintf(printstring,"Writing state into permstorage. Size: %d \n", BSEC_MAX_STATE_BLOB_SIZE);
       logOut(printstring);
@@ -1391,7 +1395,14 @@ void setup()
       if(!printflag) 
         logOut(printstring);
       */  
+
+      //critical section. Could help with hanging putBytes.
+      // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#critical-sections-disabling-interrupts
+      portMUX_TYPE myMutex = portMUX_INITIALIZER_UNLOCKED;
+      portENTER_CRITICAL(&myMutex);
+
       permstorage.putBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
+      portEXIT_CRITICAL(&myMutex);
       sprintf(printstring,"\npermstorage length after writing %d\n",permstorage.getBytesLength("bsecstate"));
       logOut(printstring);
     }
