@@ -13,8 +13,9 @@ These virtual Pins are used by EnvMonitor:
 **Inputs**
 VPin  |Function
 ------|---------
-V18 | Relay 1
-V19 | Relay 2
+V40 | Relay 1 (was V18)
+V41 | Relay 2 (was V19)
+V42 | tempSwitchOffset (Fan on if temp BS680 this much too high)
 V20 | Start CO2 Sensor Calibration
 V60 | Manual restart of 1Wire bus (DS18B20 Sensors)
 
