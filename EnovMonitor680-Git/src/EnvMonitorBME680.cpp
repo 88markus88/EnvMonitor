@@ -245,7 +245,8 @@ void logOut(char* printstring)
     delay(1000);
     numberOfDevices = sensors.getDeviceCount();
  
-    Serial.printf("Found %d Devices \n", numberOfDevices);
+    sprintf(printstring,"sensors.getDeviceCount found %d Devices \n", numberOfDevices);
+    logOut(printstring);
 
     numberOfDevices = 3; /// temporary
     // Setzen der Genauigkeit
@@ -260,32 +261,37 @@ void logOut(char* printstring)
     }
     Serial.println("");
     numberOfDevices = sensors.getDeviceCount();   // does not function with OneWire library 2.3.5 (claimed to be ok with 2.3.3)
-    Serial.printf("Found %d sensors\n", numberOfDevices);
+    sprintf(printstring,"Found %d sensors\n", numberOfDevices);
+    logOut(printstring);
     esp_task_wdt_reset();   // keep watchdog happy
 
     // code 2: find devices by searching on the onewire bus across all addresses. 
     // workaround, works apparently for ESP32
 
     noDS18B20Connected = 0;
-    Serial.print("Searching 1-Wire-Devices...\n\r");// "\n\r" is NewLine
+    sprintf(printstring,"Searching 1-Wire-Devices...\n\r");// "\n\r" is NewLine
+    logOut(printstring);
     while(sensors.getAddress(addr, noDS18B20Connected)) {  
-      Serial.printf("1-Wire-Device %d found with Adress:\n\r", noDS18B20Connected);
+      sprintf(printstring,"1-Wire-Device %d found with Adress: ", noDS18B20Connected);
+      // logOut(printstring);
       esp_task_wdt_reset();   // keep watchdog happy
 
       for( i = 0; i < 8; i++) {
         DS18B20Address[noDS18B20Connected][i] = addr[i];
         // Serial.print("0x");
         if (addr[i] < 16) {
-          Serial.print('0');
+         strcat(printstring,"0");
         }
-        Serial.print(addr[i], HEX);
+        sprintf(printstring,"%s%d",printstring, addr[i]);
         if (i < 7) {
-          Serial.print(" ");
+          strcat(printstring," ");
         }
       }
-      Serial.printf("\n");
+      strcat(printstring,"\n");
+      logOut(printstring);
       if ( OneWire::crc8( addr, 7) != addr[7]) {
-        Serial.print("CRC is not valid!\n\r");
+        sprintf(printstring,"CRC is not valid!\n\r");
+        logOut(printstring);
         return;
       }
       noDS18B20Connected ++;    // one more device found
@@ -294,7 +300,8 @@ void logOut(char* printstring)
       Serial.print(DS18B20Address[noDS18B20Connected][i], HEX);
       Serial.print(" ");
     }
-    Serial.printf("Found 1-Wire-Devices: %d \n\r", noDS18B20Connected);
+    sprintf(printstring,"Found 1-Wire-Devices: %d \n\r", noDS18B20Connected);
+    logOut(printstring);
     oneWire.reset_search();
     return;
   }
@@ -1376,6 +1383,8 @@ void setup()
       iaqSensor.getState(bsecState);
       checkIaqSensorStatus();
 
+      sprintf(printstring,"Writing state to permstorage");
+      logOut(printstring);
       // use preferences instead of deprecated eeprom method
       sprintf(printstring,"Writing state into permstorage. Size: %d \n", BSEC_MAX_STATE_BLOB_SIZE);
       logOut(printstring);
@@ -1398,11 +1407,11 @@ void setup()
 
       //critical section. Could help with hanging putBytes.
       // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#critical-sections-disabling-interrupts
-      portMUX_TYPE myMutex = portMUX_INITIALIZER_UNLOCKED;
-      portENTER_CRITICAL(&myMutex);
+      //portMUX_TYPE myMutex = portMUX_INITIALIZER_UNLOCKED;
+      //portENTER_CRITICAL(&myMutex);
 
       permstorage.putBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
-      portEXIT_CRITICAL(&myMutex);
+      //portEXIT_CRITICAL(&myMutex);
       sprintf(printstring,"\npermstorage length after writing %d\n",permstorage.getBytesLength("bsecstate"));
       logOut(printstring);
     }
@@ -1882,7 +1891,7 @@ void setup()
 
   #ifdef isRelay
   // Relay 1 is switched via virtual Pin 18
-  BLYNK_WRITE(V18) 
+  BLYNK_WRITE(V40) 
   {
     int x = param.asInt();
     Serial.printf("Relay 1 switched to  %d \n", x);
@@ -1893,7 +1902,7 @@ void setup()
   }
 
 // Relay 2 is switched via virtual Pin 19
-  BLYNK_WRITE(V19) 
+  BLYNK_WRITE(V41) 
   {
     int x = param.asInt();
     Serial.printf("Relay 2 switched to  %d \n", x);
@@ -2354,8 +2363,8 @@ void main_handler()
       manualDS18B20Restart >= 1 ||  // manual restart via Blynk app
       notMeasuredDS18B20 > 5)       // in GetOneDS18B20Temperature this count isf function is running
     {
-      sprintf(printstring,"\nRestarting DS18B20 Sensors since not measurement taken in %d %d cycles - counter not incr: %ld\n",
-        notMeasuredCount, notChangedCount, notMeasuredDS18B20);
+      sprintf(printstring,"\nRestarting DS18B20. No measurement taken in %d %d cycles - counter not incr: %ld Manual: %d\n",
+        notMeasuredCount, notChangedCount, notMeasuredDS18B20, manualDS18B20Restart);
       logOut(printstring);
       restartDS18B20MeasurementFunction();
       notMeasuredCount = 0; // reset the counter

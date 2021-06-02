@@ -30,6 +30,13 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 #ifdef isRelay  // relais connected to GPIO 26 (R1) and 27 (R2)
   #define RELAYPIN1 26
   #define RELAYPIN2 27
+
+  float tempSwitchOffset = 2.0;     // at this offset the fan is switched off
+  int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan switching
+  int fanTimerHandle;               // timer handle for fan handling        
+  #define bme680FanHandlerInterval  500L
+  int fanState = 0;                 // present state of fan
+  float fanMaxPotential =1.5;        // maximum potential in C for fan to cool sensor     
 #endif
 
 #ifdef getNTPTIME
@@ -172,7 +179,9 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   // timer for blynk check and restart
   BlynkTimer MyBlynkTimer;
   int checkTimerHandle;
+  #define checkTimerInterval 5000L
   int restartTimerHandle;
+  #define restartTimerInterval 3*3600L*1000L
 
   int restartCount = 0;
 
@@ -319,6 +328,7 @@ void restartBlynk();
 void main_handler();
 void lcd_handler();
 void oled_handler();
+void bme680FanHandler(void);
 void restartDS18B20MeasurementFunction();
 
 //*** specific forward declarations
