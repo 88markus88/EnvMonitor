@@ -2,8 +2,8 @@
 
 These GPIO Pins are used by EnvMonitor:
 **Inputs and Outputs**
-GPIO |Function
-------|---------
+GPIO |Function| Comments
+------|-------|--
 5 | SPI CS | SD Card Reader
 13 | OneWireDS18B20 | 1 Wire data for DS18B20 sensors
 14 | LED output | to show that system is alive
