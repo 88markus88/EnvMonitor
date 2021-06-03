@@ -236,21 +236,25 @@ void logOut(char* printstring)
   @return   void
   ***************************************************/
    void adresseAusgeben(void) {
-    byte i;
+    byte i, j;
     uint8_t addr[8];          // uint8_t = unsigned char, 8 bit integer
     int numberOfDevices;
+    char ps[80];
+    long checksum[5];         // address checksums
+    bool check = true;
 
     // code 1: devices finden.
     // this method does not work for ESP32
     delay(1000);
+    oneWire.reset_search(); // reset search of oneWire devices
     numberOfDevices = sensors.getDeviceCount();
  
     sprintf(printstring,"sensors.getDeviceCount found %d Devices \n", numberOfDevices);
     logOut(printstring);
 
-    numberOfDevices = 3; /// temporary
+    numberOfDevices = noDS18B20Sensors;   // number of DS18B20 expected; /// temporary
     // Setzen der Genauigkeit
-    for(i=0 ;i<numberOfDevices; i++) {
+    for(i=0; i<numberOfDevices; i++) {
       if(sensors.getAddress(tempDeviceAddress, i)) {
          sensors.setResolution(tempDeviceAddress, TEMPERATURE_PRECISION);
          Serial.print("Sensor ");
@@ -268,41 +272,91 @@ void logOut(char* printstring)
     // code 2: find devices by searching on the onewire bus across all addresses. 
     // workaround, works apparently for ESP32
 
-    noDS18B20Connected = 0;
     sprintf(printstring,"Searching 1-Wire-Devices...\n\r");// "\n\r" is NewLine
     logOut(printstring);
-    while(sensors.getAddress(addr, noDS18B20Connected)) {  
-      sprintf(printstring,"1-Wire-Device %d found with Adress: ", noDS18B20Connected);
-      // logOut(printstring);
-      esp_task_wdt_reset();   // keep watchdog happy
+    
+    //critical section. Could help with incorrect sensor detection
+    // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#critical-sections-disabling-interrupts
+    //portMUX_TYPE myMutex = portMUX_INITIALIZER_UNLOCKED;
+    //portENTER_CRITICAL(&myMutex);
+    #ifdef isBLYNK
+      Blynk.disconnect();
+      delay(1500);
+    #endif  
+    for(j=1; j<=20 ; j++)
+    {
+      noDS18B20Connected = 0;
+      oneWire.reset_search(); // reset search of oneWire devices
+      delay(100);
+      while(sensors.getAddress(addr, noDS18B20Connected)) {  
 
+        sprintf(printstring,"1-Wire-Device %d found with Adress: ", noDS18B20Connected);
+        // logOut(printstring);
+        esp_task_wdt_reset();   // keep watchdog happy
+
+        checksum[noDS18B20Connected] = 0;
+        for( i = 0; i < 8; i++) {
+          DS18B20Address[noDS18B20Connected][i] = addr[i];
+          checksum[noDS18B20Connected] += addr[i];
+          // Serial.print("0x");
+          /*
+          if (addr[i] < 16) {
+          strcat(printstring,"0");
+          }
+          sprintf(printstring,"%s%d",printstring, addr[i]);
+          if (i < 7) {
+            strcat(printstring," ");
+          }
+          */
+        }
+        // strcat(printstring,"\n");
+        //logOut(printstring);
+        if ( OneWire::crc8( addr, 7) != addr[7]) {
+          // sprintf(printstring,"CRC is not valid!\n\r");
+          // logOut(printstring);
+          return;
+        }
+        noDS18B20Connected ++;    // one more device found
+      } // while
+
+      // check if no two addresses are identical
+      check = true;
+      for(i = 1; i<noDS18B20Connected; i++){
+        if(checksum[i] == checksum[i-1])
+          check = false; 
+      }
+
+      if ((noDS18B20Connected >= noDS18B20Sensors) && (check == true)) // exit for loop if expected number of sensors has been found
+        break;
+      delay(j * 100);
+    } // for j
+    #ifdef isBLYNK
+      Blynk.connect();
+      delay(600);
+    #endif  
+    //portEXIT_CRITICAL(&myMutex); // exit critical section
+
+    sprintf(printstring,"Check: %d \n", check);
+    logOut(printstring);
+    sprintf(printstring,"Found 1-Wire-Devices: %d in %d loop runs\n\r", noDS18B20Connected, j-1);
+    logOut(printstring);
+
+    for(j=0 ; j< noDS18B20Connected; j++) 
+    {
+      sprintf(printstring, "Addr [%d] (Checksum: %ld): ", j, checksum[j]);
       for( i = 0; i < 8; i++) {
-        DS18B20Address[noDS18B20Connected][i] = addr[i];
-        // Serial.print("0x");
-        if (addr[i] < 16) {
-         strcat(printstring,"0");
-        }
-        sprintf(printstring,"%s%d",printstring, addr[i]);
-        if (i < 7) {
-          strcat(printstring," ");
-        }
+        // Serial.print(DS18B20Address[noDS18B20Connected][i], HEX);
+        // Serial.print(" ");
+        itoa(DS18B20Address[j][i], ps, 16);
+        strcat(printstring, ps); 
+        strcat(printstring," ");
       }
       strcat(printstring,"\n");
       logOut(printstring);
-      if ( OneWire::crc8( addr, 7) != addr[7]) {
-        sprintf(printstring,"CRC is not valid!\n\r");
-        logOut(printstring);
-        return;
-      }
-      noDS18B20Connected ++;    // one more device found
-    }
-    for( i = 0; i < 8; i++) {
-      Serial.print(DS18B20Address[noDS18B20Connected][i], HEX);
-      Serial.print(" ");
-    }
-    sprintf(printstring,"Found 1-Wire-Devices: %d \n\r", noDS18B20Connected);
-    logOut(printstring);
-    oneWire.reset_search();
+    }  
+    oneWire.reset_search(); // reset search of oneWire devices
+
+    
     return;
   }
 
@@ -363,7 +417,7 @@ void logOut(char* printstring)
     if(x==1)  
       manualDS18B20Restart = 1;
     else  
-      manualDS18B20Restart = 1;
+      manualDS18B20Restart = 0;
   }
 
 #endif  // DS18B20
@@ -895,18 +949,11 @@ void setup()
     pinMode(RELAYPIN1,OUTPUT);
     pinMode(RELAYPIN2,OUTPUT);
     delay(10);
-    /*
-    Serial.printf("Relay1 ON\n");
-    digitalWrite(RELAYPIN1, HIGH);
-    delay(200);
-    Serial.printf("Relay1 OFF\n");
-    digitalWrite(RELAYPIN1, LOW);
-    Serial.printf("Relay2 ON\n");
-    digitalWrite(RELAYPIN2, HIGH);
-    delay(200);
-    Serial.printf("Relay2 OFF\n");
-    digitalWrite(RELAYPIN2, LOW);
-    */
+    
+    // set timer for bme680FanHandler()
+    fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
+    sprintf(printstring, "fanTimerHandle: %d\n", fanTimerHandle);
+    logOut(printstring);
   #endif
 
   #ifdef isInfactory433     // set input pin and interrupt handler for 433 MHz sensor (conflict with button!)
@@ -1131,14 +1178,14 @@ void setup()
 
     #ifdef blynkRegularCheck
       // MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
-      checkTimerHandle = MyBlynkTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+      checkTimerHandle = MyBlynkTimer.setInterval(checkTimerInterval, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
       sprintf(printstring, "checkTimerHandle: %d\n", checkTimerHandle);
       logOut(printstring);
     #endif  
     // Serial.println("B");
     #ifdef blynkRestartHouly
       // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
-      restartTimerHandle = MyBlynkTimer.setInterval(3*3600L*1000L, restartBlynk); // attempt to restart Blynk every 3 hours
+      restartTimerHandle = MyBlynkTimer.setInterval(restartTimerInterval, restartBlynk); // attempt to restart Blynk every 3 hours
       sprintf(printstring, "restartTimerHandle: %d\n", restartTimerHandle);
       logOut(printstring);
     #endif  
@@ -1383,8 +1430,6 @@ void setup()
       iaqSensor.getState(bsecState);
       checkIaqSensorStatus();
 
-      sprintf(printstring,"Writing state to permstorage");
-      logOut(printstring);
       // use preferences instead of deprecated eeprom method
       sprintf(printstring,"Writing state into permstorage. Size: %d \n", BSEC_MAX_STATE_BLOB_SIZE);
       logOut(printstring);
@@ -1890,27 +1935,77 @@ void setup()
   */ 
 
   #ifdef isRelay
-  // Relay 1 is switched via virtual Pin 18
-  BLYNK_WRITE(V40) 
-  {
-    int x = param.asInt();
-    Serial.printf("Relay 1 switched to  %d \n", x);
-    if(x==1)  
-      digitalWrite(RELAYPIN1, HIGH);
-    else  
-      digitalWrite(RELAYPIN1, LOW);
-  }
+  // Relay 1 is switched via virtual V40 (wasPin 18)
+    BLYNK_WRITE(V40) 
+    {
+      int x = param.asInt();
+      Serial.printf("Relay 1 switched to  %d \n", x);
+      if(x==1){  
+        digitalWrite(RELAYPIN1, HIGH);
+        fanState=1;
+      } else  
+      {
+        digitalWrite(RELAYPIN1, LOW);
+        fanState=0;
+      }  
+    }
 
-// Relay 2 is switched via virtual Pin 19
-  BLYNK_WRITE(V41) 
-  {
-    int x = param.asInt();
-    Serial.printf("Relay 2 switched to  %d \n", x);
-    if(x==1)  
-      digitalWrite(RELAYPIN2, HIGH);
-    else  
-      digitalWrite(RELAYPIN2, LOW);
-  }
+  // Relay 1 is switched via virtual Pin 41 (was 19)
+    BLYNK_WRITE(V41) 
+    {
+      int x = param.asInt();
+      Serial.printf("Relay 2 switched to  %d \n", x);
+      if(x==1)  
+        digitalWrite(RELAYPIN2, HIGH);
+      else  
+        digitalWrite(RELAYPIN2, LOW);
+    }
+  // Relay 2 is switched via virtual Pin 42
+    BLYNK_WRITE(V42) 
+    {
+      tempSwitchOffset = param.asFloat();
+      sprintf(printstring, "tempSwitchOffset changed to  %4.2f \n", tempSwitchOffset);
+      logOut(printstring);
+      digitalWrite(RELAYPIN1, LOW); // fan off and defined startup state
+      fanState=0;
+      Blynk.virtualWrite(V40,0) ;   // defined state at app: fan off
+    }
+
+     /**************************************************!
+    @brief    fan handler
+    @details  handles the function of the fan, if built in, based on temp difference 
+    @param none
+    @return void
+    ***************************************************/
+    void bme680FanHandler(void)
+    {
+
+      if(calDS18B20Temperature[tempSwitchSensorSelector] < -110) // invalid DS18B20 Temp, do not try
+        return;
+      // temperature high enough and fan off: turn fan on.
+      if(temperature > calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset 
+        && fanState == 0)     
+      {
+        fanState = 1;
+        Blynk.virtualWrite(V40, 1);   
+        digitalWrite(RELAYPIN1, HIGH);  
+        sprintf(printstring, "ON_ON_ON_ON Fan switched ON. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
+            temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
+        logOut(printstring);
+      } 
+      // fan is on, and temperature has dropped to max. potential for fan: turn it off
+      if(temperature < calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset * (1-fanMaxPotential)
+        && fanState == 1)     
+      {  
+        fanState = 0;
+        Blynk.virtualWrite(V40, 0); 
+        digitalWrite(RELAYPIN1, LOW);
+        sprintf(printstring, "OFF_OFF_OFF Fan switched OFF. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
+            temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
+        logOut(printstring);
+      }  
+      Blynk.syncVirtual(V40); // synchronize app and sketch.  
+    }
   #endif  // relay
 
   // this function is called every time that blynk connection is established, and re-syncs widgets if first connection

@@ -31,12 +31,12 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   #define RELAYPIN1 26
   #define RELAYPIN2 27
 
-  float tempSwitchOffset = 2.0;     // at this offset the fan is switched off
+  volatile float tempSwitchOffset = 2.0;     // at this offset the fan is switched off
   int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan switching
   int fanTimerHandle;               // timer handle for fan handling        
   #define bme680FanHandlerInterval  500L
   int fanState = 0;                 // present state of fan
-  float fanMaxPotential =1.5;        // maximum potential in C for fan to cool sensor     
+  float fanMaxPotential =0.3;       // maximum potential in % of tempSwitchOffset for fan to cool sensor     
 #endif
 
 #ifdef getNTPTIME
