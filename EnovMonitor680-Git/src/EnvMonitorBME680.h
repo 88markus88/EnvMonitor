@@ -31,18 +31,21 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   #define RELAYPIN1 26
   #define RELAYPIN2 27
 
-  volatile float tempSwitchOffset = 2.0;     // at this offset the fan is switched off
+  volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched off. 2.4 - 2.6 proven ok
   int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan switching
   int fanTimerHandle;               // timer handle for fan handling        
   #define bme680FanHandlerInterval  500L
   int fanState = 0;                 // present state of fan
-  float fanMaxPotential =0.3;       // maximum potential in % of tempSwitchOffset for fan to cool sensor     
+  float fanMaxPotential =0.3;       // maximum potential in % of tempSwitchOffset for fan to cool sensor   
+          // if 0.3 and tempSwitch Offset = 2.5, fan is switched off at BME680 0.7*2.5 = 1,75°C above room temp  
 #endif
 
 #ifdef getNTPTIME
   // get time from NTP server
   // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
   const char* ntpServer = "pool.ntp.org";
+  const char* ntpServer2 = "ptbtime2.ptb.de";
+  const char* ntpServer3 = "ptbtime3.ptb.de";
   const long  gmtOffset_sec = 3600;             // Germany_ UTC + 1 = +3600 sec
   const int   daylightOffset_sec = 3600;
   int TimeIsInitialized = false;

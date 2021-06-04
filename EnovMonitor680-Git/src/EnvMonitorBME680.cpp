@@ -635,7 +635,7 @@ void logOut(char* printstring)
     {
       Serial.println("WiFi connected.");
       // Init and get the time
-      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer, ntpServer2, ntpServer3);
       printLocalTime(printstring, 3);
       logOut(printstring);
       //disconnect WiFi as it's no longer needed
@@ -1338,6 +1338,48 @@ void setup()
 #endif
 
 #ifdef isBME680_BSECLib
+  // Reset the BME680 sensor (if we can...)
+  void resetBME680(int sensorStatus)
+  {
+     sprintf(printstring,"Resetting BME680 since status is: %d\n", sensorStatus);
+     logOut(printstring);
+
+    Wire.begin();
+    permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
+
+    #ifdef BME_Secondary_Address   // if defined, use secondary address for BME680
+      iaqSensor.begin(BME680_I2C_ADDR_SECONDARY, Wire);
+    #else
+      iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
+    #endif
+    //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
+    //Serial.println(output);
+    sprintf(printstring,
+      "\nBSEC library version %d.%d.%d.%d", 
+        iaqSensor.version.major, iaqSensor.version.minor, 
+        iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
+    logOut(printstring);
+    // checkIaqSensorStatus();
+
+    iaqSensor.setConfig(bsec_config_iaq);
+    // checkIaqSensorStatus();
+
+    loadBsecState();
+
+    bsec_virtual_sensor_t sensorList[7] = {
+      BSEC_OUTPUT_RAW_TEMPERATURE,
+      BSEC_OUTPUT_RAW_PRESSURE,
+      BSEC_OUTPUT_RAW_HUMIDITY,
+      BSEC_OUTPUT_RAW_GAS,
+      BSEC_OUTPUT_IAQ,
+      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
+      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
+    };
+
+    iaqSensor.updateSubscription(sensorList, 7, BSEC_SAMPLE_RATE_LP);
+    checkIaqSensorStatus();
+  }
+
   // check the status if the iaq (internal air quality) sensor
   void checkIaqSensorStatus(void)
   {
@@ -1367,8 +1409,10 @@ void setup()
         sprintf(printstring,"BME680 warning code : %d\n", iaqSensor.bme680Status);
         logOut(printstring);
       }
-    }
-    iaqSensor.status = BSEC_OK;
+      iaqSensor.status = iaqSensor.status;
+    } 
+    else
+        iaqSensor.status = BSEC_OK;
   }
 
   // read the state of the BSEC sensor from permanent storage. 139 Bytes in char field.
@@ -2543,6 +2587,9 @@ void main_handler()
         updateBsecState();    // write sensor date to preferences, if time
       } else {
           checkIaqSensorStatus();
+
+         if(iaqSensor.status != BSEC_OK) 
+            resetBME680(iaqSensor.status);
       }
 
       temperature = iaqSensor.temperature;    // sensor temperature in C

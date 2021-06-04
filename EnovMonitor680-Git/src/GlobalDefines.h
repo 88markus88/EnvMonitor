@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.52"
-#define PROGDATE "2021-06-03"
+#define PROGVERSION "V0.53"
+#define PROGDATE "2021-06-04"
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
@@ -19,14 +19,14 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
-  #define blynkBME680Kueche
+ // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
- // #define blynkBME680BreadBoard    // BME680 auf Breadboard
+  #define blynkBME680BreadBoard    // BME680 auf Breadboard
 
 //***********************************************
 // hardware configurations defined here
@@ -232,7 +232,7 @@
     #undef BME_Secondary_Address   // if defined, use secondary address for BME680
     #undef isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
         #define noDS18B20Sensors 0  // number of DS18B20 expected
-    #define isDisplay       // Adafruit SSD 1306 display is present
+    #undef isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
