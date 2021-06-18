@@ -762,6 +762,101 @@ void outputProgramInfo()
   delay(200);
 }
 
+#ifdef isBLYNK
+ /**************************************************!
+   @brief    extended BLYNK setup function, attempts restarts in increasing intervals
+   @details  Sometimes local Blynk server does not connect after a restart, needs longer pause. This routine attempts to overcome that
+   @param none
+   @return   void
+  ***************************************************/
+  void extendedBlynkConnect()
+  {
+    int i, delayTime = 300;  // delay time in seconds
+
+    // Start the display
+    /* done in setup
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Initialize with the I2C addr 0x3C (for the 128x64 from Conrad else 3D)
+    display.setTextColor(WHITE);
+    */
+
+    sprintf(printstring,"extended Blynk setup function entered\n");
+    logOut(printstring);
+    #ifdef isDisplay
+      display.clearDisplay(); 
+      display.setTextSize(1);
+      sprintf(printstring,"Extended Blynk Setup");
+      display.setCursor(0, 0);
+      display.println(printstring);
+      display.display();          // transfer buffer content to display
+    #endif  
+
+    do{
+      // Blynk initialization for Blynk web account - MP internet
+      // Original example, never use in reality: You can also specify server:
+      // Blynk.begin(auth, ssid, pass, "blynk-cloud.com", 80);
+      // Blynk.begin(auth, ssid, pass, IPAddress(192,168,1,100), 8080);
+      #ifdef blynkCloud
+        // Blynk.begin(auth, ssid, pass);
+        if(WiFi.status() != WL_CONNECTED)
+          Blynk.connectWiFi(ssid,pass);
+        
+        Blynk.config(auth);   // Blynk.config(auth, "blynk-cloud.com", 80);
+        Blynk.connect();
+      #else
+        // Blynk initialization for local blynk server on raspi - MP Home
+        // original approach, does not always work
+        // Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+        // alternate approach to start Blynk
+        if(WiFi.status() != WL_CONNECTED)
+          Blynk.connectWiFi(ssid,pass);
+        Blynk.config(auth, IPAddress(blynkLocalIP), 8080);
+        Blynk.connect();
+      #endif  
+
+      #ifdef blynkTerminal
+        myBlynkTerminal.clear();
+      #endif  
+      if(Blynk.connected()){
+        sprintf(printstring,"Blynk connected\n");
+        logOut(printstring);
+        #ifdef isDisplay        
+          display.setCursor(0, 12);
+          sprintf(printstring,"Blynk connected");
+          display.println(printstring);
+        #endif  
+        Blynk.syncAll();  // synchronize device with server
+      }
+      else{
+        sprintf(printstring,"Blynk NOT connected. Retry in %d [s]\n", delayTime);
+        logOut(printstring);
+        #ifdef isDisplay
+          sprintf(printstring,"Blynk NOT connected");
+          display.setCursor(0, 24);
+          display.println(printstring);
+          sprintf(printstring,"Retry in %d [s]", delayTime);
+          display.setCursor(0, 36);
+          display.println(printstring);
+          display.display();          // transfer buffer content to display
+        #endif  
+        // esp_task_wdt_init(delayTime/1000 + WDT_TIMEOUT_SECONDS,true); // change watchdog to ensure that it does not kill us.
+        for(i=0; i<delayTime; i++){
+          vTaskDelay(1000 / portTICK_PERIOD_MS);  // delay for 1000 ms
+          esp_task_wdt_reset(); // reset watchdog 
+          #ifdef isDisplay
+            display.clearDisplay();
+            sprintf(printstring,"Retry in %d / %d s", i, delayTime);
+            display.setCursor(0, 36);
+            display.println(printstring);
+            display.display();
+          #endif  
+        }
+        delayTime += 100;  // increment delay time for next round, if necessary
+      }
+    } while(!Blynk.connected());  // exit if Blynk is connected
+    esp_task_wdt_init(WDT_TIMEOUT_SECONDS,true); // reset the watchdog time to defualt
+  }
+#endif
+
  /**************************************************!
    @brief    setup function
    @details  main setup for all functions of the software
@@ -776,7 +871,7 @@ void setup()
 
   // Set Watchdog
   pinMode(0, INPUT_PULLUP); // Digital-Pin 0 as input
-  esp_task_wdt_init(WDT_TIMEOUT_SECONDS,true); //Init Watchdog with 10 seconds timeout and panic (hardware rest if watchdog acts)
+  esp_task_wdt_init(WDT_TIMEOUT_SECONDS,true); //Init Watchdog with 40 seconds timeout and panic (hardware rest if watchdog acts)
   esp_task_wdt_add(NULL); //No special task needed
 
   // Set digital Output 14 as output for LED
@@ -807,9 +902,30 @@ void setup()
     initSDCard(logfilename);
   #endif  
 
+  #ifdef isDisplay
+    // Start the display
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Initialize with the I2C addr 0x3C (for the 128x64 from Conrad else 3D)
+    display.setTextColor(WHITE);
+    display.clearDisplay(); 
+    display.setTextSize(1);
+  #endif  
+
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
     logOut(printstring);
+    #ifdef isDisplay
+      display.clearDisplay(); 
+      display.setTextSize(1);
+      sprintf(printstring,"Standard Blynk Setup");
+      display.setCursor(0, 0);
+      display.println(printstring);
+      display.display();          // transfer buffer content to display
+    #endif 
+
+    #ifdef isDisplay
+      display.setCursor(0, 0);
+      display.println(printstring);
+    #endif  
 
     // Blynk initialization for Blynk web account - MP internet
     // Original example, never use in reality: You can also specify server:
@@ -844,6 +960,7 @@ void setup()
     else{
       sprintf(printstring,"Blynk NOT connected\n");
       logOut(printstring);
+      extendedBlynkConnect(); // try reconnects with increasing time intervals
     }
   #endif // isBLYNK  
 
@@ -859,8 +976,13 @@ void setup()
 
   #ifdef isDisplay
     // Start the display
+    /* done earlier in setup
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Initialize with the I2C addr 0x3C (for the 128x64 from Conrad else 3D)
     display.setTextColor(WHITE);
+    display.clearDisplay(); 
+    display.setTextSize(1);
+    */
+
     display.clearDisplay(); 
     display.setTextSize(1);
 
