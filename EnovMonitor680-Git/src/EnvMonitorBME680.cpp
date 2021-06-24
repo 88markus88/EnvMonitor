@@ -45,7 +45,9 @@
 #include "SDFunctions.h"        // functions to handle SD memory card
 #include "LCDFunctions.h"       // functions to handle LCD display
 
-  // Write string on the SD card
+void(* resetFunc) (void) = 0; //declare reset function @ address 0 THIS IS VERY USEFUL
+
+// Write string on the SD card
 #if defined logSD && defined isSD
   void logSDCard(char *printstring) 
   {
@@ -1461,12 +1463,30 @@ void setup()
 
 #ifdef isBME680_BSECLib
   // Reset the BME680 sensor (if we can...)
-  void resetBME680(int sensorStatus)
+  void resetBME680(int sensorStatus, int bme680Status)
   {
-     sprintf(printstring,"Resetting BME680 since status is: %d\n", sensorStatus);
-     logOut(printstring);
+    bool ret;
 
-    Wire.begin();
+    countBME680Resets++;  // increment reset counter
+
+    if(countBME680Resets > 500)   
+    {
+      sprintf(printstring,"resetBME680: Resetting %d times not successful, restarting ESP32\n", countBME680Resets-1);
+      logOut(printstring);
+      delay(2000);
+      resetFunc();
+    }  
+
+    sprintf(printstring,"Resetting BME680 #%d since sensor status: %d BME680 Status: %d\n", 
+      countBME680Resets, sensorStatus, bme680Status);
+    logOut(printstring);
+
+    do{
+      ret = Wire.begin(); 
+      sprintf(printstring,"Wire.begin() returned: %d\n", ret);
+      logOut(printstring);
+     }while(!ret);
+
     permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
 
     #ifdef BME_Secondary_Address   // if defined, use secondary address for BME680
@@ -1474,10 +1494,16 @@ void setup()
     #else
       iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
     #endif
+    iaqSensor.getState(bsecState);
+
+    sprintf(printstring,"Sensor and BME680 status after iaqSensor.begin(): %d %d\n", 
+        iaqSensor.status, iaqSensor.bme680Status);
+    logOut(printstring);
+
     //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
     //Serial.println(output);
     sprintf(printstring,
-      "\nBSEC library version %d.%d.%d.%d", 
+      "\nBSEC library version %d.%d.%d.%d\n", 
         iaqSensor.version.major, iaqSensor.version.minor, 
         iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
     logOut(printstring);
@@ -1941,8 +1967,6 @@ void setup()
 
 #ifdef isBLYNK
   int blynkDisconnects; // number of times disconnected from server
-
-  void(* resetFunc) (void) = 0; //declare reset function @ address 0 THIS IS VERY USEFUL
 
   // function to check if blynk is still connected
   void checkBlynk()
@@ -2696,9 +2720,10 @@ void main_handler()
             sprintf(iaqString,"-----");
             break;
         }
-        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f",
+        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f (resets: %d)",
             time_sec,iaqSensor.rawTemperature,iaqSensor.pressure, iaqSensor.rawHumidity, 
-            iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity);
+            iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity,
+            countBME680Resets);
         logOut(printstring);  
         sprintf(printstring," ||");
         for (int i=1;i<iaqSensor.iaq/10;i++)
@@ -2708,10 +2733,13 @@ void main_handler()
 
         updateBsecState();    // write sensor date to preferences, if time
       } else {
-          checkIaqSensorStatus();
 
-         if(iaqSensor.status != BSEC_OK) 
-            resetBME680(iaqSensor.status);
+          int iaqSensorStatus = iaqSensor.status;
+          int iaqBME680Status = iaqSensor.bme680Status;
+          checkIaqSensorStatus(); // may reset iaqSensor.status
+
+          if(iaqSensorStatus != BSEC_OK || iaqBME680Status != BSEC_OK) 
+            resetBME680(iaqSensor.status, iaqBME680Status);
       }
 
       temperature = iaqSensor.temperature;    // sensor temperature in C
