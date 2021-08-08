@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.56"
-#define PROGDATE "2021-06-24"
+#define PROGVERSION "V0.57"
+#define PROGDATE "2021-08-08"
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
@@ -235,7 +235,7 @@
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
-    #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it

@@ -1073,7 +1073,9 @@ void setup()
     pinMode(RELAYPIN1,OUTPUT);
     pinMode(RELAYPIN2,OUTPUT);
     delay(10);
-    
+  #endif
+
+  #if defined isOneDS18B20 && defined isRelay  
     // set timer for bme680FanHandler()
     fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     sprintf(printstring, "fanTimerHandle: %d\n", fanTimerHandle);
@@ -1476,6 +1478,18 @@ void setup()
       delay(2000);
       resetFunc();
     }  
+
+    #ifdef isRelay
+      if(countBME680Resets > 10)   
+      {
+        sprintf(printstring,"resetBME680: Resetting %d times not successful, toggling power to BME680\n", countBME680Resets-1);
+        logOut(printstring);
+        digitalWrite(RELAYPIN2, HIGH);
+        delay(2000);
+        digitalWrite(RELAYPIN2, LOW);
+        countBME680Resets = 0;      // restart counter
+      }  
+    #endif  
 
     sprintf(printstring,"Resetting BME680 #%d since sensor status: %d BME680 Status: %d\n", 
       countBME680Resets, sensorStatus, bme680Status);
@@ -2140,7 +2154,7 @@ void setup()
       }  
     }
 
-  // Relay 1 is switched via virtual Pin 41 (was 19)
+  // Relay 2 is switched via virtual Pin 41 (was 19)
     BLYNK_WRITE(V41) 
     {
       int x = param.asInt();
@@ -2150,7 +2164,7 @@ void setup()
       else  
         digitalWrite(RELAYPIN2, LOW);
     }
-  // Relay 2 is switched via virtual Pin 42
+  // Temperature Offset is switched via virtual Pin 42
     BLYNK_WRITE(V42) 
     {
       tempSwitchOffset = param.asFloat();
@@ -2160,7 +2174,9 @@ void setup()
       fanState=0;
       Blynk.virtualWrite(V40,0) ;   // defined state at app: fan off
     }
+  #endif  // relay
 
+  #if defined isOneDS18B20 && defined isRelay
      /**************************************************!
     @brief    fan handler
     @details  handles the function of the fan, if built in, based on temp difference 
