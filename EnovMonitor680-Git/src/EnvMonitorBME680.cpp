@@ -1487,7 +1487,8 @@ void setup()
         digitalWrite(RELAYPIN2, HIGH);
         delay(2000);
         digitalWrite(RELAYPIN2, LOW);
-        countBME680Resets = 0;      // restart counter
+        countBME680PowerToggles++;  // increment power toggle counter
+        countBME680Resets = 0;      // restart reset counter
       }  
     #endif  
 
@@ -2736,10 +2737,10 @@ void main_handler()
             sprintf(iaqString,"-----");
             break;
         }
-        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f (resets: %d)",
+        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f (pwr toggles: %d)",
             time_sec,iaqSensor.rawTemperature,iaqSensor.pressure, iaqSensor.rawHumidity, 
             iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity,
-            countBME680Resets);
+            countBME680PowerToggles);
         logOut(printstring);  
         sprintf(printstring," ||");
         for (int i=1;i<iaqSensor.iaq/10;i++)

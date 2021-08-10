@@ -147,7 +147,8 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
   Preferences permstorage;    // permanent storage object for BSEC BME 680 sensor parameter
 
-  unsigned int countBME680Resets = 0; // counter for resets of BME680
+  unsigned int countBME680Resets = 0;       // counter for resets of BME680
+  unsigned int countBME680PowerToggles = 0; // counter for Power Toggles of BME680
 
   // Helper functions declarations for BSEC library handling
   void checkIaqSensorStatus(void);
