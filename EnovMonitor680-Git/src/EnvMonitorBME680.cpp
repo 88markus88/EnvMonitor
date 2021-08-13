@@ -2737,10 +2737,11 @@ void main_handler()
             sprintf(iaqString,"-----");
             break;
         }
-        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f (pwr toggles: %d)",
+        sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f\n",
             time_sec,iaqSensor.rawTemperature,iaqSensor.pressure, iaqSensor.rawHumidity, 
-            iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity,
-            countBME680PowerToggles);
+            iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity);
+        logOut(printstring);  
+        sprintf(printstring,"BME680 power toggles: %d\n", countBME680PowerToggles);
         logOut(printstring);  
         sprintf(printstring," ||");
         for (int i=1;i<iaqSensor.iaq/10;i++)
