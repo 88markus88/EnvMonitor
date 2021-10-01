@@ -43,9 +43,12 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 #ifdef getNTPTIME
   // get time from NTP server
   // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
-  const char* ntpServer = "pool.ntp.org";
-  const char* ntpServer2 = "ptbtime2.ptb.de";
-  const char* ntpServer3 = "ptbtime3.ptb.de";
+  const char* ntpServer = "fritz.box";
+  // const char* ntpServer = "192.168.178.1";
+  // const char* ntpServer2 = "pool.ntp.org";
+  const char* ntpServer2 = "192.168.178.1";
+  // const char* ntpServer3 = "ptbtime3.ptb.de";
+  const char* ntpServer3 = "pool.ntp.org";
   const long  gmtOffset_sec = 3600;             // Germany_ UTC + 1 = +3600 sec
   const int   daylightOffset_sec = 3600;
   int TimeIsInitialized = false;

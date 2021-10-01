@@ -44,6 +44,7 @@
 #include "Infactory433.h"       // Infactory 433 Temp/Humid sensor
 #include "SDFunctions.h"        // functions to handle SD memory card
 #include "LCDFunctions.h"       // functions to handle LCD display
+#include "ESP32Ping.h"          // ping library
 
 void(* resetFunc) (void) = 0; //declare reset function @ address 0 THIS IS VERY USEFUL
 
@@ -636,14 +637,66 @@ void logOut(char* printstring)
     if (WiFi.status() == WL_CONNECTED)
     {
       Serial.println("WiFi connected.");
-      // Init and get the time
-      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer, ntpServer2, ntpServer3);
-      printLocalTime(printstring, 3);
-      logOut(printstring);
+      // check Ping
+      bool success = Ping.ping("www.google.com", 3);
+      if(!success)
+        Serial.println("Ping Google.com failed");
+      else 
+        Serial.println("Ping Google.com successful.");
+
+      const IPAddress remote_ip1(8, 8, 8, 8); 
+      success = Ping.ping(remote_ip1, 3);
+      if(!success)
+        Serial.println("Ping 8.8.8.8 failed");
+      else 
+        Serial.println("Ping 8.8.8.8 successful.");
+      const IPAddress remote_ip2(23, 23, 23, 23); 
+      success = Ping.ping(remote_ip2, 3);
+      if(!success)
+        Serial.println("Ping 23.23.23.23 failed");
+      else 
+        Serial.println("Ping 23.23.23.23 successful.");
+      
+      esp_task_wdt_reset();   // keep watchdog happy  
+      
+      struct tm timeinfo;
+      // Init and get the time. try all 3 time servers in sequence, if first not successful
+      // configTime(gmtOffset_sec, daylightOffset_sec, ntpServer, ntpServer2, ntpServer3);
+
+      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+      if(getLocalTime(&timeinfo))
+      {
+        TimeIsInitialized = true;
+        Serial.println("Successfully obtained time from first server");  
+      }  
+      else{  
+        Serial.println("Failed to obtain time from first server");   
+        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer2);
+        if(getLocalTime(&timeinfo)){
+          TimeIsInitialized = true;
+          Serial.println("Successfully obtained time from second server");  
+        }  
+        else{
+          Serial.println("Failed to obtain time from 2nd server");   
+          configTime(gmtOffset_sec, daylightOffset_sec, ntpServer3);
+          if(getLocalTime(&timeinfo)){
+            Serial.println("Successfully obtained time from third server");  
+            TimeIsInitialized = true;
+          } 
+          else{
+            Serial.println("Failed to obtain time from 3nd server");   
+            TimeIsInitialized = false;  
+          }
+        }
+      }
+
+      if(TimeIsInitialized){
+        printLocalTime(printstring, 3);
+        logOut(printstring);
+      }  
       //disconnect WiFi as it's no longer needed
       WiFi.disconnect(true);
       WiFi.mode(WIFI_OFF);
-      TimeIsInitialized = true;
     }
     else
     {
