@@ -637,7 +637,8 @@ void logOut(char* printstring)
     if (WiFi.status() == WL_CONNECTED)
     {
       Serial.println("WiFi connected.");
-      // check Ping
+      // check Ping, to determine if internet connection and DNS server are running OK.
+      // if DNS server not working: may be Pi-Hole which needs reset.
       bool success = Ping.ping("www.google.com", 3);
       if(!success)
         Serial.println("Ping Google.com failed");
@@ -650,13 +651,15 @@ void logOut(char* printstring)
         Serial.println("Ping 8.8.8.8 failed");
       else 
         Serial.println("Ping 8.8.8.8 successful.");
+      /*  
       const IPAddress remote_ip2(23, 23, 23, 23); 
       success = Ping.ping(remote_ip2, 3);
       if(!success)
         Serial.println("Ping 23.23.23.23 failed");
       else 
         Serial.println("Ping 23.23.23.23 successful.");
-      
+      */ 
+
       esp_task_wdt_reset();   // keep watchdog happy  
       
       struct tm timeinfo;
@@ -667,24 +670,30 @@ void logOut(char* printstring)
       if(getLocalTime(&timeinfo))
       {
         TimeIsInitialized = true;
-        Serial.println("Successfully obtained time from first server");  
+        sprintf(printstring,"Successfully obtained time from first server %s",ntpServer);
+        Serial.println(printstring);  
       }  
       else{  
-        Serial.println("Failed to obtain time from first server");   
+        sprintf(printstring,"Failed to obtain time from first server %s",ntpServer);  
+        Serial.println(printstring);   
         configTime(gmtOffset_sec, daylightOffset_sec, ntpServer2);
         if(getLocalTime(&timeinfo)){
           TimeIsInitialized = true;
-          Serial.println("Successfully obtained time from second server");  
+          sprintf(printstring,"Successfully obtained time from 2nd server %s",ntpServer2);
+          Serial.println(printstring);  
         }  
         else{
-          Serial.println("Failed to obtain time from 2nd server");   
+          sprintf(printstring,"Failed to obtain time from 2nd server %s",ntpServer2);  
+          Serial.println(printstring);  
           configTime(gmtOffset_sec, daylightOffset_sec, ntpServer3);
           if(getLocalTime(&timeinfo)){
-            Serial.println("Successfully obtained time from third server");  
+            sprintf(printstring,"Successfully obtained time from 3rd server %s",ntpServer3);
+            Serial.println(printstring);  
             TimeIsInitialized = true;
           } 
           else{
-            Serial.println("Failed to obtain time from 3nd server");   
+            sprintf(printstring,"Failed to obtain time from 3rd server %s",ntpServer3);  
+            Serial.println(printstring);  
             TimeIsInitialized = false;  
           }
         }
@@ -2794,8 +2803,8 @@ void main_handler()
             time_sec,iaqSensor.rawTemperature,iaqSensor.pressure, iaqSensor.rawHumidity, 
             iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity);
         logOut(printstring);  
-        sprintf(printstring,"BME680 power toggles: %d\n", countBME680PowerToggles);
-        logOut(printstring);  
+        // sprintf(printstring,"BME680 power toggles: %d\n", countBME680PowerToggles);
+        // logOut(printstring);  
         sprintf(printstring," ||");
         for (int i=1;i<iaqSensor.iaq/10;i++)
           strcat(printstring,"=");
@@ -2882,24 +2891,28 @@ void main_handler()
       if (time_sec - timer1/1000 > MZH14AMeasureWait)  // runs every 15 sec
       {
         getCO2Data();
-        Serial.printf("\n %3.1f MH-Z14A CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
+        sprintf(printstring,"--------- %3.1f MH-Z14A CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
+        logOut(printstring); 
         timer1 = millis();
       } 
       #ifdef isBLYNK 
         Blynk.virtualWrite(V9, CO2ppm);
       #endif  
-      Serial.printf("%3.1f [sec] ", time_sec);
+      sprintf(printstring,"%3.1f [sec] ", time_sec);
+      logOut(printstring); 
     }
-    else
-      Serial.printf(" CO2 Sensor still warming up %3.1f of %3.1f\n", 
-        (float)MHZ14AWarmingTime, (float)MZH14AWarmupWait);
+    else{
+      sprintf(printstring," CO2 Sensor still warming up %3.1f of %3.1f\n", (float)MHZ14AWarmingTime, (float)MZH14AWarmupWait);
+      logOut(printstring); 
+    }  
   #endif  // isMHZ14A
 
   #ifdef isSENSEAIR_S8
     send_Request(CO2req, 8);               // send request for CO2-Data to the Sensor
     read_Response(7);                      // receive the response from the Sensor
     CO2ppm = get_Value(7);
-    Serial.printf("\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
+    sprintf(printstring,"\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
+    logOut(printstring); 
     #ifdef isBLYNK 
       Blynk.virtualWrite(V9, CO2ppm);
     #endif  // Blynk
