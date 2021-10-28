@@ -3,11 +3,12 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.60"
-#define PROGDATE "2021-10-01"
+#define PROGVERSION "V0.62"
+#define PROGDATE "2021-10-28"
 
+#define isVirtuino      // Virtuno connection enabled. Alternative to Blynk
 // !!! use only one option that sends or receives data from serial!
-#define isBLYNK         // BLYNK Connection enabled
+#undef isBLYNK         // BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
     #define blynkRegularCheck // if defined, checkBlynk called() regularly by timer to reconnect
     #undef blynkCloud       // define this to use blynk cloud, undef to use local server
@@ -19,14 +20,15 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
- #define blynkBME680Kueche
+ // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
- // #define blynkBME680BreadBoard    // BME680 auf Breadboard
+ #define blynkBME680BreadBoard    // BME680 auf Breadboard
+ // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
 // hardware configurations defined here
@@ -230,8 +232,8 @@
     #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
     #define isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #undef BME_Secondary_Address   // if defined, use secondary address for BME680
-    #undef isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
-        #define noDS18B20Sensors 0  // number of DS18B20 expected
+    #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
+        #define noDS18B20Sensors 1  // number of DS18B20 expected
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
@@ -249,3 +251,34 @@
     static char infoStringLong[] = " BME680 Breadboard: BME680 auf Breadboard, sonst nichts";
     static char infoStringShort[] = "BME680 Breadboard";
 #endif
+
+#ifdef virtuinoTestbed  // Virtuino and MQTT Testbead
+    #undef isBLYNK          // this one without Blynk
+    #define isVirtuino      // this one is with Virtuino
+
+    #define isOTA           // allow OTA over te air updates    
+    #undef isMHZ14A        // CO2 Sensor present. communication via serial2
+    #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
+    #undef isBME280         // BME 280 Sensor (P, T, %) present
+    #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
+    #define isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
+    #undef BME_Secondary_Address   // if defined, use secondary address for BME680
+    #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
+        #define noDS18B20Sensors 1  // number of DS18B20 expected
+    #undef isDisplay       // Adafruit SSD 1306 display is present
+    #undef isLCD            // LCD display present
+    #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
+    #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
+    #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
+    #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
+    #define getNTPTIME       // get time from NTP server
+    #undef isSD             // SD Card reader attached
+
+    #undef logSD            // logging to SD card enabled. needs "isSD"
+    #define logSerial       // logging to serial enabled
+    #define isLEDHeartbeat      // LED heartbeat on, Pin 14
+
+    static char infoStringLong[] = " Virtuino Testbed: BME680 und 1 DS18B20 auf V0.4 Platine";
+    static char infoStringShort[] = "Virtuino Testbed";
+#endif 

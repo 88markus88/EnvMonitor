@@ -36,6 +36,7 @@
 //*** general libraries. Libraries that multiple modules use should reside here 
 #include <Arduino.h>
 #include "time.h"
+#include <SimpleTimer.h>        // Simple Timer, used instead of Blynk timer for virtuino
 #include <Preferences.h>        // used to permanently store data
 #include <esp_task_wdt.h>       // Load Watchdog-Library
 #include "GlobalDefines.h"      // global defines that determine what to compile
@@ -412,16 +413,18 @@ void logOut(char* printstring)
   }
 
   // manual restart via V60
-  BLYNK_WRITE(V60) 
-  {
-    int x = param.asInt();
-    sprintf(printstring,"Manual restart of DS18B20 initiated %d\n", x);
-    logOut(printstring);
-    if(x==1)  
-      manualDS18B20Restart = 1;
-    else  
-      manualDS18B20Restart = 0;
-  }
+  #ifdef isBLYNK
+    BLYNK_WRITE(V60) 
+    {
+      int x = param.asInt();
+      sprintf(printstring,"Manual restart of DS18B20 initiated %d\n", x);
+      logOut(printstring);
+      if(x==1)  
+        manualDS18B20Restart = 1;
+      else  
+        manualDS18B20Restart = 0;
+    }
+  #endif // isBLYNK  
 
 #endif  // DS18B20
 
@@ -921,6 +924,101 @@ void outputProgramInfo()
   }
 #endif
 
+#ifdef isVirtuino
+  //================= Virtuino Code ==============================
+
+//============================================================== connectToWiFiNetwork
+void connectToWiFiNetwork(){
+  Serial.println("Connecting to "+String(ssid));
+   // If you don't want to config IP manually disable the next two lines
+   IPAddress subnet(255, 255, 255, 0);        // set subnet mask to match your network
+  //Wifi.hostname("VirtuinoHostName");        // so kann man direkt den Hostnamen setzen
+  WiFi.config(ip, gateway, subnet);          // If you don't want to config IP manually disable this line
+  WiFi.mode(WIFI_STA);                       // Config module as station only.
+  WiFi.begin(ssid, pass);
+   while (WiFi.status() != WL_CONNECTED) {
+     delay(500);
+     Serial.print(".");
+    }
+   Serial.println("");
+   Serial.println("WiFi connected");
+   Serial.println(WiFi.localIP());
+}
+
+
+//============================================================== onCommandReceived
+//==============================================================
+/* This function is called every time Virtuino app sends a request to server to change a Pin value
+ * The 'variableType' can be a character like V, T, O  V=Virtual pin  T=Text Pin    O=PWM Pin 
+ * The 'variableIndex' is the pin number index of Virtuino app
+ * The 'valueAsText' is the value that has sent from the app   */
+boolean debug = true;
+
+void onReceived(char variableType, uint8_t variableIndex, String valueAsText){     
+  //if(debug) Serial.print(valueAsText);
+  if (variableType=='V'){
+    float value = valueAsText.toFloat();        // convert the value to float. The valueAsText have to be numerical
+    if (variableIndex<V_memory_count) V[variableIndex]=value;              // copy the received value to arduino V memory array
+  }
+  else  if (variableType=='T'){
+    if (variableIndex==0) Text_0=valueAsText;          // Store the text to the text variable Text_0
+    else if (variableIndex==1) Text_1=valueAsText;     // Store the text to the text variable Text_1
+    else if (variableIndex==2) Text_2=valueAsText;     // Store the text to the text variable T2
+    else if (variableIndex==3) Text_3=valueAsText;     // Store the text to the text variable T3
+  }  
+}
+
+//==============================================================
+/* This function is called every time Virtuino app requests to read a pin value*/
+String onRequested(char variableType, uint8_t variableIndex){    
+  //if(debug) {Serial.print(variableType); Serial.print(" "); Serial.println(variableIndex); }
+  if (variableType=='V') {
+    if (variableIndex<V_memory_count) return  String(V[variableIndex]);   // return the value of the arduino V memory array
+  }
+  else if (variableType=='T') {
+   if (variableIndex==0) return Text_0;  
+   else if (variableIndex==1) return Text_1;   
+   else if (variableIndex==2) return Text_2;   
+   else if (variableIndex==3) return Text_3;   
+  }
+  return "";
+}
+
+//==============================================================
+  void virtuinoRun(){
+   WiFiClient client = server.available();
+   if (!client) return;
+   if (debug) Serial.println("Connected");
+   unsigned long timeout = millis() + 3000;
+   while (!client.available() && millis() < timeout) delay(1);
+   if (millis() > timeout) {
+    Serial.println("timeout");
+    client.flush();
+    client.stop();
+    return;
+  }
+    virtuino.readBuffer="";    // clear Virtuino input buffer. The inputBuffer stores the incoming characters
+      while (client.available()>0) {        
+        char c = client.read();         // read the incoming data
+        virtuino.readBuffer+=c;         // add the incoming character to Virtuino input buffer
+        if (debug) Serial.write(c);
+      }
+     client.flush();
+     if (debug) Serial.println("\nReceived data: "+virtuino.readBuffer);
+     String* response= virtuino.getResponse();    // get the text that has to be sent to Virtuino as reply. The library will check the inptuBuffer and it will create the response text
+     if (debug) Serial.println("Response : "+*response);
+     client.print(*response);
+     client.flush();
+     delay(10);
+     client.stop(); 
+    if (debug) Serial.println("Disconnected");
+}
+
+//============================================================== vDelay
+void vDelay(int delayInMillis){long t=millis()+delayInMillis;while (millis()<t) virtuinoRun();}
+
+#endif
+
  /**************************************************!
    @brief    setup function
    @details  main setup for all functions of the software
@@ -934,6 +1032,7 @@ void setup()
   delay(10);
 
   // Set Watchdog
+  Serial.print("1");
   pinMode(0, INPUT_PULLUP); // Digital-Pin 0 as input
   esp_task_wdt_init(WDT_TIMEOUT_SECONDS,true); //Init Watchdog with 40 seconds timeout and panic (hardware rest if watchdog acts)
   esp_task_wdt_add(NULL); //No special task needed
@@ -944,6 +1043,7 @@ void setup()
   #endif   
 
   startTime = millis(); // remember the start time
+  Serial.print("2");
 
   #ifdef getNTPTIME
     // get time from NTP server
@@ -951,6 +1051,7 @@ void setup()
     getNTPTime();
     esp_task_wdt_reset();   // keep watchdog happy
   #endif 
+  Serial.print("3");
 
   // get number of reboots so far, is used to set SD filename
   preferences.begin("nvs", false);                 // Open nonvolatile storage (nvs)
@@ -960,6 +1061,7 @@ void setup()
   preferences.putInt("NoReboots", NoReboots+1);    // and increment it - new start.
   preferences.end();
 
+  Serial.print("4");
   #ifdef isSD
     // Create a file on the SD card and write the data labels
     sprintf(logfilename,"/log%04d.txt",NoReboots);
@@ -973,6 +1075,13 @@ void setup()
     display.clearDisplay(); 
     display.setTextSize(1);
   #endif  
+
+  #ifdef isVirtuino
+    virtuino.begin(onReceived,onRequested,512);  //Start Virtuino. Set the buffer to 512. With this buffer Virtuino can control about 50 pins (1 command >= 9bytes) The T(text) commands with 20 characters need 20+6 bytes
+    //virtuino.key="1234";                       //This is the Virtuino password. Only requests the start with this key are accepted from the library
+    connectToWiFiNetwork();
+    server.begin();
+  #endif
 
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
@@ -1027,16 +1136,21 @@ void setup()
       extendedBlynkConnect(); // try reconnects with increasing time intervals
     }
   #endif // isBLYNK  
-
+  Serial.print("5");
   // log number of reboots. Do this here, after SD opened and Blynk connection operational (no reboots make up logfilename...)
   sprintf(printstring,"NoReboots=%d\n", NoReboots);
   logOut(printstring);
 
+  Serial.print("6");
   // set timer for main_handler()
-  //mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
-  mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+  // Virtuino
+  mainHandlerTimerHandle = mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
+  // Blynk
+  // mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+  Serial.print("7 ");
   sprintf(printstring, "mainHandlerTimerHandle: %d\n", mainHandlerTimerHandle);
   logOut(printstring);
+  Serial.print(mainHandlerTimerHandle);
 
   #ifdef isDisplay
     // Start the display
@@ -1129,8 +1243,6 @@ void setup()
   // Program Info to serial Monitor
   outputProgramInfo(); 
 
-
-
   #ifdef isRelay
     pinMode(RELAYPIN1,OUTPUT);
     pinMode(RELAYPIN2,OUTPUT);
@@ -1139,7 +1251,8 @@ void setup()
 
   #if defined isOneDS18B20 && defined isRelay  
     // set timer for bme680FanHandler()
-    fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
+    // fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
+    fanTimerHandle = fanHandlerTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     sprintf(printstring, "fanTimerHandle: %d\n", fanTimerHandle);
     logOut(printstring);
   #endif
@@ -1379,6 +1492,7 @@ void setup()
     #endif  
   #endif
 
+  Serial.print("8");
   #ifdef isOneDS18B20
     // switch on Power (via GPIO 32)
     pinMode(POWER_ONEWIRE_BUS, OUTPUT);
@@ -1400,6 +1514,7 @@ void setup()
   #endif
   // Serial.println("C");
   // delay(200);
+  Serial.print("9");
 
   #ifdef serialMonitor
     logOut("Entering Serial Monitor mode - all other is off\n");
@@ -1407,6 +1522,7 @@ void setup()
   #endif
   sprintf(printstring,"end setup\n");
   logOut(printstring);
+  Serial.print(" 10 ");
 } // setup
 
 #ifdef isBME680
@@ -2239,44 +2355,6 @@ void setup()
     }
   #endif  // relay
 
-  #if defined isOneDS18B20 && defined isRelay
-     /**************************************************!
-    @brief    fan handler
-    @details  handles the function of the fan, if built in, based on temp difference 
-    @param none
-    @return void
-    ***************************************************/
-    void bme680FanHandler(void)
-    {
-
-      if(calDS18B20Temperature[tempSwitchSensorSelector] < -110) // invalid DS18B20 Temp, do not try
-        return;
-      // temperature high enough and fan off: turn fan on.
-      if(temperature > calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset 
-        && fanState == 0)     
-      {
-        fanState = 1;
-        Blynk.virtualWrite(V40, 1);   
-        digitalWrite(RELAYPIN1, HIGH);  
-        sprintf(printstring, "ON_ON_ON_ON Fan switched ON. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
-            temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
-        logOut(printstring);
-      } 
-      // fan is on, and temperature has dropped to max. potential for fan: turn it off
-      if(temperature < calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset * (1-fanMaxPotential)
-        && fanState == 1)     
-      {  
-        fanState = 0;
-        Blynk.virtualWrite(V40, 0); 
-        digitalWrite(RELAYPIN1, LOW);
-        sprintf(printstring, "OFF_OFF_OFF Fan switched OFF. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
-            temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
-        logOut(printstring);
-      }  
-      Blynk.syncVirtual(V40); // synchronize app and sketch.  
-    }
-  #endif  // relay
-
   // this function is called every time that blynk connection is established, and re-syncs widgets if first connection
   bool isFirstConnect = true;
   BLYNK_CONNECTED()
@@ -2288,6 +2366,49 @@ void setup()
     isFirstConnect = false;
   }  
 #endif  //blynk
+
+#if defined isOneDS18B20 && defined isRelay
+  /**************************************************!
+  @brief    fan handler
+  @details  handles the function of the fan, if built in, based on temp difference 
+  @param none
+  @return void
+  ***************************************************/
+  void bme680FanHandler(void)
+  {
+    if(calDS18B20Temperature[tempSwitchSensorSelector] < -110) // invalid DS18B20 Temp, do not try
+      return;
+    // temperature high enough and fan off: turn fan on.
+    if(temperature > calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset 
+      && fanState == 0)     
+    {
+      fanState = 1;
+      #ifdef isBLYNK
+        Blynk.virtualWrite(V40, 1);   
+        digitalWrite(RELAYPIN1, HIGH);  
+      #endif  
+      sprintf(printstring, "ON_ON_ON_ON Fan switched ON. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
+          temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
+      logOut(printstring);
+    } 
+      // fan is on, and temperature has dropped to max. potential for fan: turn it off
+    if(temperature < calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset * (1-fanMaxPotential)
+      && fanState == 1)     
+    {  
+      fanState = 0;
+      #ifdef isBLYNK
+        Blynk.virtualWrite(V40, 0); 
+      #endif   
+      digitalWrite(RELAYPIN1, LOW);
+      sprintf(printstring, "OFF_OFF_OFF Fan switched OFF. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
+          temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
+      logOut(printstring);
+    }  
+    #ifdef isBLYNK
+      Blynk.syncVirtual(V40); // synchronize app and sketch.  
+    #endif
+  }
+#endif  // DS18B20 & relay 
 
 #if defined sendSERIAL || defined receiveSERIAL
   // serial stuff for sending / receiving external sensor data
@@ -2456,9 +2577,10 @@ void main_handler()
   static long lastBME680Time;
 
   time_sec = (float)millis()/1000;
+
   start_loop_time = millis();
   // Serial.printf(" ******* Main Loop start at %3.1f sec ********** \n",time_sec);
-  sprintf(printstring, "M %3.1f \n",time_sec);
+  sprintf(printstring, " M %3.1f \n",time_sec);
   logOut(printstring);
 
   #ifdef isInfactory433
@@ -2722,6 +2844,41 @@ void main_handler()
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
     #endif  
 
+    #ifdef isVirtuino
+      double limit = -110.0;
+      sprintf(printstring,"ToVirtuino: ");
+      if((calDS18B20Temperature[0]) > (limit)){
+        V[13] = calDS18B20Temperature[0]; //sending to Virtuino
+        sprintf(printstring2,"Tmp1: %5.2f ",calDS18B20Temperature[0]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2,"Tmp1: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if((calDS18B20Temperature[1]) > (limit)){  
+        V[10] = calDS18B20Temperature[1]; //sending to Virtuino
+        sprintf(printstring2,"Tmp2: %5.2f ",calDS18B20Temperature[1]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2,"Tmp2: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if((calDS18B20Temperature[2]) > (limit)){  
+        V[11] = calDS18B20Temperature[2]; //sending to Virtuino  
+        sprintf(printstring2,"Tmp3: %5.2f",calDS18B20Temperature[2]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2,"Tmp3: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      strcat(printstring,"\n");
+      logOut(printstring);
+      vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay 
+    #endif  
+
     // checks for problems with measurements of DS18B20
     if(notMeasuredCount > DS18B20RestartLimit || notChangedCount > 3*DS18B20RestartLimit || // in GetOneDS18B20Temperature this count is handled if faulty checksum
       manualDS18B20Restart >= 1 ||  // manual restart via Blynk app
@@ -2859,6 +3016,15 @@ void main_handler()
         Blynk.virtualWrite(V7, humidity); 
         Blynk.virtualWrite(V8, air_quality_score); 
         Blynk.virtualWrite(V12, air_quality_string); 
+      #endif
+
+      #ifdef isVirtuino
+        // get the data to Virtuino
+        V[5] = temperature; 
+        V[6] = pressure; 
+        V[7] = humidity; 
+        V[8] = air_quality_score; 
+        // V[12] = air_quality_string; 
       #endif
       
       // delay(300); // give blynk time to send the stuff
@@ -3069,9 +3235,17 @@ void lcd_handler()
 *****************************************************************************/
 void loop()
 {
-  //mainHandlerTimer.run();   // timer for main handler
-  MyBlynkTimer.run();
-  
+  mainHandlerTimer.run();   // simple timer for main handler
+  fanHandlerTimer.run();    // simple timer for fan handler 
+
+  // and this is the version for Blynk timer. One for all, but needs Blynk
+  #ifdef isBLYNK 
+    MyBlynkTimer.run();
+  #endif  
+
+  #ifdef isVirtuino 
+    virtuinoRun(); // Necessary function to communicate with Virtuino. Client handler
+  #endif  
   //*** Blynk communication
   #ifdef isBLYNK
     Blynk.run(); 

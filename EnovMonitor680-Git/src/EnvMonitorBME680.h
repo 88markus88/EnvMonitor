@@ -33,6 +33,8 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
   volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched off. 2.4 - 2.6 proven ok
   int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan switching
+
+  SimpleTimer fanHandlerTimer;
   int fanTimerHandle;               // timer handle for fan handling        
   #define bme680FanHandlerInterval  500L
   int fanState = 0;                 // present state of fan
@@ -174,16 +176,16 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
     float Temperature, Humidity, Pressure, Altitude; // converted values in °C, %, mbar
 #endif
 
+// wifi stuff. also used if no Blynk, for time and Virtuino
+#include <WiFi.h>
+#include <WiFiClient.h>
+// credentials information: Blynk Auth tokens, wifi credentials etc.
+#include "Credentials.h"
+
 #ifdef isBLYNK
   // Stuff for Blynk
   #define BLYNK_PRINT Serial
-
-  #include <WiFi.h>
-  #include <WiFiClient.h>
   #include <BlynkSimpleEsp32.h>
-
-  // credentials information: Blynk Auth tokens, wifi credentials etc.
-  #include "Credentials.h"
 
   // timer for blynk check and restart
   BlynkTimer MyBlynkTimer;
@@ -196,6 +198,28 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
   // terminal object
   WidgetTerminal myBlynkTerminal(V50);
+#endif
+
+#ifdef isVirtuino
+  //--- SETTINGS ------------------------------------------------
+  // ssid and pass are in "credentials.h"
+  //const char* ssid = "Fritz7390-MP2.4";         // enter the name (SSID) of your WIFI network
+  //const char* password = "Aa-v465-*U3P";         // enter your WIFI network PASSWORD
+  WiFiServer server(8000);                   // Default Virtuino Server port 
+  IPAddress ip(192, 168, 178, 200);            // where 150 is the desired IP Address. The first three numbers must be the same as the router IP
+  IPAddress gateway(192, 168, 178, 1);         // set gateway to match your network. Replace with your router IP
+  //---
+
+  //---VirtuinoCM  Library settings --------------
+  #include "VirtuinoCM.h"
+  VirtuinoCM virtuino;               
+  #define V_memory_count 62          // the size of V memory. You can change it to a number <=255)
+  float V[V_memory_count];           // This array is synchronized with Virtuino V memory. You can change the type to int, long etc.
+  //---
+  String Text_0="";   // Text string 0 synchronized
+  String Text_1="";   // Text string 1 synchronized
+  String Text_2="";   // Text string 2 synchronized
+  String Text_3="";   // Text string 3 synchronized
 #endif
 
 // includes for OTA over the air Updates 
@@ -321,6 +345,7 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
 //** global stuff 
 // timer for main_handler, and interval for it
 #define mainHandlerInterval 2000L
+SimpleTimer mainHandlerTimer;
 int mainHandlerTimerHandle=0;
 
 /************************************************************
