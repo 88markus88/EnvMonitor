@@ -1083,6 +1083,18 @@ void setup()
     server.begin();
   #endif
 
+  #ifdef isThingspeak
+    WiFi.mode(WIFI_STA);  
+
+    thingspeakHandlerTimerHandle = thingspeakHandlerTimer.setInterval(thingspeakHandlerInterval, thingspeak_handler);
+    // Blynk
+    // mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+    Serial.print("7a ");
+    sprintf(printstring, "thingspeakHandlerTimerHandle: %d\n", thingspeakHandlerTimerHandle);
+    logOut(printstring);
+    Serial.print(thingspeakHandlerTimerHandle);
+  #endif
+
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
     logOut(printstring);
@@ -2561,6 +2573,157 @@ void setup()
 
 #endif // serial stuff  
 
+#ifdef isThingspeak
+  void sendThingspeakData(String url)
+  {
+    Serial.println(url);
+
+    // Connect or reconnect to WiFi
+    if(WiFi.status() != WL_CONNECTED)
+    {
+      Serial.print("Attempting to connect to SSID: ");
+      Serial.println(ssid);
+      while(WiFi.status() != WL_CONNECTED){
+        WiFi.begin(ssid, pass); // Connect to WPA/WPA2 network. Change this line if using open or WEP network
+        Serial.print(".");
+        delay(5000);     
+      } 
+      Serial.println("\nConnected.");
+    }
+
+    HTTPClient http; // Initialize our HTTP client
+        
+    http.begin(url.c_str()); // Initialize our HTTP request
+        
+    int httpResponseCode = http.GET(); // Send HTTP request
+        
+    if (httpResponseCode > 0){ // Check for good HTTP status code
+      Serial.print("HTTP Response code: ");
+      Serial.println(httpResponseCode);
+    }else{
+      Serial.print("Error code: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  }
+  #endif
+
+#ifdef isThingspeak
+  bool isEqual(double a, double b, double limit)
+  {
+    if(abs(a-b) < limit)
+      return (true);
+    else
+      return (false);  
+  }
+
+  /**************************************************!
+    @brief    thingspeak handler. Handles all data sending to thingspeak, called via timer
+    @details  called via timer, does output for all sensors actually present
+    @return   void
+  ***************************************************/
+  void thingspeak_handler() 
+  {
+    #ifdef isOneDS18B20
+      // build thingspeak string and then send it 
+      double limit = -110.0;
+      static float last_temperature=0, last_humidity=0, last_pressure=0, last_air_quality_score=0;
+      static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
+      static long thingspeakCounter = 0;
+      String url=ThingspeakServerName;
+
+      sprintf(printstring,"ToThingspeak: ");
+      // BME 680 stuff
+      if(!isEqual(temperature,last_temperature,0.05)){  
+        last_temperature = temperature;
+        url = url+ "&field1=" + temperature;
+        thingspeakCounter++;
+        sprintf(printstring2," temp: %5.2f",temperature);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," temp: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if(!isEqual(humidity,last_humidity,0.05)){  
+        last_humidity = humidity;
+        url = url+ "&field2=" + humidity;
+        thingspeakCounter++;
+        sprintf(printstring2," hum: %5.2f",humidity);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," hum: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if(!isEqual(pressure,last_pressure,0.05)){  
+        pressure = pressure;
+        url = url+ "&field3=" + pressure;
+        thingspeakCounter++;
+        sprintf(printstring2," pres: %5.2f",pressure);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," pres: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if(!isEqual(air_quality_score,last_air_quality_score,0.1)){  
+        last_air_quality_score = air_quality_score;
+        url = url+ "&field4=" + air_quality_score;
+        thingspeakCounter++;
+        sprintf(printstring2," airq : %5.2f",air_quality_score);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," airq: notMeas ");
+        strcat(printstring, printstring2);
+      }
+
+      // DS18B20 data 
+      if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.01)))
+      {
+        last_DSTemp0 = calDS18B20Temperature[0];
+        url = url+ "&field5=" + calDS18B20Temperature[0];
+        thingspeakCounter++;
+        sprintf(printstring2," Tmp0: %5.2f ",calDS18B20Temperature[0]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," Tmp0: notMeas %5.2f %5.2f %5.2f ",DS18B20Temperature[0],calDS18B20Temperature[0], last_DSTemp0);
+        strcat(printstring, printstring2);
+      }
+      if(((calDS18B20Temperature[1]) > (limit)) && (!isEqual(calDS18B20Temperature[1],last_DSTemp1,0.01)))
+      {  
+        last_DSTemp1 = calDS18B20Temperature[1];
+        url = url+ "&field6=" + calDS18B20Temperature[1];
+        thingspeakCounter++;
+        sprintf(printstring2," Tmp1: %5.2f ",calDS18B20Temperature[1]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," Tmp1: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      if(((calDS18B20Temperature[2]) > (limit)) && (!isEqual(calDS18B20Temperature[2],last_DSTemp2,0.01))){  
+        last_DSTemp2 = calDS18B20Temperature[2];
+        url = url+ "&field7=" + calDS18B20Temperature[2];
+        thingspeakCounter++;
+        sprintf(printstring2," Tmp2: %5.2f",calDS18B20Temperature[2]);
+        strcat(printstring, printstring2);
+      }  
+      else{
+        sprintf(printstring2," Tmp2: notMeas ");
+        strcat(printstring, printstring2);
+      }
+      sprintf(printstring2," Sent# : %d \n", thingspeakCounter);
+      strcat(printstring, printstring2);
+      logOut(printstring);
+      // send data in collected string to Thingspeak
+      sendThingspeakData(url);
+    #endif
+  }
+#endif
+
 /**************************************************!
   @brief    main handler, was loop. Handles all sensors, called via timer
   @details  called via timer, does measurements and output for all sensors actually present
@@ -2775,20 +2938,16 @@ void main_handler()
     // correct with compensation factors which are specific to each sensor module, defined near auth codes
     for(int iii=0; iii<noDS18B20Connected; iii++)
       calDS18B20Temperature[iii] = DS18B20Temperature[iii] + corrDS18B20[iii];
-      
-    // test ONLY!!!
-    /*
-    if((millis()%5) == 0){
-      DS18B20Temperature[0] = -111.11;
-      calDS18B20Temperature[0] = -111.88;
-    }
-    */
-
-    sprintf(printstring,"BaseDS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f %d %d %d - %d %ld\n", 
+    /*  
+    sprintf(printstring,"BaseDS18B20 Tmp1 %3.2f Tmp2 %3.2f Tmp3 %3.2f %d %d %d - %d %ld\n", 
       DS18B20Temperature[0], DS18B20Temperature[1], DS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
      logOut(printstring);
-
+    */ 
+    sprintf(printstring,"CalDS18B20 Tmp1  %3.2f Tmp2 %3.2f Tmp3 %3.2f %d %d %d - %d %ld\n", 
+      calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2], 
+      notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
+     logOut(printstring);
     if(GetOneDS18B20Counter <= previousGetOneDS18B20Counter)  // DS18B20 routine not counting
     {
       notMeasuredDS18B20 ++;
@@ -3026,7 +3185,7 @@ void main_handler()
         V[8] = air_quality_score; 
         // V[12] = air_quality_string; 
       #endif
-      
+     
       // delay(300); // give blynk time to send the stuff
       vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
     } // if start_loop_time  
@@ -3237,6 +3396,7 @@ void loop()
 {
   mainHandlerTimer.run();   // simple timer for main handler
   fanHandlerTimer.run();    // simple timer for fan handler 
+  thingspeakHandlerTimer.run(); // simple timer for thingspeak data sender handler
 
   // and this is the version for Blynk timer. One for all, but needs Blynk
   #ifdef isBLYNK 

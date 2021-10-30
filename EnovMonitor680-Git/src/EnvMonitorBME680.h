@@ -3,7 +3,7 @@
 *******************************************************/
 
 //*** global defined constants
-#define WDT_TIMEOUT_SECONDS 40  // 10 seconds watchdog timeout. Not too short, or the chip is dead!
+#define WDT_TIMEOUT_SECONDS 40  // 40 seconds watchdog timeout. Not too short, or the chip is dead!
 
 // general rule for globals: defined in module defining their function,
 // otherwise external.
@@ -85,7 +85,7 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   int noDS18B20Connected = 0;       // number of sensors that are actually connected
   volatile double DS18B20Temperature[MAX_NO_DS18B20] = {-111.11, -111.11,-111.11,-111.11,-111.11,
                                             -111.11, -111.11, -111.11, -111.11, -111.11};
-  double calDS18B20Temperature[MAX_NO_DS18B20]={-111.11, -111.11,-111.11,-111.11,-111.11,
+  volatile double calDS18B20Temperature[MAX_NO_DS18B20]={-111.11, -111.11,-111.11,-111.11,-111.11,
                                             -111.11, -111.11, -111.11, -111.11, -111.11}; 
                                                 // calibrated temperature values for output
   #define DS18B20RestartLimit 25              // these two to store how long no valid measurements, do restart of above limit
@@ -222,6 +222,15 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   String Text_3="";   // Text string 3 synchronized
 #endif
 
+#ifdef isThingspeak
+  #include <HTTPClient.h>
+  unsigned long myChannelNumber = 1553116;
+  const char * myWriteAPIKey = "Z56RS9AXT2VCZCV0";
+  // String readApiKey = "NMUECWL090S543MU" // not needed here, but for reference
+
+  String ThingspeakServerName = "https://api.thingspeak.com/update?api_key=Z56RS9AXT2VCZCV0";
+#endif
+
 // includes for OTA over the air Updates 
 #ifdef isOTA
   #include <WiFi.h>
@@ -345,8 +354,18 @@ float temperature, humidity, pressure, gas; // converted values in °C, %, mbar,
 //** global stuff 
 // timer for main_handler, and interval for it
 #define mainHandlerInterval 2000L
+#ifdef isThingspeak
+  #define mainHandlerInterval 2000L
+#else
+  #define mainHandlerInterval 2000L  
+#endif
+
 SimpleTimer mainHandlerTimer;
 int mainHandlerTimerHandle=0;
+#define thingspeakHandlerInterval 60000L
+
+SimpleTimer thingspeakHandlerTimer;
+int thingspeakHandlerTimerHandle=1;
 
 /************************************************************
 * Forward declarations
@@ -360,6 +379,7 @@ void getBME680SensorData();
 void checkBlynk();
 void restartBlynk();
 void main_handler();
+void thingspeak_handler();
 void lcd_handler();
 void oled_handler();
 void bme680FanHandler(void);

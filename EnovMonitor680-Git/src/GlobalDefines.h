@@ -3,10 +3,11 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.62"
-#define PROGDATE "2021-10-28"
+#define PROGVERSION "V0.64"
+#define PROGDATE "2021-10-30"
 
-#define isVirtuino      // Virtuno connection enabled. Alternative to Blynk
+#define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+#undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
 // !!! use only one option that sends or receives data from serial!
 #undef isBLYNK         // BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
@@ -248,7 +249,7 @@
     #define logSerial       // logging to serial enabled
     #define isLEDHeartbeat      // LED heartbeat on, Pin 14
 
-    static char infoStringLong[] = " BME680 Breadboard: BME680 auf Breadboard, sonst nichts";
+    static char infoStringLong[] = " BME680 Breadboard: BME680, 1 DS18B20 auf Breadboard";
     static char infoStringShort[] = "BME680 Breadboard";
 #endif
 
