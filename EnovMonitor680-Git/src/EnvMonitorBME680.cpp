@@ -2571,7 +2571,7 @@ void setup()
     return(ret);
   } // processSerialData()
 
-#endif // serial stuff  
+#endif // serial stuff 
 
 #ifdef isThingspeak
   void sendThingspeakData(String url)
@@ -2634,7 +2634,7 @@ void setup()
 
       sprintf(printstring,"ToThingspeak: ");
       // BME 680 stuff
-      if(!isEqual(temperature,last_temperature,0.05)){  
+      if(!isEqual(temperature,last_temperature,0.03)){  
         last_temperature = temperature;
         url = url+ "&field1=" + temperature;
         thingspeakCounter++;
@@ -2645,7 +2645,7 @@ void setup()
         sprintf(printstring2," temp: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(!isEqual(humidity,last_humidity,0.05)){  
+      if(!isEqual(humidity,last_humidity,0.07)){  
         last_humidity = humidity;
         url = url+ "&field2=" + humidity;
         thingspeakCounter++;
@@ -2656,8 +2656,8 @@ void setup()
         sprintf(printstring2," hum: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(!isEqual(pressure,last_pressure,0.05)){  
-        pressure = pressure;
+      if(!isEqual(pressure,last_pressure,0.07)){  
+        last_pressure = pressure;
         url = url+ "&field3=" + pressure;
         thingspeakCounter++;
         sprintf(printstring2," pres: %5.2f",pressure);
@@ -2667,7 +2667,32 @@ void setup()
         sprintf(printstring2," pres: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(!isEqual(air_quality_score,last_air_quality_score,0.1)){  
+      // average since last transfer
+      double avg;
+      if(air_quality_score_n > 0)
+        avg = air_quality_score_sum / air_quality_score_n;
+      else
+        avg = air_quality_score;
+      // send datum is sufficiently changed or 1000 measurments collected (to get an occasional data point to thingspeak)  
+      if(!isEqual(avg,last_air_quality_score,0.5) || air_quality_score_n > 999)
+      {  
+        sprintf(printstring2," airq : %5.2f %5.2f %d ",avg,air_quality_score_sum,air_quality_score_n);
+        strcat(printstring, printstring2);
+        last_air_quality_score = avg;
+        air_quality_score_sum = 0;  // reset sum for average
+        air_quality_score_n = 0;    // rest counter for average
+        url = url+ "&field4=" + avg;
+        thingspeakCounter++;
+        
+      }  
+      else{
+        sprintf(printstring2," airq: notMeas (avg: %5.3f) ",avg);
+        strcat(printstring, printstring2);
+        air_quality_score_sum = 0;  // reset sum for average
+        air_quality_score_n = 0;    // rest counter for average
+      }
+      /* original
+      if(!isEqual(air_quality_score,last_air_quality_score,0.5)){  
         last_air_quality_score = air_quality_score;
         url = url+ "&field4=" + air_quality_score;
         thingspeakCounter++;
@@ -2678,9 +2703,9 @@ void setup()
         sprintf(printstring2," airq: notMeas ");
         strcat(printstring, printstring2);
       }
-
+      */
       // DS18B20 data 
-      if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.01)))
+      if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.05)))
       {
         last_DSTemp0 = calDS18B20Temperature[0];
         url = url+ "&field5=" + calDS18B20Temperature[0];
@@ -2692,7 +2717,7 @@ void setup()
         sprintf(printstring2," Tmp0: notMeas %5.2f %5.2f %5.2f ",DS18B20Temperature[0],calDS18B20Temperature[0], last_DSTemp0);
         strcat(printstring, printstring2);
       }
-      if(((calDS18B20Temperature[1]) > (limit)) && (!isEqual(calDS18B20Temperature[1],last_DSTemp1,0.01)))
+      if(((calDS18B20Temperature[1]) > (limit)) && (!isEqual(calDS18B20Temperature[1],last_DSTemp1,0.05)))
       {  
         last_DSTemp1 = calDS18B20Temperature[1];
         url = url+ "&field6=" + calDS18B20Temperature[1];
@@ -2704,7 +2729,7 @@ void setup()
         sprintf(printstring2," Tmp1: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(((calDS18B20Temperature[2]) > (limit)) && (!isEqual(calDS18B20Temperature[2],last_DSTemp2,0.01))){  
+      if(((calDS18B20Temperature[2]) > (limit)) && (!isEqual(calDS18B20Temperature[2],last_DSTemp2,0.05))){  
         last_DSTemp2 = calDS18B20Temperature[2];
         url = url+ "&field7=" + calDS18B20Temperature[2];
         thingspeakCounter++;
@@ -3142,6 +3167,8 @@ void main_handler()
       pressure    = iaqSensor.pressure / 100; // sensor air pressure in mbar
       humidity    = iaqSensor.humidity;       // humidity in %
       air_quality_score = iaqSensor.iaq;      // air quality score. here 0(perfect)..500(worst)
+      air_quality_score_sum += air_quality_score; // for averaging in thingspeak
+      air_quality_score_n++;                      // for averaging in thingspeak
       
       if(air_quality_score <= 50){
         strcpy(air_quality_string," Air Quality is good");

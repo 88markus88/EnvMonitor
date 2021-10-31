@@ -121,7 +121,8 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   #include <SPI.h>              // < Include the SPI standard library
   #include "bsec.h"   // < The BME680 sensor library
 
-  float air_quality_score;
+  float air_quality_score, air_quality_score_sum = 0; 
+  unsigned long air_quality_score_n = 0;
   char air_quality_string[80];
   char air_quality_shortstring[80];
 
