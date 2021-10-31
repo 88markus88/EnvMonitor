@@ -2640,7 +2640,7 @@ void setup()
         avg = temperature_sum / temperature_n;
       else
         avg = temperature;
-      if(!isEqual(avg,last_temperature,0.03) || (temperature_n > 999)){  
+      if(!isEqual(avg,last_temperature,0.02) || (temperature_n > 999)){  
         last_temperature = avg;
         sprintf(printstring2," temp: %5.2f",avg);
         strcat(printstring, printstring2);
@@ -2657,7 +2657,7 @@ void setup()
         avg = humidity_sum / humidity_n;
       else
         avg = humidity;
-      if(!isEqual(avg,last_humidity,0.07) || (humidity_n > 999)){  
+      if(!isEqual(avg,last_humidity,0.03) || (humidity_n > 999)){  
         last_humidity = avg;
         sprintf(printstring2," hum: %5.2f",avg);
         strcat(printstring, printstring2);
@@ -2674,7 +2674,7 @@ void setup()
         avg = pressure_sum / pressure_n;
       else
         avg = pressure;
-      if(!isEqual(avg,last_pressure,0.07) || (pressure_n > 999)){  
+      if(!isEqual(avg,last_pressure,0.05) || (pressure_n > 999)){  
         last_pressure = avg;
         sprintf(printstring2," pres: %5.2f",avg);
         strcat(printstring, printstring2);
@@ -2723,7 +2723,7 @@ void setup()
       }
       */
       // DS18B20 data 
-      if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.05)))
+      if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.03)))
       {
         last_DSTemp0 = calDS18B20Temperature[0];
         url = url+ "&field5=" + calDS18B20Temperature[0];
@@ -2735,7 +2735,7 @@ void setup()
         sprintf(printstring2," Tmp0: notMeas %5.2f %5.2f %5.2f ",DS18B20Temperature[0],calDS18B20Temperature[0], last_DSTemp0);
         strcat(printstring, printstring2);
       }
-      if(((calDS18B20Temperature[1]) > (limit)) && (!isEqual(calDS18B20Temperature[1],last_DSTemp1,0.05)))
+      if(((calDS18B20Temperature[1]) > (limit)) && (!isEqual(calDS18B20Temperature[1],last_DSTemp1,0.03)))
       {  
         last_DSTemp1 = calDS18B20Temperature[1];
         url = url+ "&field6=" + calDS18B20Temperature[1];
@@ -2747,7 +2747,7 @@ void setup()
         sprintf(printstring2," Tmp1: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(((calDS18B20Temperature[2]) > (limit)) && (!isEqual(calDS18B20Temperature[2],last_DSTemp2,0.05))){  
+      if(((calDS18B20Temperature[2]) > (limit)) && (!isEqual(calDS18B20Temperature[2],last_DSTemp2,0.03))){  
         last_DSTemp2 = calDS18B20Temperature[2];
         url = url+ "&field7=" + calDS18B20Temperature[2];
         thingspeakCounter++;
