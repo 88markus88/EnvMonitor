@@ -2631,44 +2631,62 @@ void setup()
       static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
       static long thingspeakCounter = 0;
       String url=ThingspeakServerName;
+      // average since last transfer
+      float avg;
 
       sprintf(printstring,"ToThingspeak: ");
       // BME 680 stuff
-      if(!isEqual(temperature,last_temperature,0.03)){  
-        last_temperature = temperature;
-        url = url+ "&field1=" + temperature;
-        thingspeakCounter++;
-        sprintf(printstring2," temp: %5.2f",temperature);
+      if(temperature_n > 0)
+        avg = temperature_sum / temperature_n;
+      else
+        avg = temperature;
+      if(!isEqual(avg,last_temperature,0.03) || (temperature_n > 999)){  
+        last_temperature = avg;
+        sprintf(printstring2," temp: %5.2f",avg);
         strcat(printstring, printstring2);
+        temperature_sum=0; temperature_n=0;
+        url = url+ "&field1=" + avg;
+        thingspeakCounter++;
       }  
       else{
         sprintf(printstring2," temp: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(!isEqual(humidity,last_humidity,0.07)){  
-        last_humidity = humidity;
-        url = url+ "&field2=" + humidity;
-        thingspeakCounter++;
-        sprintf(printstring2," hum: %5.2f",humidity);
+      // humidity to thingspeak
+      if(humidity_n > 0)
+        avg = humidity_sum / humidity_n;
+      else
+        avg = humidity;
+      if(!isEqual(avg,last_humidity,0.07) || (humidity_n > 999)){  
+        last_humidity = avg;
+        sprintf(printstring2," hum: %5.2f",avg);
         strcat(printstring, printstring2);
+        humidity_sum=0; humidity_n=0;
+        url = url+ "&field2=" + avg;
+        thingspeakCounter++;
       }  
       else{
         sprintf(printstring2," hum: notMeas ");
         strcat(printstring, printstring2);
       }
-      if(!isEqual(pressure,last_pressure,0.07)){  
-        last_pressure = pressure;
-        url = url+ "&field3=" + pressure;
-        thingspeakCounter++;
-        sprintf(printstring2," pres: %5.2f",pressure);
+      // pressure to thingspeak
+      if(pressure_n > 0)
+        avg = pressure_sum / pressure_n;
+      else
+        avg = pressure;
+      if(!isEqual(avg,last_pressure,0.07) || (pressure_n > 999)){  
+        last_pressure = avg;
+        sprintf(printstring2," pres: %5.2f",avg);
         strcat(printstring, printstring2);
+        pressure_sum=0; pressure_n=0;
+        url = url+ "&field3=" + avg;
+        thingspeakCounter++;
       }  
       else{
         sprintf(printstring2," pres: notMeas ");
         strcat(printstring, printstring2);
       }
-      // average since last transfer
-      double avg;
+      // air quality score to thingspeak
       if(air_quality_score_n > 0)
         avg = air_quality_score_sum / air_quality_score_n;
       else
@@ -3163,12 +3181,22 @@ void main_handler()
             resetBME680(iaqSensor.status, iaqBME680Status);
       }
 
+      // get the data, and collect the required sums for averaging 
       temperature = iaqSensor.temperature;    // sensor temperature in C
+      temperature_sum += temperature;         // for averaging in thingspeak
+      temperature_n++;                        // for averaging in thingspeak
+
       pressure    = iaqSensor.pressure / 100; // sensor air pressure in mbar
+      pressure_sum += pressure;               // for averaging in thingspeak
+      pressure_n++;                           // for averaging in thingspeak
+
       humidity    = iaqSensor.humidity;       // humidity in %
+      humidity_sum += humidity;               // for averaging in thingspeak
+      humidity_n++;                           // for averaging in thingspeak
+
       air_quality_score = iaqSensor.iaq;      // air quality score. here 0(perfect)..500(worst)
       air_quality_score_sum += air_quality_score; // for averaging in thingspeak
-      air_quality_score_n++;                      // for averaging in thingspeak
+      air_quality_score_n++;                  // for averaging in thingspeak
       
       if(air_quality_score <= 50){
         strcpy(air_quality_string," Air Quality is good");

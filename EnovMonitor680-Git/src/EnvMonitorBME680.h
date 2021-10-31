@@ -111,7 +111,8 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   #include <SPI.h>              // < Include the SPI standard library
   #include "Zanshin_BME680.h"   // < The BME680 sensor library
 
-  float air_quality_score;
+  float air_quality_score, air_quality_score_sum = 0; 
+  unsigned long air_quality_score_n = 0;
   char air_quality_string[80];
   char air_quality_shortstring[80];
 #endif  
@@ -253,6 +254,9 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 #endif
 
 float temperature, humidity, pressure, gas; // converted values in °C, %, mbar, ???
+float temperature_sum, humidity_sum, pressure_sum;  // sums for averaging
+long temperature_n, humidity_n, pressure_n; // counters for averaging
+
 #ifdef isMHZ14A
   //*** PINs for serial communication via UART with CO2 Sensor
   #define RXD2 16
