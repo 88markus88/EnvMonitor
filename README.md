@@ -11,6 +11,8 @@ Visualization is done via Blynk, a commercial service that can also be used with
 All data that the EnvMonitor provides can be shown via the Blynk App - very simple and powerful. Since the service is cloud based, the data can be viewed at every location.
 Blynk also supports a local server (e.g. on a Raspberry) - this eliminates the costs for the Blynk service.
 
+Now also beginning to add support vor Thingspeak and for Virtuino
+
 ## Sensors:
 So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in *GlobalDefines.h*:
 - BME280 (Temperature / Humidity / Pressure) via I2C
