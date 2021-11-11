@@ -46,6 +46,8 @@
 #include "SDFunctions.h"        // functions to handle SD memory card
 #include "LCDFunctions.h"       // functions to handle LCD display
 #include "ESP32Ping.h"          // ping library
+//#include <cstring>
+//#include <string>
 
 void(* resetFunc) (void) = 0; //declare reset function @ address 0 THIS IS VERY USEFUL
 
@@ -63,7 +65,7 @@ void(* resetFunc) (void) = 0; //declare reset function @ address 0 THIS IS VERY 
 void logOut(char* printstring)
   {
     char timestring[50]="";      
-    char outstring[120];
+    char outstring[230];
 
     #ifdef isLEDHeartbeat
       heartbeatStatus = !heartbeatStatus;
@@ -1692,7 +1694,8 @@ void setup()
     }  
 
     #ifdef isRelay
-      if(countBME680Resets > 10)   
+      // toggle power if Wire.begin does not help (as it does not in  most cases)
+      if(countBME680Resets > 5)   
       {
         sprintf(printstring,"resetBME680: Resetting %d times not successful, toggling power to BME680\n", countBME680Resets-1);
         logOut(printstring);
@@ -1713,7 +1716,7 @@ void setup()
       sprintf(printstring,"%d Wire.begin() returned: %d\n", i, ret);
       logOut(printstring);
       i++;
-     }while(!ret && i<10);
+     }while(!ret && i<5);
 
     permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
 
@@ -2597,12 +2600,20 @@ void setup()
 #endif // serial stuff 
 
 #ifdef isThingspeak
+  /**************************************************!
+    @brief    function to send data to thingspeak 
+    @details  sends the completed URL string to the thingspeak web API
+    @param    String url : completed url string to be sent via internet to Thingspeak api 
+    @return   void
+  ***************************************************/
   void sendThingspeakData(String url)
   {
     int i=0;
     static int httpErrorCounter = 0;
 
-    Serial.println(url);
+    //Serial.println(url);
+    sprintf(printstring,"sendThingspekData() URL: %s\n",url.c_str());
+    logOut(printstring);
 
     // Connect or reconnect to WiFi
     if(WiFi.status() != WL_CONNECTED)
@@ -2799,6 +2810,8 @@ void setup()
       logOut(printstring);
       // send data in collected string to Thingspeak
       sendThingspeakData(url);
+      sprintf(printstring,"After sendThingspekData() \n");
+      logOut(printstring);
     #endif
   }
 #endif

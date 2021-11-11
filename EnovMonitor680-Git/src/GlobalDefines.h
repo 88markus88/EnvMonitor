@@ -3,10 +3,10 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.6"
-#define PROGDATE "2021-11-1"
+#define PROGVERSION "V0.67"
+#define PROGDATE "2021-11-11"
 
-#undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+#define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
