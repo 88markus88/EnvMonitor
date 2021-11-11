@@ -626,12 +626,19 @@ void logOut(char* printstring)
   void getNTPTime()
   {
     char printstring[80];
+    int tryCount = 0;
 
     Serial.print("Connecting to ");
     Serial.println(ssid);
-    WiFi.begin(ssid, pass);
-    while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
+
+    // while ((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED)) 
+    while(WiFi.status() != WL_CONNECTED)
+    {
+      tryCount++;
+      WiFi.disconnect();      // new 11.10.21: disconnect and connect in the loop
+      WiFi.begin(ssid, pass);
+    
+      delay(500*tryCount);
       Serial.print(".");
     }
     esp_task_wdt_reset();   // keep watchdog happy
@@ -1155,10 +1162,15 @@ void setup()
 
   Serial.print("6");
   // set timer for main_handler()
-  // Virtuino
-  mainHandlerTimerHandle = mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
-  // Blynk
-  // mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+
+  #ifdef isBLYNK
+    mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
+  #else  
+    // Virtuino, Thingspeak
+    mainHandlerTimer.setInterval(mainHandlerInterval, main_handler);
+  #endif  
+
+
   Serial.print("7 ");
   sprintf(printstring, "mainHandlerTimerHandle: %d\n", mainHandlerTimerHandle);
   logOut(printstring);
@@ -1261,7 +1273,7 @@ void setup()
     delay(10);
   #endif
 
-  #if defined isOneDS18B20 && defined isRelay  
+  #ifdef isRelay  
     // set timer for bme680FanHandler()
     // fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     fanTimerHandle = fanHandlerTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
@@ -1455,7 +1467,7 @@ void setup()
       });
 
       ArduinoOTA.begin();
-    #endif
+    #endif // isOTA
   
     //Serial.println("A1 ");
     #ifdef isInfactory433
@@ -2576,18 +2588,26 @@ void setup()
 #ifdef isThingspeak
   void sendThingspeakData(String url)
   {
+    int i=0;
+    static int httpErrorCounter = 0;
+
     Serial.println(url);
 
     // Connect or reconnect to WiFi
     if(WiFi.status() != WL_CONNECTED)
+    // if((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED))
     {
       Serial.print("Attempting to connect to SSID: ");
       Serial.println(ssid);
-      while(WiFi.status() != WL_CONNECTED){
-        WiFi.begin(ssid, pass); // Connect to WPA/WPA2 network. Change this line if using open or WEP network
+      while((WiFi.status() != WL_CONNECTED) && (i<10))
+      {
+        i++;
+        WiFi.disconnect();      // new 11.10.21: disconnect and connect in the loop
+        WiFi.begin(ssid, pass);
         Serial.print(".");
-        delay(5000);     
+        delay(i*500);     
       } 
+      esp_task_wdt_reset();   // keep watchdog happy
       Serial.println("\nConnected.");
     }
 
@@ -2600,11 +2620,16 @@ void setup()
     if (httpResponseCode > 0){ // Check for good HTTP status code
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
+      httpErrorCounter = 0;
     }else{
-      Serial.print("Error code: ");
+      Serial.print("HTTP Error code: ");
       Serial.println(httpResponseCode);
+      httpErrorCounter++;
     }
     http.end();
+    // if too many fails: reboot.
+    if(httpErrorCounter > 4)
+      ESP.restart();
   }
   #endif
 
@@ -3449,9 +3474,15 @@ void lcd_handler()
 *****************************************************************************/
 void loop()
 {
-  mainHandlerTimer.run();   // simple timer for main handler
-  fanHandlerTimer.run();    // simple timer for fan handler 
-  thingspeakHandlerTimer.run(); // simple timer for thingspeak data sender handler
+  #if defined isThingspeak || defined isVirtuino
+    mainHandlerTimer.run();   // simple timer for main handler
+  #endif
+  #ifdef isRelay
+    fanHandlerTimer.run();    // simple timer for fan handler 
+  #endif  
+  #ifdef isThingspeak
+    thingspeakHandlerTimer.run(); // simple timer for thingspeak data sender handler
+  #endif  
 
   // and this is the version for Blynk timer. One for all, but needs Blynk
   #ifdef isBLYNK 

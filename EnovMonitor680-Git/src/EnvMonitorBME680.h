@@ -366,11 +366,14 @@ long temperature_n, humidity_n, pressure_n; // counters for averaging
 #endif
 
 SimpleTimer mainHandlerTimer;
-int mainHandlerTimerHandle=0;
-#define thingspeakHandlerInterval 60000L
+int mainHandlerTimerHandle;
 
-SimpleTimer thingspeakHandlerTimer;
-int thingspeakHandlerTimerHandle=1;
+#ifdef isThingspeak
+  #define thingspeakHandlerInterval 60000L
+
+  SimpleTimer thingspeakHandlerTimer;
+  int thingspeakHandlerTimerHandle=1;
+#endif  
 
 /************************************************************
 * Forward declarations

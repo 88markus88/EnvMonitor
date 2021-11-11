@@ -3,13 +3,13 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.65"
-#define PROGDATE "2021-10-31"
+#define PROGVERSION "V0.66"
+#define PROGDATE "2021-11-10"
 
-#define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+#undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
 // !!! use only one option that sends or receives data from serial!
-#undef isBLYNK         // BLYNK Connection enabled
+#define isBLYNK         // BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
     #define blynkRegularCheck // if defined, checkBlynk called() regularly by timer to reconnect
     #undef blynkCloud       // define this to use blynk cloud, undef to use local server
@@ -25,10 +25,10 @@
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
- // #define blynkSenseAirRedBox
+  #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
- #define blynkBME680BreadBoard    // BME680 auf Breadboard
+ // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
