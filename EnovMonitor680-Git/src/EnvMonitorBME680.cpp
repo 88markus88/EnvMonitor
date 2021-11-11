@@ -1366,43 +1366,52 @@ void setup()
   #endif
 
   #ifdef isBME680_BSECLib
-    sprintf(printstring,"- Initializing BME680 sensor with BSEC Library\n");
-    logOut(printstring);
+    int iaqSensorStatus, iaqBME680Status;
+    do{
+      sprintf(printstring,"- Initializing BME680 sensor with BSEC Library\n");
+      logOut(printstring);
 
-    Wire.begin();
-    permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
+      Wire.begin();
+      permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
 
-    #ifdef BME_Secondary_Address   // if defined, use secondary address for BME680
-      iaqSensor.begin(BME680_I2C_ADDR_SECONDARY, Wire);
-    #else
-      iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
-    #endif
-    //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
-    //Serial.println(output);
-    sprintf(printstring,
-      "\nBSEC library version %d.%d.%d.%d", 
-        iaqSensor.version.major, iaqSensor.version.minor, 
-        iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
-    logOut(printstring);
-    checkIaqSensorStatus();
+      #ifdef BME_Secondary_Address   // if defined, use secondary address for BME680
+        iaqSensor.begin(BME680_I2C_ADDR_SECONDARY, Wire);
+      #else
+        iaqSensor.begin(BME680_I2C_ADDR_PRIMARY, Wire);
+      #endif
+      //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
+      //Serial.println(output);
+      sprintf(printstring,
+        "\nBSEC library version %d.%d.%d.%d", 
+          iaqSensor.version.major, iaqSensor.version.minor, 
+          iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
+      logOut(printstring);
+      checkIaqSensorStatus();
 
-    iaqSensor.setConfig(bsec_config_iaq);
-    checkIaqSensorStatus();
+      iaqSensor.setConfig(bsec_config_iaq);
+      checkIaqSensorStatus();
 
-    loadBsecState();
+      loadBsecState();
 
-    bsec_virtual_sensor_t sensorList[7] = {
-      BSEC_OUTPUT_RAW_TEMPERATURE,
-      BSEC_OUTPUT_RAW_PRESSURE,
-      BSEC_OUTPUT_RAW_HUMIDITY,
-      BSEC_OUTPUT_RAW_GAS,
-      BSEC_OUTPUT_IAQ,
-      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
-      BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
-    };
+      bsec_virtual_sensor_t sensorList[7] = {
+        BSEC_OUTPUT_RAW_TEMPERATURE,
+        BSEC_OUTPUT_RAW_PRESSURE,
+        BSEC_OUTPUT_RAW_HUMIDITY,
+        BSEC_OUTPUT_RAW_GAS,
+        BSEC_OUTPUT_IAQ,
+        BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_TEMPERATURE,
+        BSEC_OUTPUT_SENSOR_HEAT_COMPENSATED_HUMIDITY,
+      };
 
-    iaqSensor.updateSubscription(sensorList, 7, BSEC_SAMPLE_RATE_LP);
-    checkIaqSensorStatus();
+      iaqSensor.updateSubscription(sensorList, 7, BSEC_SAMPLE_RATE_LP);
+
+      iaqSensorStatus = iaqSensor.status;
+      iaqBME680Status = iaqSensor.bme680Status;
+      checkIaqSensorStatus(); // may reset iaqSensor.status
+      if(iaqSensorStatus != BSEC_OK || iaqBME680Status != BSEC_OK) 
+        resetBME680(iaqSensor.status, iaqBME680Status);
+      esp_task_wdt_reset();   // keep watchdog happy  
+    } while(iaqSensorStatus != BSEC_OK || iaqBME680Status != BSEC_OK);  
   #endif 
 
   #ifdef isBLYNK
@@ -1670,6 +1679,7 @@ void setup()
   void resetBME680(int sensorStatus, int bme680Status)
   {
     bool ret;
+    int i=0;
 
     countBME680Resets++;  // increment reset counter
 
@@ -1700,9 +1710,10 @@ void setup()
 
     do{
       ret = Wire.begin(); 
-      sprintf(printstring,"Wire.begin() returned: %d\n", ret);
+      sprintf(printstring,"%d Wire.begin() returned: %d\n", i, ret);
       logOut(printstring);
-     }while(!ret);
+      i++;
+     }while(!ret && i<10);
 
     permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
 

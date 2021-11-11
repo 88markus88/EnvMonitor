@@ -391,6 +391,7 @@ void thingspeak_handler();
 void lcd_handler();
 void oled_handler();
 void bme680FanHandler(void);
+void resetBME680(int sensorStatus, int bme680Status);
 void restartDS18B20MeasurementFunction();
 
 //*** specific forward declarations
