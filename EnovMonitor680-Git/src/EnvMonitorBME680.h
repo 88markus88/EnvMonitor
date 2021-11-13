@@ -375,6 +375,13 @@ int mainHandlerTimerHandle;
   int thingspeakHandlerTimerHandle=1;
 #endif  
 
+#ifdef isBluetoothCredentials
+  // Bluetooth
+  #include "BluetoothSerial.h"    // Header File for Serial Bluetooth, will be added by default into Arduino
+  BluetoothSerial ESP_BT; //Object for Bluetooth
+  Preferences credentialstorage;    // permanent storage object for BSEC BME 680 sensor parameter
+#endif  
+
 /************************************************************
 * Forward declarations
 *************************************************************/

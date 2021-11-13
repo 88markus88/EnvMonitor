@@ -46,6 +46,7 @@
 #include "SDFunctions.h"        // functions to handle SD memory card
 #include "LCDFunctions.h"       // functions to handle LCD display
 #include "ESP32Ping.h"          // ping library
+
 //#include <cstring>
 //#include <string>
 
@@ -1028,6 +1029,118 @@ void vDelay(int delayInMillis){long t=millis()+delayInMillis;while (millis()<t) 
 
 #endif
 
+#ifdef isBluetoothCredentials
+
+/**************************************************!
+   @brief    function scan all networks available within Wifi
+   @details  
+   @param none
+   @return   void
+  ***************************************************/
+  int scanWifiNetworks()
+  {
+    Serial.println("scan start");
+
+    // WiFi.scanNetworks will return the number of networks found
+    int n = WiFi.scanNetworks();
+    Serial.println("scan done");
+    if (n == 0) {
+      Serial.println("no networks found");
+    } else {
+      Serial.print(n);
+      Serial.println(" networks found");
+      for (int i = 0; i < n; ++i) {
+        // Print SSID and RSSI for each network found
+        Serial.print(i + 1);
+        Serial.print(": ");
+        Serial.print(WiFi.SSID(i));
+        Serial.print(" (");
+        Serial.print(WiFi.RSSI(i));
+        Serial.print(")");
+        Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
+        delay(10);
+      }
+    }
+    WiFi.begin();
+    delay(500);
+    WiFi.disconnect();
+    delay(500);
+    return(n);  
+  }
+
+ /**************************************************!
+   @brief    function to get wifi credentials via bluetooth at startup
+   @details  
+   @param char* ssid: wifi network ssid to be returned
+          char* pass: wifi password to be returned
+          int* noOfNetwork: alternative to ssid, the index of the list scanned is returned
+          int noOfNetworks: Input parameter, the number of networks that are detectred  
+   @return   bool : true = successfully got wifi parameters.
+  ***************************************************/
+bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noNetworks)
+{
+  long currentMillis, startMillis, intervalMillis=60000;
+  String buffer_in, Ssid, Pass; // https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/ 
+  boolean ssidFlag=false, passFlag=false, noFlag=false;
+  int a,b;
+
+  startMillis = millis();
+  while(millis() < startMillis + intervalMillis)
+  {
+    if (ESP_BT.available()) // Check if we receive anything from Bluetooth
+    {
+      buffer_in = ESP_BT.readStringUntil('\n'); //Read what we recevive 
+      Serial.print("Received: "); Serial.println(buffer_in);
+	    delay(20);
+      if(buffer_in.indexOf("ssid") != -1)
+      {
+        a=buffer_in.indexOf("[");
+        b=buffer_in.indexOf("]");
+        if(a>-1 && b>-1 && (b-a)>1) // start and end character found, and something between them
+        {
+          Ssid = buffer_in.substring(a+1, b);
+          strcpy(ssid, Ssid.c_str());
+          sprintf(printstring,"ssid is: _%s_\n",ssid);
+          Serial.print(printstring);
+          ssidFlag=true;
+        }  
+      }
+      else if(buffer_in.indexOf("pass") != -1)
+      {
+        a=buffer_in.indexOf("[");
+        b=buffer_in.indexOf("]");
+        if(a>-1 && b>-1 && (b-a)>1) // start and end character found, and something between them
+        {
+          Pass = buffer_in.substring(a+1, b);
+          sprintf(printstring,"pass is: _%s_\n",Pass.c_str());
+          strcpy(pass,Pass.c_str());
+          Serial.print(printstring);
+          passFlag=true;
+        }
+      }  
+      else if(buffer_in.toInt() > 0)
+      {
+        a = buffer_in.toInt();
+
+        if(a>0 && a<noNetworks) 
+        {
+          *noOfNetwork = a;
+          sprintf(printstring,"Network number is: _%d_\n",*noOfNetwork);
+          Serial.print(printstring);
+          noFlag=true;
+        }
+      }  
+    }
+    delay(100);
+    esp_task_wdt_reset();   // keep watchdog happy  
+
+    if ((ssidFlag && passFlag) || (passFlag && noFlag)) // leave loop if both are available
+      break;
+  }
+  return ((ssidFlag && passFlag) || (passFlag && noFlag));
+} 
+#endif
+
  /**************************************************!
    @brief    setup function
    @details  main setup for all functions of the software
@@ -1054,6 +1167,68 @@ void setup()
   startTime = millis(); // remember the start time
   Serial.print("2");
 
+  #ifdef isBluetoothCredentials
+    // get ssid and pass via bluetooth
+    int noNetworks=0;
+    char ss[50], pw[50]; 
+    int noOfNetwork=0;
+    String Ss, Pw;
+
+    // this prevents a successful connection later!!
+    // noNetworks = scanWifiNetworks();
+
+    Serial.println("Bluetooth Device is Ready to Pair");
+    Serial.println("Waiting For Wifi Credential Updates 60 seconds");
+    Serial.println("Enter: ('ssid:[myssid]' OR network index number) AND 'pass:[password] ");
+
+    ESP_BT.begin("ESP32_BLUETOOTH"); //Name of your Bluetooth Signal
+    if(checkBluetoothCredentials(ss,  pw, &noOfNetwork, noNetworks) )
+    {
+      sprintf(printstring,"Raw Credentials: _%s_ _%s_ %d\n",
+          ss, pw, noOfNetwork);
+      Serial.print(printstring);
+      if(noOfNetwork < 1)
+        strcpy(ssid,ss);
+      else
+        strcpy(ssid,WiFi.SSID(noOfNetwork-1).c_str());
+      strcpy(pass,pw);
+      sprintf(printstring,"checkBluetoothCredentials returned TRUE. Credentials: _%s_ _%s_ %d\n",
+          ssid, pass, noOfNetwork);
+      Serial.print(printstring);
+      credentialstorage.begin("credentials", false);    
+      int ssid_len = credentialstorage.putBytes("ssid", ssid, strlen(ssid)+1); 
+      int pass_len = credentialstorage.putBytes("pass", pass, strlen(pass)+1); 
+      credentialstorage.end();
+      sprintf(printstring,"Wrote to EEPROM: ssid: %d _%s_ | %d pass: _%s_ \n", 
+          ssid_len, ssid, pass_len, pass);
+      Serial.print(printstring);
+      delay(500);
+    }
+    else
+    {
+      // no credentials received via bluetooth. 
+      sprintf(printstring,"checkBluetoothCredentials returned FALSE. Credentials: _%s_ _%s_\n",ssid, pass);
+      Serial.print(printstring);
+      // try to get from credential storage (EEPROM)
+      credentialstorage.begin("credentials", false);    
+      // ssid = credentialstorage.getString("ssid", ""); 
+      // pass = credentialstorage.getString("pass", ""); 
+      int ssid_len = credentialstorage.getBytes("ssid", ssid, 50); 
+      int pass_len = credentialstorage.getBytes("pass", pass, 50); 
+      credentialstorage.end();
+      sprintf(printstring,"Read from EEPROM: ssid: %d _%s_ | %d pass: _%s_ \n", ssid_len, ssid, pass_len, pass);
+      Serial.print(printstring);
+      delay(500);
+
+      if (strlen(ssid) <2 || strlen(pass) < 2){
+        Serial.println("No values saved in EEPROM for ssid or password, using defaults");
+        strcpy(ssid,default_ssid);
+        strcpy(pass,default_pass);
+      }
+    }
+    ESP_BT.end();
+  #endif
+
   #ifdef getNTPTIME
     // get time from NTP server
     // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
@@ -1070,6 +1245,7 @@ void setup()
   preferences.putInt("NoReboots", NoReboots+1);    // and increment it - new start.
   preferences.end();
 
+  
   Serial.print("4");
   #ifdef isSD
     // Create a file on the SD card and write the data labels
@@ -2671,68 +2847,68 @@ void setup()
   ***************************************************/
   void thingspeak_handler() 
   {
-    #ifdef isOneDS18B20
-      // build thingspeak string and then send it 
-      double limit = -110.0;
-      static float last_temperature=0, last_humidity=0, last_pressure=0, last_air_quality_score=0;
-      static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
-      static long thingspeakCounter = 0;
-      String url=ThingspeakServerName;
-      // average since last transfer
-      float avg;
+    // build thingspeak string and then send it 
+    double limit = -110.0;
+    static float last_temperature=0, last_humidity=0, last_pressure=0, last_air_quality_score=0;
+    static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
+    static long thingspeakCounter = 0;
+    String url=ThingspeakServerName;
+    // average since last transfer
+    float avg;
 
-      sprintf(printstring,"ToThingspeak: ");
-      // BME 680 stuff
-      if(temperature_n > 0)
-        avg = temperature_sum / temperature_n;
-      else
-        avg = temperature;
-      if(!isEqual(avg,last_temperature,0.02) || (temperature_n > 999)){  
-        last_temperature = avg;
-        sprintf(printstring2," temp: %5.2f",avg);
-        strcat(printstring, printstring2);
-        temperature_sum=0; temperature_n=0;
-        url = url+ "&field1=" + avg;
-        thingspeakCounter++;
-      }  
-      else{
-        sprintf(printstring2," temp: notMeas ");
-        strcat(printstring, printstring2);
-      }
-      // humidity to thingspeak
-      if(humidity_n > 0)
-        avg = humidity_sum / humidity_n;
-      else
-        avg = humidity;
-      if(!isEqual(avg,last_humidity,0.03) || (humidity_n > 999)){  
-        last_humidity = avg;
-        sprintf(printstring2," hum: %5.2f",avg);
-        strcat(printstring, printstring2);
-        humidity_sum=0; humidity_n=0;
-        url = url+ "&field2=" + avg;
-        thingspeakCounter++;
-      }  
-      else{
-        sprintf(printstring2," hum: notMeas ");
-        strcat(printstring, printstring2);
-      }
-      // pressure to thingspeak
-      if(pressure_n > 0)
-        avg = pressure_sum / pressure_n;
-      else
-        avg = pressure;
-      if(!isEqual(avg,last_pressure,0.05) || (pressure_n > 999)){  
-        last_pressure = avg;
-        sprintf(printstring2," pres: %5.2f",avg);
-        strcat(printstring, printstring2);
-        pressure_sum=0; pressure_n=0;
-        url = url+ "&field3=" + avg;
-        thingspeakCounter++;
-      }  
-      else{
-        sprintf(printstring2," pres: notMeas ");
-        strcat(printstring, printstring2);
-      }
+    sprintf(printstring,"ToThingspeak: ");
+    // BME 680 stuff
+    if(temperature_n > 0)
+      avg = temperature_sum / temperature_n;
+    else
+      avg = temperature;
+    if(!isEqual(avg,last_temperature,0.02) || (temperature_n > 999)){  
+      last_temperature = avg;
+      sprintf(printstring2," temp: %5.2f",avg);
+      strcat(printstring, printstring2);
+      temperature_sum=0; temperature_n=0;
+      url = url+ "&field1=" + avg;
+      thingspeakCounter++;
+    }  
+    else{
+      sprintf(printstring2," temp: notMeas ");
+      strcat(printstring, printstring2);
+    }
+    // humidity to thingspeak
+    if(humidity_n > 0)
+      avg = humidity_sum / humidity_n;
+    else
+      avg = humidity;
+    if(!isEqual(avg,last_humidity,0.03) || (humidity_n > 999)){  
+      last_humidity = avg;
+      sprintf(printstring2," hum: %5.2f",avg);
+      strcat(printstring, printstring2);
+      humidity_sum=0; humidity_n=0;
+      url = url+ "&field2=" + avg;
+      thingspeakCounter++;
+    }  
+    else{
+      sprintf(printstring2," hum: notMeas ");
+      strcat(printstring, printstring2);
+    }
+    // pressure to thingspeak
+    if(pressure_n > 0)
+      avg = pressure_sum / pressure_n;
+    else
+      avg = pressure;
+    if(!isEqual(avg,last_pressure,0.05) || (pressure_n > 999)){  
+      last_pressure = avg;
+      sprintf(printstring2," pres: %5.2f",avg);
+      strcat(printstring, printstring2);
+      pressure_sum=0; pressure_n=0;
+      url = url+ "&field3=" + avg;
+      thingspeakCounter++;
+    }  
+    else{
+      sprintf(printstring2," pres: notMeas ");
+      strcat(printstring, printstring2);
+    }
+    #if defined isBME680 || defined isBME680_BSECLib
       // air quality score to thingspeak
       if(air_quality_score_n > 0)
         avg = air_quality_score_sum / air_quality_score_n;
@@ -2747,28 +2923,17 @@ void setup()
         air_quality_score_sum = 0;  // reset sum for average
         air_quality_score_n = 0;    // rest counter for average
         url = url+ "&field4=" + avg;
-        thingspeakCounter++;
-        
-      }  
+        thingspeakCounter++;          
+    }  
       else{
         sprintf(printstring2," airq: notMeas (avg: %5.3f) ",avg);
         strcat(printstring, printstring2);
         air_quality_score_sum = 0;  // reset sum for average
         air_quality_score_n = 0;    // rest counter for average
       }
-      /* original
-      if(!isEqual(air_quality_score,last_air_quality_score,0.5)){  
-        last_air_quality_score = air_quality_score;
-        url = url+ "&field4=" + air_quality_score;
-        thingspeakCounter++;
-        sprintf(printstring2," airq : %5.2f",air_quality_score);
-        strcat(printstring, printstring2);
-      }  
-      else{
-        sprintf(printstring2," airq: notMeas ");
-        strcat(printstring, printstring2);
-      }
-      */
+    #endif 
+
+    #ifdef isOneDS18B20
       // DS18B20 data 
       if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.03)))
       {
@@ -2805,14 +2970,14 @@ void setup()
         sprintf(printstring2," Tmp2: notMeas ");
         strcat(printstring, printstring2);
       }
-      sprintf(printstring2," Sent# : %d \n", thingspeakCounter);
-      strcat(printstring, printstring2);
-      logOut(printstring);
-      // send data in collected string to Thingspeak
-      sendThingspeakData(url);
-      sprintf(printstring,"After sendThingspekData() \n");
-      logOut(printstring);
-    #endif
+    #endif // isOneDS18B20  
+    sprintf(printstring2," Sent# : %ld \n", thingspeakCounter);
+    strcat(printstring, printstring2);
+    logOut(printstring);
+    // send data in collected string to Thingspeak
+    sendThingspeakData(url);
+    sprintf(printstring,"After sendThingspekData() \n");
+    logOut(printstring);
   }
 #endif
 
@@ -2829,7 +2994,10 @@ void main_handler()
 
   // float time_sec;
   long start_loop_time, end_loop_time;
-  static long lastBME680Time;
+  
+  #if defined  isBME680  || defined isBME680_BSECLib
+    static long lastBME680Time;
+  #endif 
 
   time_sec = (float)millis()/1000;
 
@@ -3347,6 +3515,7 @@ void main_handler()
     #endif  // Blynk
   #endif    // SENSEAIR
 
+  sprintf(printstring,"%ld %ld",start_loop_time, end_loop_time);
   // loop timing - no more needed, with main_handler controlled by timer
   /*
   end_loop_time= millis();
