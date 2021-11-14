@@ -87,6 +87,9 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
                                             -111.11, -111.11, -111.11, -111.11, -111.11};
   volatile double calDS18B20Temperature[MAX_NO_DS18B20]={-111.11, -111.11,-111.11,-111.11,-111.11,
                                             -111.11, -111.11, -111.11, -111.11, -111.11}; 
+  double calDS18B20Temperature_sum[MAX_NO_DS18B20]= {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int calDS18B20Temperature_n[MAX_NO_DS18B20]  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
                                                 // calibrated temperature values for output
   #define DS18B20RestartLimit 25              // these two to store how long no valid measurements, do restart of above limit
   int noDS18B20Restarts = 0;                  // Counter for DS18B20 Restarts

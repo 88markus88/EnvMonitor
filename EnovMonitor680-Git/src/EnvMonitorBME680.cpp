@@ -824,6 +824,7 @@ void outputProgramInfo()
   logOut(printstring2);
   strcpy(printstring2,"\n This is EnvMonitorBME680.cpp \n"); 
   logOut(printstring2);
+  logOut(infoStringShort);
   logOut(infoStringLong);
   logOut(printstring);
   #ifdef isBLYNK
@@ -1072,7 +1073,7 @@ String NetworkID[50];
     // WiFi.disconnect();
     delay(1000);
     WiFi.disconnect( true );
-    delay(1000);
+    delay(5000);
     return(n);  
   }
 
@@ -1112,6 +1113,7 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
           Serial.print(printstring);
           ssidFlag=true;
         }  
+        startMillis = millis(); // reset timer
       }
       else if(buffer_in.indexOf("pass") != -1)
       {
@@ -1125,6 +1127,7 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
           Serial.print(printstring);
           passFlag=true;
         }
+        startMillis = millis(); // reset timer
       }  
       else if(buffer_in.toInt() > 0)
       {
@@ -1138,6 +1141,7 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
           Serial.println(WiFi.SSID(*noOfNetwork - 1));
           noFlag=true;
         }
+        startMillis = millis(); // reset timer
       }  
     }
     delay(100);
@@ -1183,12 +1187,12 @@ void setup()
     int noOfNetwork=0;
     String Ss, Pw;
 
-    // this prevents a successful connection later!!
+    // this often prevents a successful connection later!!
     // noNetworks = scanWifiNetworks();
 
-    Serial.println("Bluetooth Device is ready to pair");
+    Serial.println("\nBluetooth Device is ready to pair");
     Serial.println("Waiting For Wifi Credential Updates 60 seconds");
-    Serial.println("Enter: ('ssid:[myssid]' AND 'pass:[password] ");
+    Serial.println("Enter: 'ssid:[myssid]' AND 'pass:[password]' ");
 
     ESP_BT.begin("ESP32_BLUETOOTH"); //Name of your Bluetooth Signal
     ESP_BT.setPin("1234");           // Set the bluetooth PIN of the device
@@ -2862,7 +2866,10 @@ void setup()
   {
     // build thingspeak string and then send it 
     double limit = -110.0;
-    static float last_temperature=0, last_humidity=0, last_pressure=0, last_air_quality_score=0;
+    static float last_temperature=0, last_humidity=0, last_pressure=0; 
+    #if defined isBME680 || defined isBME680_BSECLib
+      static float last_air_quality_score=0;
+    #endif   
     static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
     static long thingspeakCounter = 0;
     String url=ThingspeakServerName;
@@ -2886,6 +2893,7 @@ void setup()
     else{
       sprintf(printstring2," temp: notMeas ");
       strcat(printstring, printstring2);
+      temperature_sum=0; temperature_n=0;
     }
     // humidity to thingspeak
     if(humidity_n > 0)
@@ -2903,6 +2911,7 @@ void setup()
     else{
       sprintf(printstring2," hum: notMeas ");
       strcat(printstring, printstring2);
+      humidity_sum=0; humidity_n=0;
     }
     // pressure to thingspeak
     if(pressure_n > 0)
@@ -2920,7 +2929,9 @@ void setup()
     else{
       sprintf(printstring2," pres: notMeas ");
       strcat(printstring, printstring2);
+      pressure_sum=0; pressure_n=0;
     }
+
     #if defined isBME680 || defined isBME680_BSECLib
       // air quality score to thingspeak
       if(air_quality_score_n > 0)
@@ -2948,40 +2959,71 @@ void setup()
 
     #ifdef isOneDS18B20
       // DS18B20 data 
-      if(((calDS18B20Temperature[0]) > (limit)) && (!isEqual(calDS18B20Temperature[0],last_DSTemp0,0.03)))
+      double temp;
+      sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum[0],calDS18B20Temperature_n[0]);
+      logOut(printstring);
+      if(calDS18B20Temperature_n[0] > 0)
+        temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
+      else
+        temp = -111.11;  
+      if((temp > limit) && (!isEqual(temp,last_DSTemp0,0.03)))
       {
-        last_DSTemp0 = calDS18B20Temperature[0];
-        url = url+ "&field5=" + calDS18B20Temperature[0];
-        thingspeakCounter++;
-        sprintf(printstring2," Tmp0: %5.2f ",calDS18B20Temperature[0]);
+        sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+          calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
         strcat(printstring, printstring2);
+        last_DSTemp0 = temp;
+        calDS18B20Temperature_sum[0] = 0;
+        calDS18B20Temperature_n[0] = 0;
+        url = url+ "&field5=" + temp;
+        thingspeakCounter++;       
       }  
       else{
-        sprintf(printstring2," Tmp0: notMeas %5.2f %5.2f %5.2f ",DS18B20Temperature[0],calDS18B20Temperature[0], last_DSTemp0);
+        sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+          calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
         strcat(printstring, printstring2);
+        calDS18B20Temperature_sum[0] = 0;
+        calDS18B20Temperature_n[0] = 0;
       }
-      if(((calDS18B20Temperature[1]) > (limit)) && (!isEqual(calDS18B20Temperature[1],last_DSTemp1,0.03)))
+
+      if(calDS18B20Temperature_n[1] > 0)
+        temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
+      else
+        temp = -111.11;  
+      if((temp > limit) && (!isEqual(temp,last_DSTemp1,0.03)))
       {  
-        last_DSTemp1 = calDS18B20Temperature[1];
-        url = url+ "&field6=" + calDS18B20Temperature[1];
-        thingspeakCounter++;
-        sprintf(printstring2," Tmp1: %5.2f ",calDS18B20Temperature[1]);
+        sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
+        last_DSTemp1 = temp;
+        calDS18B20Temperature_sum[1] = 0;
+        calDS18B20Temperature_n[1] = 0;
+        url = url+ "&field6=" + temp;
+        thingspeakCounter++;
       }  
       else{
         sprintf(printstring2," Tmp1: notMeas ");
         strcat(printstring, printstring2);
+        calDS18B20Temperature_sum[1] = 0;
+        calDS18B20Temperature_n[1] = 0;
       }
-      if(((calDS18B20Temperature[2]) > (limit)) && (!isEqual(calDS18B20Temperature[2],last_DSTemp2,0.03))){  
-        last_DSTemp2 = calDS18B20Temperature[2];
-        url = url+ "&field7=" + calDS18B20Temperature[2];
-        thingspeakCounter++;
-        sprintf(printstring2," Tmp2: %5.2f",calDS18B20Temperature[2]);
+
+      if(calDS18B20Temperature_n[2] > 0)
+        temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
+      else
+        temp = -111.11;        
+      if((temp > limit) && (!isEqual(temp,last_DSTemp2,0.03))){  
+        sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
+        last_DSTemp2 = temp;
+        calDS18B20Temperature_sum[2] = 0;
+        calDS18B20Temperature_n[2] = 0;
+        url = url+ "&field7=" + temp;
+        thingspeakCounter++;
       }  
       else{
         sprintf(printstring2," Tmp2: notMeas ");
         strcat(printstring, printstring2);
+        calDS18B20Temperature_sum[1] = 0;
+        calDS18B20Temperature_n[1] = 0;
       }
     #endif // isOneDS18B20  
     sprintf(printstring2," Sent# : %ld \n", thingspeakCounter);
@@ -3310,6 +3352,21 @@ void main_handler()
       logOut(printstring);
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay 
     #endif  
+
+    #ifdef isThingspeak
+       if((calDS18B20Temperature[0]) > (limit)){
+         calDS18B20Temperature_sum[0] += calDS18B20Temperature[0];
+         calDS18B20Temperature_n[0] += 1;
+       }  
+       if((calDS18B20Temperature[1]) > (limit)){
+         calDS18B20Temperature_sum[1] += calDS18B20Temperature[1];
+         calDS18B20Temperature_n[1] += 1;
+       }  
+       if((calDS18B20Temperature[2]) > (limit)){
+         calDS18B20Temperature_sum[2] += calDS18B20Temperature[2];
+         calDS18B20Temperature_n[2] += 1;
+       }  
+    #endif
 
     // checks for problems with measurements of DS18B20
     if(notMeasuredCount > DS18B20RestartLimit || notChangedCount > 3*DS18B20RestartLimit || // in GetOneDS18B20Temperature this count is handled if faulty checksum
