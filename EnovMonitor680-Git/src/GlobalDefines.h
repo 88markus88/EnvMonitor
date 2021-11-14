@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.68"
-#define PROGDATE "2021-11-13"
+#define PROGVERSION "V0.69"
+#define PROGDATE "2021-11-14"
 
 #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk

@@ -1031,6 +1031,7 @@ void vDelay(int delayInMillis){long t=millis()+delayInMillis;while (millis()<t) 
 
 #ifdef isBluetoothCredentials
 
+String NetworkID[50];
 /**************************************************!
    @brief    function scan all networks available within Wifi
    @details  
@@ -1044,27 +1045,34 @@ void vDelay(int delayInMillis){long t=millis()+delayInMillis;while (millis()<t) 
     // WiFi.scanNetworks will return the number of networks found
     int n = WiFi.scanNetworks();
     Serial.println("scan done");
-    if (n == 0) {
-      Serial.println("no networks found");
-    } else {
-      Serial.print(n);
-      Serial.println(" networks found");
-      for (int i = 0; i < n; ++i) {
-        // Print SSID and RSSI for each network found
-        Serial.print(i + 1);
-        Serial.print(": ");
-        Serial.print(WiFi.SSID(i));
-        Serial.print(" (");
-        Serial.print(WiFi.RSSI(i));
-        Serial.print(")");
-        Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
-        delay(10);
-      }
+    if(n!=WIFI_SCAN_FAILED){
+      if (n == 0) {
+        Serial.println("no networks found");
+      } else {
+        Serial.print(n);
+        Serial.println(" networks found");
+        for (int i = 0; i < n; ++i) {
+          NetworkID[i] = (String)WiFi.SSID(i);
+          // Print SSID and RSSI for each network found
+          Serial.print(i + 1);
+          Serial.print(": ");
+          Serial.print((String)WiFi.SSID(i));
+          Serial.print(" (");
+          Serial.print((String)WiFi.RSSI(i));
+          Serial.print(") ");
+          Serial.print(NetworkID[i]);
+          Serial.println((WiFi.encryptionType(i) == WIFI_AUTH_OPEN)?" ":"*");
+          delay(10);
+        }
+      } 
     }
-    WiFi.begin();
-    delay(500);
-    WiFi.disconnect();
-    delay(500);
+    WiFi.mode ( WIFI_STA );
+    // WiFi.begin();
+    // delay(500);
+    // WiFi.disconnect();
+    delay(1000);
+    WiFi.disconnect( true );
+    delay(1000);
     return(n);  
   }
 
@@ -1079,7 +1087,7 @@ void vDelay(int delayInMillis){long t=millis()+delayInMillis;while (millis()<t) 
   ***************************************************/
 bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noNetworks)
 {
-  long currentMillis, startMillis, intervalMillis=60000;
+  long startMillis, intervalMillis=60000;
   String buffer_in, Ssid, Pass; // https://www.arduino.cc/reference/en/language/variables/data-types/stringobject/ 
   boolean ssidFlag=false, passFlag=false, noFlag=false;
   int a,b;
@@ -1127,6 +1135,7 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
           *noOfNetwork = a;
           sprintf(printstring,"Network number is: _%d_\n",*noOfNetwork);
           Serial.print(printstring);
+          Serial.println(WiFi.SSID(*noOfNetwork - 1));
           noFlag=true;
         }
       }  
@@ -1177,11 +1186,12 @@ void setup()
     // this prevents a successful connection later!!
     // noNetworks = scanWifiNetworks();
 
-    Serial.println("Bluetooth Device is Ready to Pair");
+    Serial.println("Bluetooth Device is ready to pair");
     Serial.println("Waiting For Wifi Credential Updates 60 seconds");
-    Serial.println("Enter: ('ssid:[myssid]' OR network index number) AND 'pass:[password] ");
+    Serial.println("Enter: ('ssid:[myssid]' AND 'pass:[password] ");
 
     ESP_BT.begin("ESP32_BLUETOOTH"); //Name of your Bluetooth Signal
+    ESP_BT.setPin("1234");           // Set the bluetooth PIN of the device
     if(checkBluetoothCredentials(ss,  pw, &noOfNetwork, noNetworks) )
     {
       sprintf(printstring,"Raw Credentials: _%s_ _%s_ %d\n",
@@ -1227,6 +1237,9 @@ void setup()
       }
     }
     ESP_BT.end();
+  #else // ensure that there are wifi credentials if not taken from bluetooth
+    strcpy(ssid,default_ssid);
+    strcpy(pass,default_pass);  
   #endif
 
   #ifdef getNTPTIME
@@ -2993,7 +3006,7 @@ void main_handler()
   float time_sec;
 
   // float time_sec;
-  long start_loop_time, end_loop_time;
+  long start_loop_time, end_loop_time = 0;
   
   #if defined  isBME680  || defined isBME680_BSECLib
     static long lastBME680Time;
