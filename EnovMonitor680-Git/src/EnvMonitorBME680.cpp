@@ -2827,24 +2827,27 @@ void setup()
     }
 
     HTTPClient http; // Initialize our HTTP client
-        
-    http.begin(url.c_str()); // Initialize our HTTP request
-        
-    int httpResponseCode = http.GET(); // Send HTTP request
-        
-    if (httpResponseCode > 0){ // Check for good HTTP status code
-      Serial.print("HTTP Response code: ");
-      Serial.println(httpResponseCode);
-      httpErrorCounter = 0;
-    }else{
-      Serial.print("HTTP Error code: ");
-      Serial.println(httpResponseCode);
-      httpErrorCounter++;
-    }
-    http.end();
-    // if too many fails: reboot.
-    if(httpErrorCounter > 4)
-      ESP.restart();
+    int httpResponseCode;
+    do {         
+      http.begin(url.c_str()); // Initialize our HTTP request
+          
+      httpResponseCode = http.GET(); // Send HTTP request          
+      if (httpResponseCode > 0){ // Check for good HTTP status code
+        Serial.print("HTTP Response code: ");
+        Serial.println(httpResponseCode);
+        httpErrorCounter = 0;
+      }else{
+        Serial.print("HTTP Error code: ");
+        Serial.println(httpResponseCode);
+        httpErrorCounter++;
+      }
+      http.end();
+      // if too many fails: reboot.
+      // if(httpErrorCounter > 4)
+      //  ESP.restart();
+      delay(500);
+    } while (httpResponseCode <=0 && httpErrorCounter <= 3 );
+    httpErrorCounter = 0;
   }
   #endif
 
@@ -2966,7 +2969,7 @@ void setup()
         temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
       else
         temp = -111.11;  
-      if((temp > limit) && (!isEqual(temp,last_DSTemp0,0.03)))
+      if((temp > limit) && (!isEqual(temp,last_DSTemp0,0.05)))
       {
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
           calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
@@ -2989,7 +2992,7 @@ void setup()
         temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
       else
         temp = -111.11;  
-      if((temp > limit) && (!isEqual(temp,last_DSTemp1,0.03)))
+      if((temp > limit) && (!isEqual(temp,last_DSTemp1,0.05)))
       {  
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
@@ -3010,7 +3013,8 @@ void setup()
         temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
       else
         temp = -111.11;        
-      if((temp > limit) && (!isEqual(temp,last_DSTemp2,0.03))){  
+      if((temp > limit) && (!isEqual(temp,last_DSTemp2,0.05)))
+      {  
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
         last_DSTemp2 = temp;
@@ -3026,7 +3030,7 @@ void setup()
         calDS18B20Temperature_n[1] = 0;
       }
     #endif // isOneDS18B20  
-    sprintf(printstring2," Sent# : %ld \n", thingspeakCounter);
+    sprintf(printstring2," Sent Item# : %ld \n", thingspeakCounter);
     strcat(printstring, printstring2);
     logOut(printstring);
     // send data in collected string to Thingspeak
