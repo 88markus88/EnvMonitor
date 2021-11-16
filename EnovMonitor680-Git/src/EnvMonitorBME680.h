@@ -385,6 +385,10 @@ int mainHandlerTimerHandle;
   Preferences credentialstorage;    // permanent storage object for BSEC BME 680 sensor parameter
 #endif  
 
+#ifdef isCaptivePortal
+  Preferences credentialstorage2;    // permanent storage object for BSEC BME 680 sensor parameter
+#endif
+
 /************************************************************
 * Forward declarations
 *************************************************************/

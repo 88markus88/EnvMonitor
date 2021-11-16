@@ -46,6 +46,7 @@
 #include "SDFunctions.h"        // functions to handle SD memory card
 #include "LCDFunctions.h"       // functions to handle LCD display
 #include "ESP32Ping.h"          // ping library
+#include "CaptivePortal.h"      // Captive Portal functions
 
 //#include <cstring>
 //#include <string>
@@ -1079,12 +1080,13 @@ String NetworkID[50];
 
  /**************************************************!
    @brief    function to get wifi credentials via bluetooth at startup
-   @details  
+   @details  Bluetooth connection is opened by caller. Then listens for ssid:[ID] and pass:[pw], and returns these
+             can also use a scan, but since that makes wifi unreliable on ESP32: better not.
    @param char* ssid: wifi network ssid to be returned
-          char* pass: wifi password to be returned
-          int* noOfNetwork: alternative to ssid, the index of the list scanned is returned
-          int noOfNetworks: Input parameter, the number of networks that are detectred  
-   @return   bool : true = successfully got wifi parameters.
+   @param char* pass: wifi password to be returned
+   @param int* noOfNetwork: alternative to ssid, the index of the list scanned is returned
+   @param int noOfNetworks: Input parameter, the number of networks that are detectred  
+   @return bool : true = successfully got wifi parameters.
   ***************************************************/
 bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noNetworks)
 {
@@ -1153,6 +1155,39 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
   return ((ssidFlag && passFlag) || (passFlag && noFlag));
 } 
 #endif
+
+// Connect or reconnect to WiFi
+bool connectToWiFi(char* ssid, char* pass)
+{
+  int i=0;
+
+  WiFi.disconnect();   
+  delay(500);  
+  // if((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED))
+  {
+    sprintf(printstring,"Attempting to connect to SSID: _%s_ PASS: _%s_\n", ssid, pass);
+    Serial.println(printstring);
+    while((WiFi.status() != WL_CONNECTED) && (i<10))
+    {
+      i++;
+      WiFi.disconnect();      // new 11.10.21: disconnect and connect in the loop
+      WiFi.begin(ssid, pass);
+      Serial.print(".");
+      delay(i*500);     
+    } 
+    esp_task_wdt_reset();   // keep watchdog happy
+  }
+  if(WiFi.status() == WL_CONNECTED)
+  {
+    Serial.println("Connected.");
+    return(true);
+  }  
+  else
+  {
+    Serial.println("Not Connected.");
+    return(false);
+  }  
+}  
 
  /**************************************************!
    @brief    setup function
@@ -1244,6 +1279,64 @@ void setup()
   #else // ensure that there are wifi credentials if not taken from bluetooth
     strcpy(ssid,default_ssid);
     strcpy(pass,default_pass);  
+  #endif
+
+  #ifdef isCaptivePortal // captive portal is credentials are not present
+    // try to get from credential storage (EEPROM)
+    credentialstorage2.begin("credentials", false);    
+    int ssid_len = 0; 
+    int pass_len = 0; 
+    ssid_len = credentialstorage2.getBytes("ssid", ssid, 50); 
+    pass_len = credentialstorage2.getBytes("pass", pass, 50); 
+    credentialstorage2.end();
+    sprintf(printstring,"Read from Preferences EEPROM: ssid: %d _%s_ | %d pass: _%s_ \n", ssid_len, ssid, pass_len, pass);
+    Serial.print(printstring);
+    
+    //******** debug always go beyond EEPROM REMOVE!!!
+    // strcpy(pass,"aaa");
+
+    // Check if connection with these data is possible
+    bool connectPossible = connectToWiFi(ssid,  pass);
+    if(connectPossible)
+    {
+      sprintf(printstring,"Connection successful (Preferences) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+      logOut(printstring);
+    }
+    else
+    {
+      sprintf(printstring,"Connection NOT successful for ssid _%s_ pass _%s_ => Captive Portal\n", ssid, pass);
+      logOut(printstring);
+      
+      setupCaptivePortal(); // start the captive portal
+      loopCaptivePortal(ssid, pass); // and it's main event loop
+      connectPossible = connectToWiFi(ssid, pass);
+      if(connectPossible)
+      { 
+        sprintf(printstring,"Connection successful (Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+        logOut(printstring);
+      }  
+    }  
+    if(!connectPossible)  // did not work, use data from default
+    {
+      strcpy(ssid,default_ssid);
+      strcpy(pass,default_pass);  
+      connectPossible = connectToWiFi(ssid, pass);
+      if(connectPossible)
+      {
+        sprintf(printstring,"Connection successful (Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+        logOut(printstring);
+      }
+    }
+    if(connectPossible) // one of the previous methods was successful
+    {
+      // write credentials to EEPROM
+      sprintf(printstring,"Credentials from Captive Portal: _%s_ _%s_\n", ssid, pass);
+      Serial.print(printstring);
+      credentialstorage2.begin("credentials", false);    
+      ssid_len = credentialstorage2.putBytes("ssid", ssid, strlen(ssid)+1); 
+      pass_len = credentialstorage2.putBytes("pass", pass, strlen(pass)+1); 
+      credentialstorage2.end();     
+    }  
   #endif
 
   #ifdef getNTPTIME

@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.71"
-#define PROGDATE "2021-11-14"
+#define PROGVERSION "V0.72"
+#define PROGDATE "2021-11-16"
 
 #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
@@ -277,7 +277,9 @@
     #undef logSD            // logging to SD card enabled. needs "isSD"
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, Pin 14
-    #define isBluetoothCredentials  // get credentials via bluetooth
+    #undef isBluetoothCredentials  // get credentials via bluetooth
+    #define isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " GeneralTestbed";
     static char infoStringShort[] = " General Testbed for all kinds of stuff";
 #endif 
