@@ -80,6 +80,28 @@ In order to compile the code, the following adaptations have to be made:
   - determine if OTA (over the air) updates shall be used
  4. modify *platformio.ini* as needed: set _default_envs_ to determine which environment is to be used. This is largely required to determine if USB  upload or OTA upload to a given IP are to be used.
 
+## Connectivity 
+In order to transmit data to a web service the ESP32 needs to log into a local network. At present, three services can be supported
+- <b>Blynk</b>: Commercial service to which the data are sent, and shown on mobile device in an app that can be configured very fleibly. The data can either be sent to the Blynk web service or to a local server. fully implemented for all data. Temperature, Humidity, Pressure etc. for all sensors are transmitted via "Virtual Pins" (see below for details). Blynk Auth Codes, which are specific for any devices and generated within the Blynk App on a mobile device, need to be put into the file <i>Credentials.h</i>
+<b>Notice</b> Blynk is presently transitioning to V2.0 with much more expensive licensing models, and no local server. Makes it less desirably for hobbyist users, consider Thingspeak as an alternative.
+- <b>Virtuino</b>: (Experimental) Similar solution to Blynk. However, here the device itself provides a web server into which the mobile has to log in. Only partly implemented for demonstration purposes.
+- <b>Thingspeak</b>: (Experimental) Web service that stores sensor data and makes them available to a variety of generic mobile apps. At present, data for BME680 and DS18B20 can be transmitted. Thingspeak is addressed via a https call to an address that encodes the Write API Key defined for a specific device, there can be up to 8 data channels per device. Presently hard coded within <i>ThingspeakServerName</i>. Needs to be more flexible for full use
+Blynk and Thingspeak can be used in parallel on a device. 
+Settings which connecitivity type is used are done in <i>GlobalDefines.h</i> via the #defines isBLYNK, isThingspeak, isVirtuino. 
+
+### Setting the WiFi Credentials
+To access the local network the ESP32 requires the network credentials, particularly the SSID and password. They could be encoded in source code, and indeed default data are included in <i>Credentials.h</i>. However, this method is very clumsy - it requires re-compile of the code every time the credentials are changed, or a new network is used. Therefore, two methods are provided to update the credentials at runtime, and store them in the Preferences (ESP32 EEPROM):
+- <b>Captive Portal</b> Activated by the #define <i>isCaptivePortal</i>. If this is set, the device goes through a sequence at bootup: 
+1. If Wifi login with valid credentials are stored in the preferences, these are used
+2. If not, the captive portal is opened, the user can select a network and provide the password. If login with these data is possible, these credentials are stored in the preferences for future use
+3. If neither works, the defaults are used (but not stores, since the network may be out temporarily)
+- <b>Bluetooth</b> Activated by the #define <i>isBluetoothCredentials</i>. When activated, the ESP32 waits for 60 sec after Boot for a connection from a mobile device. In a Bluetooth terminal app on the mobile, the user can then connect to the device, and enter the credentials: <i>ssid:[id_of_your_network]<i/> <i>pass:[your_password]<i/>. These credentials are then stored in the Preferences and used in future logins
+
+### Blynk Virtual Pins
+Blynk uses the concept of __Virtual Pins__ for communication between the hardware devices and App (via the server). The list of virtual pins in actual use depends on the sensors that are implemented on a specific devices. They need to be known in order to connect the Widgets within the App to specific sensors.
+
+See [List of Virtual Pins](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/BlynkVirtualPins.md)
+
 # Arduino
 PCB and Code for the Arduino Nano that can provide the data from an external 433MHz sensor is also included.
 Why using and Arduino? It turns out that the Wifi used by the ESP32 interferes with the 433 MHz reception when an ESP32 is used directly. The signals are disturbed by the 100 ms heartbeat of the Wifi that cannot be changed easily. 
@@ -96,11 +118,6 @@ See [Parts List](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor6
 ## GPIO Pins
 A number of ESP32 I/O Pins are used. 
 See  [List of GPIO Pins](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/GPIOs.md)
-
-## Blynk Virtual Pins
-Blynk uses the concept of __Virtual Pins__ for communication between the hardware devices and App (via the server). The list of virtual pins in actual use depends on the sensors that are implemented on a specific devices. They need to be known in order to connect the Widgets within the App to specific sensors.
-
-See [List of Virtual Pins](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/BlynkVirtualPins.md)
 
 ## Credits
 - Blynk Library from here: https://blynk.io/. Using <i>Wifi, WifiClient</i> and <i>BlynkSimpleEsp32</i> libraries
