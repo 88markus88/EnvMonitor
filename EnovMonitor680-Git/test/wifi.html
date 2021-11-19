@@ -1,0 +1,128 @@
+<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>
+<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}
+body {background-color: powderblue;}</style><head><title>WiFi Settings</title></head>
+<h2>WiFi Settings</h2><body>
+
+<table border=2 bgcolor = white width = 420 >
+	<thead>
+		<caption align=center>Current ESP 32 WiFi Settings: </caption>
+	</thead>
+	<tbody align=right>
+		<tr><td> Mode </td><td> Soft Access Point (AP)</td></tr>
+		<tr><td>SSID </td><td> "MyWiFiConfig.APSTAName"</td></tr>
+	</body>
+</table><br>
+
+<br><br>
+<table border=1 bgcolor = white width = 420>
+<tr>
+	<th>Current ESP 32 WiFi Settings:
+		<table border=1 bgcolor = white width = 410>
+			<tr><td> Mode </td><td> Soft Access Point (AP)</td></tr>
+			<tr><td>SSID </td><td> "MyWiFiConfig.APSTAName"</td></tr>
+		</table>
+	</th>
+</tr>	
+</table>
+<br><br>
+
+<form action='/wifi' method='post'>
+<table border=2 bgcolor = white width = 420>
+<tr>
+	<th>Available WiFi Networks:	
+		<table border=1 bgcolor = white width = 410>
+
+		<tr>
+			<td>No </td>
+			<td>SSID  </td>
+			<td>Encryption </td>
+			<td>WiFi dB</td>
+		</tr>
+		<tr>
+			<td> 1 </td>
+			<td>Fritz7390-Gast</td>
+			<td>WPA/WPA2 4</td>
+			<td>-76</td>	
+		</tr>
+		<tr>
+			<td> 2 </td>
+			<td>Fritz7390-MP2.4</td>
+			<td>WPA/WPA2 4</td>
+			<td>-77</td>	
+		</tr>
+		<tr>
+			<td> 3 </td>
+			<td>Dumbledore</td>
+			<td>WPA2 3</td>
+			<td>-78</td>
+		</tr>	
+	</th>	
+</table>
+
+<table border=1 bgcolor = white width = 410>
+	<tr>
+		<td>Connect to WiFi SSID: </td>
+		<td><select name='WiFi_Network' >
+			<option value='Fritz7390-Gast'>Fritz7390-Gast</option>
+			<option value='Fritz7390-MP2.4'>Fritz7390-MP2.4</option>
+			<option value='Dumbledore'>Dumbledore</option>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td>WiFi Password: </td>
+		<td><input type='text' name='STAWLanPW' maxlength='40'></td>
+	</tr>
+	<br>
+</table>
+
+	<button type='submit' name='Settings' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;' autofocus >Save Client Wifi Settings</button>
+</table>
+
+<br><br>
+
+<table border=2 bgcolor = white width = 420 >
+	<tr>
+		<th>WiFi Access Point Settings
+
+	<table border=1 bgcolor = white width = 410>
+	</tr></th> 
+	<td>WiFi Access Point Name: </td>
+	<td><input type='text' name='APPointName' maxlength='APSTANameLen' size='30' value='APSTAName'></td>
+	</tr></th>
+	<td>WiFi Password: </td>
+	<td><input type='password' name='APPW' maxlength='30' size='30' value=' WiFiPwd '></td>
+	</tr></th>
+	<td>Repeat WiFi Password: </td>
+	<td><input type='password' name='APPWRepeat' maxlength='30' size='30' value='WiFiPwd'> </td>
+	</table>
+	<table>
+		<input type='checkbox' name='PasswordReq' checked> Login Password required
+		<input type='checkbox' name='CaptivePortal' checked> Captive Portal active
+		<br>
+		<button type='submit' name='SavePortalSettings' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;'  >Save Portal Wifi Settings</button>
+	</table>
+</table>	
+
+<br><br>
+
+<button type='submit' name='Reboot ESP32' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;'>Reboot System</button>
+<button type='reset' name='action' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;'>Reset Access Point settings</button>
+</form>
+<br>
+
+<table border=2 bgcolor = white width = 420 cellpadding =5 >
+	<tr><th>
+	<b>System Links:</b>
+	</tr></th>
+	<tr><td><a href='/'>Main Page</a></td></tr>
+	<tr><td><a href='/status'>Markus Status Page</a></td></tr>
+</table>
+
+<footer><p>Programmed and designed by: Markus P.</p></footer>
+</body></html>
+
+
+	
+
+

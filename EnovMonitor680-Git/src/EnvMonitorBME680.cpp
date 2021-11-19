@@ -1160,31 +1160,55 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
 bool connectToWiFi(char* ssid, char* pass)
 {
   int i=0;
-
+  long starttime, endtime;
   WiFi.disconnect();   
   delay(500);  
   // if((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED))
-  {
+  //{
     sprintf(printstring,"Attempting to connect to SSID: _%s_ PASS: _%s_\n", ssid, pass);
     Serial.println(printstring);
-    while((WiFi.status() != WL_CONNECTED) && (i<10))
+    // 0 = WL_IDLE_STATUS
+    // 3 = WL_CONNECTED 
+    // 4 = WL_CONNECT_FAILED 
+    // 6 = WL_DISCONNECTED 
+    // see following link for discussion of connection issues
+    // https://github.com/espressif/arduino-esp32/issues/2501
+    // der entscheidende Punkt, war nach dem WiFi.begin() lange genug zu warten
+    // da hilft die wartende Funktion WiFi.waitForConnectResult();
+
+    starttime = millis();
+    int status = WiFi.status();
+    while((status != WL_CONNECTED) && (i<20))
     {
       i++;
-      WiFi.disconnect();      // new 11.10.21: disconnect and connect in the loop
+      if(status == WL_CONNECT_FAILED)
+      {
+        WiFi.disconnect(true);      // new 11.10.21: disconnect and connect in the loop. New 19.11.: only if connect failed
+        delay(500);
+      }  
+      esp_task_wdt_reset();   // keep watchdog happy
+
       WiFi.begin(ssid, pass);
-      Serial.print(".");
-      delay(i*500);     
+      delay(i*500);  
+      // status = WiFi.status();      // this call returns the result right away
+      status = WiFi.waitForConnectResult(); // this call may wait a long time
+
+      sprintf(printstring,".%d ",status);
+      Serial.print(printstring);
     } 
     esp_task_wdt_reset();   // keep watchdog happy
-  }
+  //}
+  endtime = millis();
   if(WiFi.status() == WL_CONNECTED)
   {
-    Serial.println("Connected.");
+    sprintf(printstring,"Connected after %5.2f sec",(float)(endtime-starttime)/1000);
+    Serial.println(printstring);
     return(true);
   }  
   else
   {
-    Serial.println("Not Connected.");
+    sprintf(printstring,"NOT Connected after %5.2f sec",(float)(endtime-starttime)/1000);
+    Serial.println(printstring);
     return(false);
   }  
 }  
@@ -1292,11 +1316,10 @@ void setup()
     sprintf(printstring,"Read from Preferences EEPROM: ssid: %d _%s_ | %d pass: _%s_ \n", ssid_len, ssid, pass_len, pass);
     Serial.print(printstring);
     
-    //******** debug always go beyond EEPROM REMOVE!!!
-    // strcpy(pass,"aaa");
-
     // Check if connection with these data is possible
-    bool connectPossible = connectToWiFi(ssid,  pass);
+       //******** debug always go beyond EEPROM. REMOVE for productive software!!!
+      bool connectPossible = false;
+    //debug, remove - bool connectPossible = connectToWiFi(ssid,  pass);
     if(connectPossible)
     {
       sprintf(printstring,"Connection successful (Preferences) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
@@ -1304,7 +1327,7 @@ void setup()
     }
     else
     {
-      sprintf(printstring,"Connection NOT successful for ssid _%s_ pass _%s_ => Captive Portal\n", ssid, pass);
+      sprintf(printstring,"Connection NOT successful (Preferences) for ssid _%s_ pass _%s_ => Captive Portal\n", ssid, pass);
       logOut(printstring);
       
       setupCaptivePortal(); // start the captive portal
@@ -1312,9 +1335,22 @@ void setup()
       connectPossible = connectToWiFi(ssid, pass);
       if(connectPossible)
       { 
-        sprintf(printstring,"Connection successful (Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+        sprintf(printstring,"Connection successful (Data from Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
         logOut(printstring);
+        // write credentials to EEPROM
+        credentialstorage2.begin("credentials", false);    
+        ssid_len = credentialstorage2.putBytes("ssid", ssid, strlen(ssid)+1); 
+        pass_len = credentialstorage2.putBytes("pass", pass, strlen(pass)+1); 
+        credentialstorage2.end();     
+        sprintf(printstring,"Credentials written to Preferences: _%s_ (%d) _%s_ (%d)\n", 
+            ssid, ssid_len, pass, pass_len);
+        Serial.print(printstring);
       }  
+      else
+      {
+        sprintf(printstring,"Connection NOT successful (Data from Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+        logOut(printstring);
+      }
     }  
     if(!connectPossible)  // did not work, use data from default
     {
@@ -1323,20 +1359,15 @@ void setup()
       connectPossible = connectToWiFi(ssid, pass);
       if(connectPossible)
       {
-        sprintf(printstring,"Connection successful (Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+        sprintf(printstring,"Connection successful (using Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
+        logOut(printstring);
+      }
+      else
+      {
+        sprintf(printstring,"Connection NOT successful (using Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
         logOut(printstring);
       }
     }
-    if(connectPossible) // one of the previous methods was successful
-    {
-      // write credentials to EEPROM
-      sprintf(printstring,"Credentials from Captive Portal: _%s_ _%s_\n", ssid, pass);
-      Serial.print(printstring);
-      credentialstorage2.begin("credentials", false);    
-      ssid_len = credentialstorage2.putBytes("ssid", ssid, strlen(ssid)+1); 
-      pass_len = credentialstorage2.putBytes("pass", pass, strlen(pass)+1); 
-      credentialstorage2.end();     
-    }  
   #endif
 
   #ifdef getNTPTIME
@@ -2898,7 +2929,7 @@ void setup()
     static int httpErrorCounter = 0;
 
     //Serial.println(url);
-    sprintf(printstring,"sendThingspekData() URL: %s\n",url.c_str());
+    sprintf(printstring,"sendThingspeakData() URL: %s\n",url.c_str());
     logOut(printstring);
 
     // Connect or reconnect to WiFi

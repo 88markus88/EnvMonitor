@@ -91,7 +91,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     byte len;
     char printstring[200];
 
-    #define alwaysCaptivePortal // this is for debug purposes only, reset the stored config in every case
+    #undef alwaysCaptivePortal // this is for debug purposes only, reset the stored config in every case
     #ifdef alwaysCaptivePortal
       Serial.println(F("Debug: always reset stored credentials"));
       SetDefaultWiFiConfig();
@@ -177,19 +177,24 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   {
     // bool initok = false;
     /* Setup web pages: root, wifi config pages, SO captive portal detectors and not found. */
+    // server.on("/", handleRoot);
     server.on("/", handleRoot);
-    server.on("/wifi", handleWifi);
+    server.on("/wifi", handleWifiNew);
+    server.on("/status", handleStatus);
     if (MyWiFiConfig.CapPortal)
     {
       server.on("/generate_204", handleRoot);
+      // server.on("/generate_204", handleWifiNew);
     } //Android captive portal. Maybe not needed. Might be handled by notFound handler.
     if (MyWiFiConfig.CapPortal)
     {
       server.on("/favicon.ico", handleRoot);
+      // server.on("/favicon.ico", handleWifiNew);
     } //Another Android captive portal. Maybe not needed. Might be handled by notFound handler. Checked on Sony Handy
     if (MyWiFiConfig.CapPortal)
     {
       server.on("/fwlink", handleRoot);
+      // server.on("/fwlink", handleWifiNew);
     } //Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
     //server.on("/generate_204", handleRoot);  //Android captive portal. Maybe not needed. Might be handled by notFound handler.
     //server.on("/favicon.ico", handleRoot);    //Another Android captive portal. Maybe not needed. Might be handled by notFound handler. Checked on Sony Handy
@@ -340,7 +345,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     bool RetValue;
     // Check logical Errors
     char printstring[100];
-    sprintf(printstring,"Save Credentials called: ssid: %s PW: %s \n",
+    sprintf(printstring,"Save AP Credentials called: ssid: %s PW: %s \n",
       MyWiFiConfig.APSTAName,MyWiFiConfig.WiFiPwd);
     Serial.print(printstring);
     RetValue = true;
@@ -404,6 +409,59 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   {
     //  Main Page:
     temp = "";
+    Serial.println("'handleRoot()' called");
+    #define noMainDialog
+    #ifdef noMainDialog
+      handleWifiNew();
+    #else  
+      // byte PicCount = 0;
+      // byte ServArgs = 0;
+      // HTML Header
+      server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+      server.sendHeader("Pragma", "no-cache");
+      server.sendHeader("Expires", "-1");
+      server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+      // HTML Content
+      server.send(200, "text/html", temp); // Speichersparen - Schon mal dem Cleint senden
+      temp = "";
+      temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>";
+      server.sendContent(temp);
+      temp = "";
+      temp += "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}";
+      server.sendContent(temp);
+      temp = "";
+      temp += "body {background-color: powderblue;}</style>";
+      temp += "<head><title>Hauptseite</title></head>";
+      temp += "<h2>Hauptseite</h2>";
+      temp += "<body>";
+      server.sendContent(temp);
+      temp = "";
+      // Processing User Request
+      temp = "";
+      temp += "<table border=2 bgcolor = white width = 400 cellpadding =5 ><caption><p><h3>Systemlinks:</h2></p></caption>";
+      temp += "<tr><th><br>";
+      temp += "<a href='/wifi'>WIFI Einstellungen</a><br><br>";
+      temp += "</th></tr></table><br><br>";
+      temp += "<footer><p>Programmed and designed by: Tobias Kuch</p><p>Contact information: <a href='mailto:tobias.kuch@googlemail.com'>tobias.kuch@googlemail.com</a>.</p></footer>";
+      temp += "</body></html>";
+      server.sendContent(temp);
+      temp = "";
+      server.client().stop(); // Stop is needed because we sent no content length
+    #endif  
+  }
+
+/**************************************************!
+    @brief    Handle "status" : Status-Seite bauen und an client senden
+    @details  
+    @param none
+    @return void
+    ***************************************************/
+  void handleStatus()
+  {
+    //  Main Page:
+    temp = "";
+
+    Serial.println("'handleStatus()' called");
     // byte PicCount = 0;
     // byte ServArgs = 0;
     // HTML Header
@@ -421,24 +479,55 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     server.sendContent(temp);
     temp = "";
     temp += "body {background-color: powderblue;}</style>";
-    temp += "<head><title>Hauptseite</title></head>";
-    temp += "<h2>Hauptseite</h2>";
+    temp += "<head><title>Status</title></head>";
+    temp += "<h2>Status Page</h2>";
     temp += "<body>";
     server.sendContent(temp);
+
+    temp = "";
+    // H4: "Current Wifi Settings"
+    temp += "<table border=2 bgcolor = white width = 420 >";
+    temp +=      "<caption><h4>Current WiFi Settings: </h4></caption>";
+    temp +=      "<tr>";
+    temp +=        "<td>";  
+    temp +=           "SSID";
+    temp +=        "</td>";
+    temp +=        "<td>"; 
+    temp +=           MyWiFiConfig.APSTAName;
+    temp +=        "</td>";
+    temp +=      "</tr>";
+    temp +=      "<tr>";
+    temp +=        "<td>";  
+    temp +=           "Password" ;
+    temp +=        "</td>";
+    temp +=        "<td>"; 
+    temp +=           MyWiFiConfig.WiFiPwd;
+    temp +=        "</td>";
+    temp +=      "</tr>";
+    temp +=      "<tr>";
+    temp +=        "<td>";  
+    temp +=           "Config Valid" ;
+    temp +=        "</td>";
+    temp +=        "<td>"; 
+    temp +=           MyWiFiConfig.ConfigValid;
+    temp +=        "</td>";
+    temp +=      "</tr>";
+    temp +="</table><br>";
+    server.sendContent(temp);
+
     temp = "";
     // Processing User Request
     temp = "";
     temp += "<table border=2 bgcolor = white width = 400 cellpadding =5 ><caption><p><h3>Systemlinks:</h2></p></caption>";
     temp += "<tr><th><br>";
-    temp += "<a href='/wifi'>WIFI Einstellungen</a><br><br>";
+    temp += "<a href='/'>Main Page</a><br><br>";
     temp += "</th></tr></table><br><br>";
-    temp += "<footer><p>Programmed and designed by: Tobias Kuch</p><p>Contact information: <a href='mailto:tobias.kuch@googlemail.com'>tobias.kuch@googlemail.com</a>.</p></footer>";
+    temp += "<footer><p>Programmed and designed by: Markus P.</p></footer>";
     temp += "</body></html>";
     server.sendContent(temp);
     temp = "";
     server.client().stop(); // Stop is needed because we sent no content length
   }
-
   /**************************************************!
      @brief    Handle "Not found", send this to client. Or go to captive partal if that is set.
     @details  Displays "404 File not found" if not in captive portal
@@ -447,6 +536,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     ***************************************************/
   void handleNotFound()
   {
+    Serial.println("'handleNotFound()' called");
     if (captivePortal())
     { // If caprive portal redirect instead of displaying the error page.
       return;
@@ -502,6 +592,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   /** Redirect to captive portal if we got a request for another domain. Return true in that case so the page handler do not try to handle the request again. */
   boolean captivePortal()
   {
+    Serial.println("'captivePortal()' called");
     if (!isIp(server.hostHeader()) && server.hostHeader() != (String(ESPHostname) + ".local"))
     {
       // Serial.println("Request redirected to captive portal");
@@ -512,6 +603,273 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     }
     return false;
   }
+
+  /**************************************************!
+    @brief    new Wifi config page handler subfunction draw HTML
+    @details  simplified to remove unnecessary stuff
+    @param none
+    @return void
+  ***************************************************/
+  void drawWifiNewPage()
+  {
+    temp = "";
+    //----- HTML Header
+    server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    server.sendHeader("Pragma", "no-cache");
+    server.sendHeader("Expires", "-1");
+    server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+    //----- HTML Content
+    temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>";
+    server.send(200, "text/html", temp);
+    temp = "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}";
+    temp += "body {background-color: powderblue;}</style><head><title>WiFi Settings</title></head>";
+    server.sendContent(temp);
+    // Tabelle. Titel als H2 darüber: "Wifi Einstellungen"
+    temp = "<h2>WiFi Settings</h2><body>";
+    server.sendContent(temp);
+    // "Current Wifi Settings"
+
+    temp = "<table border=2 bgcolor = white width = 420 >";
+    temp+= "<tr><th>";
+    temp+= "Current ESP 32 WiFi Settings:";
+    temp+= "<table border=1 bgcolor = white width = 410>";
+    server.sendContent(temp);
+    if (server.client().localIP() == apIP)
+    {
+      temp  = "<tr><td> Mode </td><td> Soft Access Point (AP)</td></tr>";
+      temp += "<tr><td>SSID </td><td> " + String(MyWiFiConfig.APSTAName) + "</td></tr>";
+    }
+    else
+    {
+      temp  = "<tr><td>Mode </td><td> Station (STA) </td></tr>";
+      temp += "<tr><td>SSID  </td><td> " + String(MyWiFiConfig.APSTAName) + "</td></tr>";
+      temp += "<tr><td>BSSID </td><td> " + WiFi.BSSIDstr() + "</td></tr>";
+    }
+    temp+= "</table>";
+    temp+= "</th></tr>";
+    temp+= "</table><br>";
+    server.sendContent(temp);
+
+    // Table of Wifi networks
+    temp  = "<form action='/wifi' method='post'>";
+    temp += "<table border=2 bgcolor = white width = 420>";
+    temp += "<tr><th>Available WiFi Networks:";
+    server.sendContent(temp);
+    temp  = "<table border=1 bgcolor = white width = 410>";
+    // now do the wifi scan 
+    WiFi.scanDelete();
+    int n = WiFi.scanNetworks(false, false); //WiFi.scanNetworks(async, show_hidden)
+    if (n > 0)
+    {
+      for (int i = 0; i < n; i++)
+      {
+        // build the table rows from number, SSID, encryption type, RSSI (network strength )
+        temp += "<tr>";
+        String Nrb = String(i);     // number of the network found, simply convert "i" to String "Nrb"
+        temp += "<td>" + Nrb + "</td>";
+        temp += "<td>" + WiFi.SSID(i) + "</td>";
+        Nrb = GetEncryptionType(WiFi.encryptionType(i));
+        temp += "<td>" + Nrb + "</td>";
+        temp += "<td>" + String(WiFi.RSSI(i)) + "</td>";
+        temp += "</tr>";
+      }
+    }
+    else
+    {
+      temp += "<tr>";
+      temp += "<td>1 </td>";
+      temp += "<td>No WLAN found</td>";
+      temp += "<td> --- </td>";
+      temp += "<td> --- </td>";
+      temp += "</tr>";
+    }
+    temp += "</tr>";
+    temp += "</table>";
+    server.sendContent(temp);
+
+    // start the next table. That contains on the left the "connect to wifi ssid", on the right a selector for the network
+    temp = "<table border=1 bgcolor = white width = 410>";
+    temp += "<tr>";
+    temp += "<td>Connect to WiFi SSID: </td>";
+    temp += "<td>";
+    temp += "<select name='WiFi_Network' >";
+    if (n > 0)
+      for (int i = 0; i < n; i++)
+        temp += "<option value='" + WiFi.SSID(i) + "'>" + WiFi.SSID(i) + "</option>";
+    else
+      temp += "<option value='No_WiFi_Network'>No WiFiNetwork found !/option>";
+    temp += "</select>";   
+    temp += "</td>";  
+    temp += "</tr>";  
+    server.sendContent(temp);
+
+    // enter the wifi password for the selected network
+    temp = "<tr>";
+    temp += "<td>Wifi Password: </td>";
+    temp += "<td><input type='text' name='STAWLanPW' maxlength='40'></td>";
+    temp += "</tr>";
+    temp += "<br>";
+    temp += "</table>";
+    
+    // Button for "Save wifi settings"
+    temp += "<button type='submit' name='Settings' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;' autofocus >Save Client Wifi Settings</button>";
+    temp += "</table>";
+    temp += "<br>";
+    server.sendContent(temp);
+
+    // New table: "wifi access point"
+    temp  = "<table border=2 bgcolor = white width = 420 >";
+    temp += "<tr><th>WiFi Access Point Settings";
+    temp += "<table border=1 bgcolor = white width = 410>";
+    temp += "</tr></th>";
+    temp += "<td>WiFi Access Point Name: </td>";
+    temp += "<td><input type='text' name='APPointName' maxlength='" + String(APSTANameLen - 1) + "' size='30' value='" + String(MyWiFiConfig.APSTAName) + "'></td>";
+    temp += "</tr></th>";
+    temp += "<td>WiFi Password: </td>";
+    temp += "<td><input type='password' name='APPW' maxlength='" + String(WiFiPwdLen - 1) + "' size='30' value='" + String(MyWiFiConfig.WiFiPwd) + "'></td>";
+    temp += "</tr></th>";
+    temp += "<td>Repeat WiFi Password: </td>";
+    temp += "<td><input type='password' name='APPWRepeat' maxlength='" + String(WiFiPwdLen - 1) + "' size='30' value='" + String(MyWiFiConfig.WiFiPwd) + "'> </td>";
+    temp += "</table>";
+    server.sendContent(temp);
+
+    // Checkmarks
+    temp  = "<table>";
+    temp += "<input type='checkbox' name='PasswordReq' checked> Login Password required";
+    temp += "<input type='checkbox' name='CaptivePortal' checked> Captive Portal active";
+    temp += "<br>";
+    temp += "<button type='submit' name='SavePortalSettings' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;'  >Save Portal Wifi Settings</button>";
+    temp += "</table>";
+
+    temp += "</table>";
+    temp += "<br>";
+    server.sendContent(temp);
+
+    temp  = "<button type='submit' name='Reboot ESP32' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;'>Reboot System</button>";
+    temp += "<button type='reset' name='action' value='1' style=' color:blue;  border-radius: 0.5em; padding:0.4em; margin: 0.3em;'>Reset Access Point settings</button>";
+    temp += "</form>";
+    server.sendContent(temp);
+    
+    // system links
+    temp  = "<table border=2 bgcolor = white width = 420 cellpadding =5 >";
+	  temp += "<tr><th>";
+	  temp += "<b>System Links:</b>";
+	  temp += "</tr></th>";
+	  temp += "<tr><td><a href='/'>Main Page</a></td></tr>";
+	  temp += "<tr><td><a href='/status'>Markus Status Page</a></td></tr>";
+    temp += "</table>";
+
+    temp += "<footer><p>Programmed and designed by: Markus P.</p></footer>";
+    temp += "</body></html>";
+    server.sendContent(temp);
+    server.client().stop(); // Stop is needed because we sent no content length
+    temp = "";
+  }
+
+  /**************************************************!
+    @brief    New 17.11.21 Wifi config page handler
+    @details  simplified to remove unnecessary stuff
+    @param none
+    @return void
+    ***************************************************/
+  void handleWifiNew()
+  {
+    //  Page: /wifi
+    byte i;
+    byte len;
+    temp = "";
+
+    Serial.println(F("'handleWifiNew()' called"));
+    // Check for Site Parameters
+    if (server.hasArg("Reboot")) // Reboot System
+    {
+      Serial.println("'handleWifiNew()' - hasArg'Reboot'");
+      temp = "Rebooting System in 5 Seconds..";
+      Serial.println(temp);
+      server.send(200, "text/html", temp);
+      delay(5000);
+      server.client().stop();
+      WiFi.disconnect();
+      delay(1000);
+      localResetFunc(); // reset the system
+    }
+
+    if (server.hasArg("Settings")) // Set wifi settings
+    {
+      Serial.println(F("'handleWifiNew()' - hasArg'Settings'"));
+      temp = "'Save Wifi Settings' button pressed";
+      Serial.println(temp);
+      temp = server.arg("WiFi_Network");
+      len = temp.length();
+      for (i = 0; i < len; i++)
+        targetSSID[i] = temp[i];
+      temp = "Network SSID: _"+ temp;   
+      Serial.print(temp);
+      temp = "";
+      for (i = 0; i < WiFiPwdLen; i++)
+        targetPASS[i] = 0;
+      temp = server.arg("STAWLanPW");
+      len = temp.length();
+      for (i = 0; i < len; i++)
+        if (temp[i] > 32) //Steuerzeichen raus
+          targetPASS[i]= temp[i];
+      temp = "_ Network Password: _"+ temp +"_ \n";   
+      Serial.print(temp);
+      bool SaveOk = saveCredentials();
+
+
+    temp = "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>";
+    server.send(200, "text/html", temp);
+    temp = "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}";
+    // background color names: https://developer.mozilla.org/de/docs/Web/CSS/color_value
+    temp += "body {background-color: thistle;}</style><head><title>WiFi Settings</title></head>";
+    server.sendContent(temp);
+    // Tabelle. Titel als H2 darüber: "Wifi Einstellungen"
+    temp = "<h2>Stopping Web Server in 3 sec...</h2><body>";
+    temp += "</body></html>";
+    server.sendContent(temp);
+    server.client().stop(); // Stop is needed because we sent no content length
+    delay(3000);
+    
+       
+
+    // "Current Wifi Settings"
+
+     /*
+      temp = "Stopping web server in 3 Seconds..";
+      Serial.println(temp);
+      server.send(200, "text/html", temp);
+      delay(3000);
+     */ 
+
+
+      server.client().stop();
+      WiFi.scanDelete();  // delete results of previous scan. worth a try...
+      delay(500);
+      WiFi.disconnect();
+      delay(500);
+      WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
+      delay(500);
+      
+      captivePortalExit = true; // set flag to end the main loop
+      return;
+    }
+
+    if (server.hasArg("action")) // Reset
+    {
+      Serial.println(F("'handleWifiNew()' - hasArg'action'"));
+      temp = "'Reset' Button pressed. Ressetting Access Point wifi config data..";
+      server.send(200, "text/html", temp);
+      SetDefaultWiFiConfig();
+      delay(1000);
+      setupCaptivePortal();
+      return;
+    }
+
+    // draw the HTML contents
+    drawWifiNewPage();
+  }
+
 
   /**************************************************!
     @brief    Wifi config page handler
@@ -525,6 +883,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     byte i;
     byte len;
     temp = "";
+    Serial.println("'handleWifi()' called");
     // Check for Site Parameters
     if (server.hasArg("Reboot")) // Reboot System
     {
@@ -777,7 +1136,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     temp += "</td></table><br>";
     server.sendContent(temp);
 
-    // Table if Wifi networks
+    // Table of Wifi networks
     temp = "";
     temp += "<form action='/wifi' method='post'>";
     temp += "<table border=2 bgcolor = white width = 420><tr><th><br>";

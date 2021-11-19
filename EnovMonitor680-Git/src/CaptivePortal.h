@@ -27,6 +27,8 @@
     void handleNotFound();
     boolean captivePortal();
     void handleWifi();
+    void handleWifiNew();
+    void handleStatus();
     boolean isIp(String str);
     String toStringIp(IPAddress IP);
     void setupCaptivePortal();
