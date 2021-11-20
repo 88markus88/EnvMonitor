@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.74"
-#define PROGDATE "2021-11-19"
+#define PROGVERSION "V0.75"
+#define PROGDATE "2021-11-20"
 
 #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
@@ -28,8 +28,8 @@
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
- // #define blynkBME680BreadBoard    // BME680 auf Breadboard
-  #define blynkGeneralTestbed
+  #define blynkBME680BreadBoard    // BME680 auf Breadboard
+ // #define blynkGeneralTestbed
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
@@ -58,6 +58,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, PIN 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " KombiSensorExtLCD: Black Eurobox with LCD. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExtLCD";
 #endif
@@ -85,6 +87,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, PIN 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " KombiSensorExt: Black Velleman Box with OLED. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExt";
 #endif
@@ -113,6 +117,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, PIN 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " BME680 Küche: Eurobox, OLED, BME680, 3 DS18B20, MH-Z14a, Fan";
     static char infoStringShort[] = "BME680 Küche";
 #endif
@@ -140,6 +146,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, Pin 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " SenseAirRedBox: Eurobox, OLED, BME280, 3 DS18B20, SenseAir S8";
     static char infoStringShort[] = "SenseAirRedBox";
 #endif
@@ -167,6 +175,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, Pin 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " Small Sensor Bad: Small Box, BME280, 2 DS18B20";
     static char infoStringShort[] = "Small Sensor Bad";
 #endif
@@ -194,6 +204,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, Pin 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " Small Sensor Schlafzimmer: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Schlafzimmer";
 #endif
@@ -222,6 +234,8 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, Pin 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " Small Sensor ExHans: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Small Sensor ExHans";
 #endif
@@ -250,6 +264,8 @@
     #define logSerial       // logging to serial enabled
     #define isLEDHeartbeat      // LED heartbeat on, Pin 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
+    #undef isCaptivePortal  // Code for captive portal
+
     static char infoStringLong[] = " BME680 Breadboard: BME680, 1 DS18B20 auf Breadboard";
     static char infoStringShort[] = "BME680 Breadboard";
 #endif

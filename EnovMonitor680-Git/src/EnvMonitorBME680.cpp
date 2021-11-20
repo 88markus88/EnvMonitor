@@ -1178,7 +1178,7 @@ bool connectToWiFi(char* ssid, char* pass)
 
     starttime = millis();
     int status = WiFi.status();
-    while((status != WL_CONNECTED) && (i<20))
+    while((status != WL_CONNECTED) && (i<7))
     {
       i++;
       if(status == WL_CONNECT_FAILED)
@@ -2921,9 +2921,9 @@ void setup()
     @brief    function to send data to thingspeak 
     @details  sends the completed URL string to the thingspeak web API
     @param    String url : completed url string to be sent via internet to Thingspeak api 
-    @return   void
+    @return   int httpResponseCode. OK if above zero.
   ***************************************************/
-  void sendThingspeakData(String url)
+  int sendThingspeakData(String url)
   {
     int i=0;
     static int httpErrorCounter = 0;
@@ -2972,6 +2972,7 @@ void setup()
       delay(500);
     } while (httpResponseCode <=0 && httpErrorCounter <= 3 );
     httpErrorCounter = 0;
+    return(httpResponseCode);
   }
   #endif
 
@@ -2994,6 +2995,8 @@ void setup()
     // build thingspeak string and then send it 
     double limit = -110.0;
     static float last_temperature=0, last_humidity=0, last_pressure=0; 
+    int httpResponseCode;
+    static bool repeatFlag = false;
     #if defined isBME680 || defined isBME680_BSECLib
       static float last_air_quality_score=0;
     #endif   
@@ -3009,7 +3012,7 @@ void setup()
       avg = temperature_sum / temperature_n;
     else
       avg = temperature;
-    if(!isEqual(avg,last_temperature,0.02) || (temperature_n > 999)){  
+    if(!isEqual(avg,last_temperature,0.02) || (temperature_n > 999) || (repeatFlag==true)){  
       last_temperature = avg;
       sprintf(printstring2," temp: %5.2f",avg);
       strcat(printstring, printstring2);
@@ -3027,7 +3030,7 @@ void setup()
       avg = humidity_sum / humidity_n;
     else
       avg = humidity;
-    if(!isEqual(avg,last_humidity,0.03) || (humidity_n > 999)){  
+    if(!isEqual(avg,last_humidity,0.03) || (humidity_n > 999) || (repeatFlag==true)){  
       last_humidity = avg;
       sprintf(printstring2," hum: %5.2f",avg);
       strcat(printstring, printstring2);
@@ -3045,7 +3048,7 @@ void setup()
       avg = pressure_sum / pressure_n;
     else
       avg = pressure;
-    if(!isEqual(avg,last_pressure,0.05) || (pressure_n > 999)){  
+    if(!isEqual(avg,last_pressure,0.05) || (pressure_n > 999) || (repeatFlag==true)){  
       last_pressure = avg;
       sprintf(printstring2," pres: %5.2f",avg);
       strcat(printstring, printstring2);
@@ -3066,7 +3069,7 @@ void setup()
       else
         avg = air_quality_score;
       // send datum is sufficiently changed or 1000 measurments collected (to get an occasional data point to thingspeak)  
-      if(!isEqual(avg,last_air_quality_score,0.5) || air_quality_score_n > 999)
+      if(!isEqual(avg,last_air_quality_score,0.5) || air_quality_score_n > 999 || (repeatFlag==true))
       {  
         sprintf(printstring2," airq : %5.2f %5.2f %d ",avg,air_quality_score_sum,air_quality_score_n);
         strcat(printstring, printstring2);
@@ -3093,7 +3096,7 @@ void setup()
         temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
       else
         temp = -111.11;  
-      if((temp > limit) && (!isEqual(temp,last_DSTemp0,0.05)))
+      if((temp > limit) && ((!isEqual(temp,last_DSTemp0,0.05)) || (repeatFlag==true)))
       {
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
           calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
@@ -3116,7 +3119,7 @@ void setup()
         temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
       else
         temp = -111.11;  
-      if((temp > limit) && (!isEqual(temp,last_DSTemp1,0.05)))
+      if((temp > limit) && ((!isEqual(temp,last_DSTemp1,0.05)) || (repeatFlag==true)))
       {  
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
@@ -3137,7 +3140,7 @@ void setup()
         temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
       else
         temp = -111.11;        
-      if((temp > limit) && (!isEqual(temp,last_DSTemp2,0.05)))
+      if((temp > limit) && ((!isEqual(temp,last_DSTemp2,0.05)) || (repeatFlag==true)))
       {  
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
@@ -3158,8 +3161,13 @@ void setup()
     strcat(printstring, printstring2);
     logOut(printstring);
     // send data in collected string to Thingspeak
-    sendThingspeakData(url);
-    sprintf(printstring,"After sendThingspekData() \n");
+    httpResponseCode = sendThingspeakData(url);
+    if(httpResponseCode == 200) 
+      repeatFlag=false;
+    else 
+      repeatFlag = false;
+    sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
+      httpResponseCode, repeatFlag);
     logOut(printstring);
   }
 #endif

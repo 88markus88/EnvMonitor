@@ -766,6 +766,35 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     temp = "";
   }
 
+
+  void showGreeting()
+  {
+    //  Main Page:
+    temp = "";
+    Serial.println("'showGreeting()' called");
+    // HTML header
+    server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    server.sendHeader("Pragma", "no-cache");
+    server.sendHeader("Expires", "-1");
+    server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+    // HTML Content
+    server.send(200, "text/html", temp); // Speichersparen - Schon mal dem Client senden
+    temp = "";
+    temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>";
+    server.sendContent(temp);
+    temp = "";
+    temp += "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}";
+    server.sendContent(temp);
+    temp = "";
+    temp += "body {background-color: powderblue;}</style>";
+    temp += "<head><title>Waiting for disconnect</title></head>";
+    temp += "<h2>Waiting for disconnect</h2>";
+    temp += "<body>";
+    server.sendContent(temp);
+    temp = "";
+
+    server.client().stop(); // Stop is needed because we sent no content length  
+  }
   /**************************************************!
     @brief    New 17.11.21 Wifi config page handler
     @details  simplified to remove unnecessary stuff
@@ -815,41 +844,19 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
           targetPASS[i]= temp[i];
       temp = "_ Network Password: _"+ temp +"_ \n";   
       Serial.print(temp);
-      bool SaveOk = saveCredentials();
+      bool SaveOk = saveCredentials();  
 
+      // "Current Wifi Settings"
 
-    temp = "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>";
-    server.send(200, "text/html", temp);
-    temp = "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}";
-    // background color names: https://developer.mozilla.org/de/docs/Web/CSS/color_value
-    temp += "body {background-color: thistle;}</style><head><title>WiFi Settings</title></head>";
-    server.sendContent(temp);
-    // Tabelle. Titel als H2 darüber: "Wifi Einstellungen"
-    temp = "<h2>Stopping Web Server in 3 sec...</h2><body>";
-    temp += "</body></html>";
-    server.sendContent(temp);
-    server.client().stop(); // Stop is needed because we sent no content length
-    delay(3000);
-    
-       
-
-    // "Current Wifi Settings"
-
-     /*
+      /*
       temp = "Stopping web server in 3 Seconds..";
       Serial.println(temp);
       server.send(200, "text/html", temp);
       delay(3000);
-     */ 
+      */ 
 
-
-      server.client().stop();
-      WiFi.scanDelete();  // delete results of previous scan. worth a try...
-      delay(500);
-      WiFi.disconnect();
-      delay(500);
-      WiFi.softAPdisconnect(true); // Function will set currently configured SSID and password of the soft-AP to null values. The parameter  is optional. If set to true it will switch the soft-AP mode off.
-      delay(500);
+      showGreeting();
+      delay(3000);
       
       captivePortalExit = true; // set flag to end the main loop
       return;
@@ -872,11 +879,12 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
 
 
   /**************************************************!
-    @brief    Wifi config page handler
+    @brief    Wifi config page handler - outdated
     @details  handle the entries on the wifi config pages, and draw the page
     @param none
     @return void
     ***************************************************/
+  /*  
   void handleWifi()
   {
     //  Page: /wifi
@@ -1267,6 +1275,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     server.client().stop(); // Stop is needed because we sent no content length
     temp = "";
   }
+  */
 
   /**************************************************!
      @brief    function to determine if paramter string contains a plausible IP (e.g. "123.123.80.21")
@@ -1388,8 +1397,11 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     ***************************************************/
   void loopCaptivePortal(char* ss, char* pw)
   {
+    long starttime, timeout = 120000; // timeout after 120 sec 
     char printstring[120];
-    while (!captivePortalExit){
+    starttime = millis();
+    while (!captivePortalExit && (millis() < (starttime+timeout)))
+    {
       if (SoftAccOK)
         dnsServer.processNextRequest(); //DNS
       //HTTP
