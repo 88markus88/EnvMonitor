@@ -2927,6 +2927,7 @@ void setup()
   {
     int i=0;
     static int httpErrorCounter = 0;
+    static int sendThingspeakDataErrors = 0;
 
     //Serial.println(url);
     sprintf(printstring,"sendThingspeakData() URL: %s\n",url.c_str());
@@ -2958,11 +2959,11 @@ void setup()
       httpResponseCode = http.GET(); // Send HTTP request          
       if (httpResponseCode > 0){ // Check for good HTTP status code
         Serial.print("HTTP Response code: ");
-        Serial.println(httpResponseCode);
+        Serial.print(httpResponseCode);
         httpErrorCounter = 0;
       }else{
         Serial.print("HTTP Error code: ");
-        Serial.println(httpResponseCode);
+        Serial.print(httpResponseCode);
         httpErrorCounter++;
       }
       http.end();
@@ -2972,6 +2973,10 @@ void setup()
       delay(500);
     } while (httpResponseCode <=0 && httpErrorCounter <= 3 );
     httpErrorCounter = 0;
+    if(httpResponseCode <=0)
+      sendThingspeakDataErrors++;
+    Serial.print(" HTTP Error Counter: ");  
+    Serial.println(sendThingspeakDataErrors);  
     return(httpResponseCode);
   }
   #endif
@@ -3002,7 +3007,7 @@ void setup()
     #endif   
     static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
     static long thingspeakCounter = 0;
-    String url=ThingspeakServerName;
+    String url=ThingspeakServerName + thingspeakWriteAPIKey; 
     // average since last transfer
     float avg;
 

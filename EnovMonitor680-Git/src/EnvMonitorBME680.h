@@ -233,7 +233,7 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   const char * myWriteAPIKey = "Z56RS9AXT2VCZCV0";
   // String readApiKey = "NMUECWL090S543MU" // not needed here, but for reference
 
-  String ThingspeakServerName = "https://api.thingspeak.com/update?api_key=Z56RS9AXT2VCZCV0";
+  String ThingspeakServerName = "https://api.thingspeak.com/update?api_key=";
 #endif
 
 // includes for OTA over the air Updates 
