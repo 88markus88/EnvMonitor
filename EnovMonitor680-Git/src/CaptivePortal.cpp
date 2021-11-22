@@ -613,6 +613,9 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   void drawWifiNewPage()
   {
     temp = "";
+    static bool scanAlreadyDone = false;
+    static int numberOfNetworks = 0;
+
     //----- HTML Header
     server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     server.sendHeader("Pragma", "no-cache");
@@ -656,12 +659,16 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     temp += "<tr><th>Available WiFi Networks:";
     server.sendContent(temp);
     temp  = "<table border=1 bgcolor = white width = 410>";
-    // now do the wifi scan 
-    WiFi.scanDelete();
-    int n = WiFi.scanNetworks(false, false); //WiFi.scanNetworks(async, show_hidden)
-    if (n > 0)
+    // now do the wifi scan, if not yet already done 
+    if(!scanAlreadyDone)
     {
-      for (int i = 0; i < n; i++)
+      WiFi.scanDelete();
+      numberOfNetworks = WiFi.scanNetworks(false, false); //WiFi.scanNetworks(async, show_hidden)
+      scanAlreadyDone = true;
+    }  
+    if (numberOfNetworks > 0)
+    {
+      for (int i = 0; i < numberOfNetworks; i++)
       {
         // build the table rows from number, SSID, encryption type, RSSI (network strength )
         temp += "<tr>";
@@ -693,8 +700,8 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     temp += "<td>Connect to WiFi SSID: </td>";
     temp += "<td>";
     temp += "<select name='WiFi_Network' >";
-    if (n > 0)
-      for (int i = 0; i < n; i++)
+    if (numberOfNetworks > 0)
+      for (int i = 0; i < numberOfNetworks; i++)
         temp += "<option value='" + WiFi.SSID(i) + "'>" + WiFi.SSID(i) + "</option>";
     else
       temp += "<option value='No_WiFi_Network'>No WiFiNetwork found !/option>";
@@ -766,8 +773,13 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     temp = "";
   }
 
-
-  void showGreeting()
+  /**************************************************!
+    @brief    Show message "waiting for disconnect" in browser
+    @details  
+    @param none
+    @return void
+    ***************************************************/
+  void showGoodbyeMessage(char *ssid)
   {
     //  Main Page:
     temp = "";
@@ -788,13 +800,15 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     temp = "";
     temp += "body {background-color: powderblue;}</style>";
     temp += "<head><title>Waiting for disconnect</title></head>";
-    temp += "<h2>Waiting for disconnect</h2>";
+    temp = temp + "<h2>ESP32 is connecting to WLAN " + ssid + "</h2>";
+    temp += "<h2>Waiting for disconnect Webserver</h2>";
     temp += "<body>";
     server.sendContent(temp);
     temp = "";
 
     server.client().stop(); // Stop is needed because we sent no content length  
   }
+
   /**************************************************!
     @brief    New 17.11.21 Wifi config page handler
     @details  simplified to remove unnecessary stuff
@@ -804,8 +818,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   void handleWifiNew()
   {
     //  Page: /wifi
-    byte i;
-    byte len;
+    byte i, len;
     temp = "";
 
     Serial.println(F("'handleWifiNew()' called"));
@@ -813,13 +826,13 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     if (server.hasArg("Reboot")) // Reboot System
     {
       Serial.println("'handleWifiNew()' - hasArg'Reboot'");
-      temp = "Rebooting System in 5 Seconds..";
+      temp = "Rebooting System ....";
       Serial.println(temp);
       server.send(200, "text/html", temp);
-      delay(5000);
+      delay(500);
       server.client().stop();
       WiFi.disconnect();
-      delay(1000);
+      delay(500);
       localResetFunc(); // reset the system
     }
 
@@ -846,16 +859,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
       Serial.print(temp);
       bool SaveOk = saveCredentials();  
 
-      // "Current Wifi Settings"
-
-      /*
-      temp = "Stopping web server in 3 Seconds..";
-      Serial.println(temp);
-      server.send(200, "text/html", temp);
-      delay(3000);
-      */ 
-
-      showGreeting();
+      showGoodbyeMessage(targetSSID);
       delay(3000);
       
       captivePortalExit = true; // set flag to end the main loop
@@ -868,7 +872,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
       temp = "'Reset' Button pressed. Ressetting Access Point wifi config data..";
       server.send(200, "text/html", temp);
       SetDefaultWiFiConfig();
-      delay(1000);
+      delay(500);
       setupCaptivePortal();
       return;
     }
@@ -877,405 +881,6 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     drawWifiNewPage();
   }
 
-
-  /**************************************************!
-    @brief    Wifi config page handler - outdated
-    @details  handle the entries on the wifi config pages, and draw the page
-    @param none
-    @return void
-    ***************************************************/
-  /*  
-  void handleWifi()
-  {
-    //  Page: /wifi
-    byte i;
-    byte len;
-    temp = "";
-    Serial.println("'handleWifi()' called");
-    // Check for Site Parameters
-    if (server.hasArg("Reboot")) // Reboot System
-    {
-      temp = "Rebooting System in 5 Seconds..";
-      Serial.println(temp);
-      server.send(200, "text/html", temp);
-      delay(5000);
-      server.client().stop();
-      WiFi.disconnect();
-      delay(1000);
-      localResetFunc(); // reset the system
-    }
-
-    if (server.hasArg("Settings")) // Set wifi settings
-    {
-      temp = "'Set Wifi Settings' button pressed";
-      Serial.println(temp);
-      temp = server.arg("WiFi_Network");
-      len = temp.length();
-      for (i = 0; i < len; i++)
-        targetSSID[i] = temp[i];
-      temp = "Network SSID: _"+ temp;   
-      Serial.print(temp);
-      temp = "";
-      for (i = 0; i < WiFiPwdLen; i++)
-        targetPASS[i] = 0;
-      temp = server.arg("STAWLanPW");
-      len = temp.length();
-      for (i = 0; i < len; i++)
-      {
-        if (temp[i] > 32) //Steuerzeichen raus
-        {
-          targetPASS[i]= temp[i];
-        }
-      }
-      temp = "_ Network Password: _"+ temp +"_ \n";   
-      Serial.print(temp);
-      bool SaveOk = saveCredentials();
-      server.client().stop();
-      WiFi.disconnect();
-      // delay(1000);
-      captivePortalExit = true; // end the main loop
-      return;
-    }
-
-    if (server.hasArg("action")) // Reset
-    {
-      temp = "'Reset' Button pressed. Ressetting wifi config data..";
-      server.send(200, "text/html", temp);
-      SetDefaultWiFiConfig();
-      delay(1000);
-      setupCaptivePortal();
-      return;
-    }
-
-    if (server.hasArg("WiFiMode") and (server.arg("WiFiMode") == "1")) // STA Station Mode Connect to another WIFI Station
-    {
-      startMillis = millis(); // Reset Time Up Counter to avoid Idle Mode while operating
-      // Connect to existing STATION
-      if (sizeof(server.arg("WiFi_Network")) > 0)
-      {
-        Serial.println("STA Mode");
-        MyWiFiConfig.APSTA = false; // Access Point or Station Mode - false == Station Mode
-        temp = "";
-        for (i = 0; i < APSTANameLen; i++)
-        {
-          MyWiFiConfig.APSTAName[i] = 0;
-        }
-        temp = server.arg("WiFi_Network");
-        len = temp.length();
-        for (i = 0; i < len; i++)
-        {
-          MyWiFiConfig.APSTAName[i] = temp[i];
-        }
-        temp = "";
-
-        for (i = 0; i < WiFiPwdLen; i++)
-        {
-          MyWiFiConfig.WiFiPwd[i] = 0;
-        }
-        temp = server.arg("STAWLanPW");
-        len = temp.length();
-        for (i = 0; i < len; i++)
-        {
-          if (temp[i] > 32) //Steuerzeichen raus
-          {
-            MyWiFiConfig.WiFiPwd[i] = temp[i];
-          }
-        }
-        temp = "WiFi Connect to AP: -";
-        temp += MyWiFiConfig.APSTAName;
-        temp += "-<br>WiFi PW: -";
-        temp += MyWiFiConfig.WiFiPwd;
-        temp += "-<br>";
-        temp += "Connecting to STA Mode in 2 Seconds..<br>";
-        server.send(200, "text/html", temp);
-        server.sendContent(temp);
-        delay(2000);
-        server.client().stop();
-        server.stop();
-        temp = "";
-        WiFi.disconnect();
-        WiFi.softAPdisconnect(true);
-        delay(500);
-        // ConnectWifiAP
-        bool SaveOk = saveCredentials();
-        Serial.print(F("Save Credentials 1 returned: "));
-        Serial.println(SaveOk);
-        i = ConnectWifiAP();
-        delay(700);
-        if (i != 3) // 4: WL_CONNECT_FAILED - Password is incorrect | 1: WL_NO_SSID_AVAILin - Configured SSID cannot be reached | 6_ WL_DISCONNECT
-        {
-          Serial.print(F("Cannot Connect to specified Network. Reason: "));  // F() Macro: combines FPSTR() and PSTR(), makes string a PROGMEM string (Flash instead SRAM) and saves RAM
-          Serial.println(i);
-          server.client().stop();
-          delay(100);
-          WiFi.setAutoReconnect(false);
-          delay(100);
-          WiFi.disconnect();
-          delay(1000);
-          SetDefaultWiFiConfig();
-          CreateWifiSoftAP();
-          return;
-        }
-        else
-        {
-          // Safe Config
-          bool SaveOk = saveCredentials();
-          Serial.print(F("Save Credentials 2 returned: "));
-          Serial.println(SaveOk);
-          InitalizeHTTPServer();
-          return;
-        }
-      }
-    }
-
-    if (server.hasArg("WiFiMode") and (server.arg("WiFiMode") == "2")) // Change AP Mode
-    {
-      startMillis = millis(); // Reset Time Up Counter to avoid Idle Mode whiole operating
-      // Configure Access Point
-      temp = server.arg("APPointName");
-      len = temp.length();
-      temp = server.arg("APPW");
-      if (server.hasArg("PasswordReq"))
-      {
-        i = temp.length();
-      }
-      else
-      {
-        i = 8;
-      }
-
-      if ((len > 1) and (server.arg("APPW") == server.arg("APPWRepeat")) and (i > 7))
-      {
-        temp = "";
-        Serial.println(F("APMode"));
-        MyWiFiConfig.APSTA = true; // Access Point or Station Mode - true AP Mode
-
-        if (server.hasArg("CaptivePortal"))
-        {
-          MyWiFiConfig.CapPortal = true; //CaptivePortal on in AP Mode
-        }
-        else
-        {
-          MyWiFiConfig.CapPortal = false;
-        }
-
-        if (server.hasArg("PasswordReq"))
-        {
-          MyWiFiConfig.PwDReq = true; //Password Required in AP Mode
-        }
-        else
-        {
-          MyWiFiConfig.PwDReq = false;
-        }
-
-        for (i = 0; i < APSTANameLen; i++)
-        {
-          MyWiFiConfig.APSTAName[i] = 0;
-        }
-        temp = server.arg("APPointName");
-        len = temp.length();
-        for (i = 0; i < len; i++)
-        {
-          MyWiFiConfig.APSTAName[i] = temp[i];
-        }
-        MyWiFiConfig.APSTAName[len + 1] = '\0';
-        temp = "";
-        for (i = 0; i < WiFiPwdLen; i++)
-        {
-          MyWiFiConfig.WiFiPwd[i] = 0;
-        }
-        temp = server.arg("APPW");
-        len = temp.length();
-        for (i = 0; i < len; i++)
-        {
-          MyWiFiConfig.WiFiPwd[i] = temp[i];
-        }
-        MyWiFiConfig.WiFiPwd[len + 1] = '\0';
-        temp = "";
-        if (saveCredentials()) // Save AP ConfigCongfig
-        {
-          temp = "Daten des AP Modes erfolgreich gespeichert. Reboot notwendig.";
-        }
-        else
-        {
-          temp = "Daten des AP Modes fehlerhaft.";
-        }
-      }
-      else if (server.arg("APPW") != server.arg("APPWRepeat"))
-      {
-        temp = "";
-        temp = "WLAN Passwort nicht gleich. Abgebrochen.";
-      }
-      else
-      {
-        temp = "";
-        temp = "WLAN Passwort oder AP Name zu kurz. Abgebrochen.";
-      }
-    }
-
-    //----- HTML Header
-    server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    server.sendHeader("Pragma", "no-cache");
-    server.sendHeader("Expires", "-1");
-    server.setContentLength(CONTENT_LENGTH_UNKNOWN);
-    //----- HTML Content
-    temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,'>";
-    server.send(200, "text/html", temp);
-    temp = "";
-    temp += "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px}";
-    temp += "body {background-color: powderblue;}</style><head><title>Smartes Tuerschild - WiFi Settings</title></head>";
-    server.sendContent(temp);
-    // Tabelle. Titel als H2 darüber: "Wifi Einstellungen"
-    temp = "";
-    temp += "<h2>WiFi Einstellungen</h2><body><left>";
-    // H4: "Current Wifi Settings"
-    temp += "<table border=2 bgcolor = white width = 420 ><td><h4>Current WiFi Settings: </h4>";
-    if (server.client().localIP() == apIP)
-    {
-      temp += "Mode : Soft Access Point (AP)<br>";
-      temp += "SSID : " + String(MyWiFiConfig.APSTAName) + "<br><br>";
-    }
-    else
-    {
-      temp += "Mode : Station (STA) <br>";
-      temp += "SSID  :  " + String(MyWiFiConfig.APSTAName) + "<br>";
-      temp += "BSSID :  " + WiFi.BSSIDstr() + "<br><br>";
-    }
-    temp += "</td></table><br>";
-    server.sendContent(temp);
-
-    // Table of Wifi networks
-    temp = "";
-    temp += "<form action='/wifi' method='post'>";
-    temp += "<table border=2 bgcolor = white width = 420><tr><th><br>";
-    // radio button: checked only if station mode
-    if (MyWiFiConfig.APSTA == 1)
-    {
-      temp += "<input type='radio' value='1' name='WiFiMode' > WiFi Station Mode<br>";
-    }
-    else
-    {
-      temp += "<input type='radio' value='1' name='WiFiMode' checked > WiFi Station Mode<br>";
-    }
-    // Last line of overall header, table headings
-    temp += "Available WiFi Networks:<table border=2 bgcolor = white ></tr></th><td>No </td><td>SSID  </td><td>Encryption </td><td>WiFi dB</td>";
-    server.sendContent(temp);
-    // now do the wifi scan 
-    temp = "";
-    WiFi.scanDelete();
-    int n = WiFi.scanNetworks(false, false); //WiFi.scanNetworks(async, show_hidden)
-    if (n > 0)
-    {
-      for (int i = 0; i < n; i++)
-      {
-        // build the table rows from number, SSID, encryption type, RSSI (network strength )
-        temp += "</tr></th>";
-        String Nrb = String(i);     // number of the network found, simply convert "i" to String "Nrb"
-        temp += "<td>" + Nrb + "</td>";
-        temp += "<td>" + WiFi.SSID(i) + "</td>";
-
-        Nrb = GetEncryptionType(WiFi.encryptionType(i));
-        temp += "<td>" + Nrb + "</td>";
-        temp += "<td>" + String(WiFi.RSSI(i)) + "</td>";
-      }
-    }
-    else
-    {
-      temp += "</tr></th>";
-      temp += "<td>1 </td>";
-      temp += "<td>No WLAN found</td>";
-      temp += "<td> --- </td>";
-      temp += "<td> --- </td>";
-    }
-    // end the table, and start the next one. That contains on the left the "connect to wifi ssid", on the right a selector for the network
-    temp += "</table><table border=2 bgcolor = white width = 420></tr></th><td>Connect to WiFi SSID: </td><td><select name='WiFi_Network' >";
-    if (n > 0)
-    {
-      for (int i = 0; i < n; i++)
-      {
-        temp += "<option value='" + WiFi.SSID(i) + "'>" + WiFi.SSID(i) + "</option>";
-      }
-    }
-    else
-    {
-      temp += "<option value='No_WiFi_Network'>No WiFiNetwork found !/option>";
-    }
-    server.sendContent(temp);
-    // End of selector for the wifi network ssid, entry "Wifi Password"
-    temp = "";
-    temp += "</select></td></tr></th></tr></th><td>WiFi Password: </td><td>";
-
-    // maxlen: maximum input length, size: width of the entry field
-    temp += "<input type='text' name='STAWLanPW' maxlength='40'>";
-    // end of main table, of selector subtable
-    temp += "</td></tr></th><br></th></tr></table></table><table border=2 bgcolor = white width = 420 ><tr><th><br>";
-    server.sendContent(temp);
-    // now the content for the Wifi access point mode settings: name, password and password confirmation
-    temp = "";
-    if (MyWiFiConfig.APSTA == true)
-      temp += "<input type='radio' name='WiFiMode' value='2' checked> WiFi Access Point Mode <br>";
-    else
-      temp += "<input type='radio' name='WiFiMode' value='2' > WiFi Access Point Mode <br>";
-    // sub-table for entering data
-    temp += "<table border=2 bgcolor = white ></tr></th> <td>WiFi Access Point Name: </td><td>";
-    server.sendContent(temp);
-    temp = "";
-    if (MyWiFiConfig.APSTA == true) // get station ssid. If already present, then use this to pre-populate the entry
-      temp += "<input type='text' name='APPointName' maxlength='" + String(APSTANameLen - 1) + "' size='30' value='" + String(MyWiFiConfig.APSTAName) + "'></td>";
-    else
-      temp += "<input type='text' name='APPointName' maxlength='" + String(APSTANameLen - 1) + "' size='30' ></td>";
-    server.sendContent(temp);
-    // password and password repeat. As password (****) and pre-populated
-    temp = "";
-    if (MyWiFiConfig.APSTA == true)
-    {
-      temp += "</tr></th><td>WiFi Password: </td><td>";
-      temp += "<input type='password' name='APPW' maxlength='" + String(WiFiPwdLen - 1) + "' size='30' value='" + String(MyWiFiConfig.WiFiPwd) + "'> </td>";
-      temp += "</tr></th><td>Repeat WiFi Password: </td>";
-      temp += "<td><input type='password' name='APPWRepeat' maxlength='" + String(WiFiPwdLen - 1) + "' size='30' value='" + String(MyWiFiConfig.WiFiPwd) + "'> </td>";
-    }
-    else
-    {
-      temp += "</tr></th><td>WiFi Password: </td><td>";
-      temp += "<input type='password' name='APPW' maxlength='" + String(WiFiPwdLen - 1) + "' size='30'> </td>";
-      temp += "</tr></th><td>Repeat WiFi Password: </td>";
-      temp += "<td><input type='password' name='APPWRepeat' maxlength='" + String(WiFiPwdLen - 1) + "' size='30'> </td>";
-    }
-    temp += "</table>";
-    server.sendContent(temp);
-    // now the checkboxes for captive portal nand password for login required
-    temp = "";
-    if (MyWiFiConfig.PwDReq)
-      temp += "<input type='checkbox' name='PasswordReq' checked> Password for Login required. ";
-    else
-      temp += "<input type='checkbox' name='PasswordReq' > Password for Login required. ";
-    server.sendContent(temp);
-    temp = "";
-    if (MyWiFiConfig.CapPortal)
-      temp += "<input type='checkbox' name='CaptivePortal' checked> Activate Captive Portal";
-    else
-      temp += "<input type='checkbox' name='CaptivePortal' > Activate Captive Portal";
-    server.sendContent(temp);
-    temp = "";
-    temp += "<br></tr></th></table><br>";
-        // Buttons for "set wifi settings" "reboot" "reset"
-    temp += "<button type='submit' name='Settings' value='1' style='height: 50px; width: 200px' autofocus>Save Client Wifi Settings</button>";
-    temp += "<button type='submit' name='Reboot' value='1' style='height: 50px; width: 200px' >Reboot System</button>";
-    server.sendContent(temp);
-    temp = "";
-    temp += "<button type='reset' name='action' value='1' style='height: 50px; width: 200px' >Reset Access Point settings</button></form>";
-    temp += "<table border=2 bgcolor = white width = 500 cellpadding =5 ><caption><p><h3>Systemlinks:</h2></p></caption><tr><th><br>";
-    server.sendContent(temp);
-    temp = "";
-    temp += "<a href='/'>Main Page</a><br><br></th></tr></table><br><br>";
-    temp += "<a href='/google'>Markus Test</a><br><br></th></tr></table><br><br>";
-    temp += "<footer><p>Programmed and designed by: Tobias Kuch</p><p>Contact information: <a href='mailto:tobias.kuch@googlemail.com'>tobias.kuch@googlemail.com</a>.</p></footer>";
-    temp += "</body></html>";
-    server.sendContent(temp);
-    server.client().stop(); // Stop is needed because we sent no content length
-    temp = "";
-  }
-  */
 
   /**************************************************!
      @brief    function to determine if paramter string contains a plausible IP (e.g. "123.123.80.21")

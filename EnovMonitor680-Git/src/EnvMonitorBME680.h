@@ -269,6 +269,7 @@ long temperature_n, humidity_n, pressure_n; // counters for averaging
   byte cmdCal[9] = {0xFF, 0x01, 0x87, 0x00, 0x00, 0x00, 0x00, 0x00, 0x78};  // calibrate command
   char response[9];  // holds the recieved data
   int CO2ppm = 0;
+  unsigned long CO2ppm_sum = 0, CO2ppm_n = 0, last_CO2ppm = 0;
   unsigned long warmingTimer = 0;
   unsigned long timer1 = 0;
 
@@ -407,6 +408,8 @@ void oled_handler();
 void bme680FanHandler(void);
 void resetBME680(int sensorStatus, int bme680Status);
 void restartDS18B20MeasurementFunction();
+bool connectToWiFi(char* ssid, char* pass);
+ String toStringIp(IPAddress ip);
 
 //*** specific forward declarations
 #ifdef getNTPTIME

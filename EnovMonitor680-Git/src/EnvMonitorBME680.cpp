@@ -265,9 +265,9 @@ void logOut(char* printstring)
     for(i=0; i<numberOfDevices; i++) {
       if(sensors.getAddress(tempDeviceAddress, i)) {
          sensors.setResolution(tempDeviceAddress, TEMPERATURE_PRECISION);
-         Serial.print("Sensor ");
+         Serial.print(F("Sensor "));
          Serial.print(i);
-         Serial.print(" had a resolution of ");
+         Serial.print(F(" had a resolution of "));
          Serial.println(sensors.getResolution(tempDeviceAddress), DEC);
       }
     }
@@ -543,7 +543,7 @@ void logOut(char* printstring)
 
     struct tm timeinfo;
     if(!getLocalTime(&timeinfo)){
-      Serial.println("Failed to obtain time");
+      Serial.println(F("Failed to obtain time"));
       strcpy(printstring,"<?time?>");
       return;
     }
@@ -630,11 +630,15 @@ void logOut(char* printstring)
   void getNTPTime()
   {
     char printstring[80];
-    int tryCount = 0;
+    // int tryCount = 0;
 
-    Serial.print("Connecting to ");
+    Serial.print(F("Connecting to "));
     Serial.println(ssid);
 
+    // new 22.11.21
+    connectToWiFi(ssid, pass);
+
+    /* old until 22.11.21
     // while ((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED)) 
     while(WiFi.status() != WL_CONNECTED)
     {
@@ -645,26 +649,26 @@ void logOut(char* printstring)
       delay(500*tryCount);
       Serial.print(".");
     }
+    */
     esp_task_wdt_reset();   // keep watchdog happy
-    Serial.println("");
-    Serial.println("WiFi connected.");
+
     if (WiFi.status() == WL_CONNECTED)
     {
-      Serial.println("WiFi connected.");
+      Serial.println(F("WiFi connected."));
       // check Ping, to determine if internet connection and DNS server are running OK.
       // if DNS server not working: may be Pi-Hole which needs reset.
       bool success = Ping.ping("www.google.com", 3);
       if(!success)
-        Serial.println("Ping Google.com failed");
+        Serial.println(F("Ping Google.com failed"));
       else 
-        Serial.println("Ping Google.com successful.");
+        Serial.println(F("Ping Google.com successful."));
 
       const IPAddress remote_ip1(8, 8, 8, 8); 
       success = Ping.ping(remote_ip1, 3);
       if(!success)
-        Serial.println("Ping 8.8.8.8 failed");
+        Serial.println(F("Ping 8.8.8.8 failed"));
       else 
-        Serial.println("Ping 8.8.8.8 successful.");
+        Serial.println(F("Ping 8.8.8.8 successful."));
       /*  
       const IPAddress remote_ip2(23, 23, 23, 23); 
       success = Ping.ping(remote_ip2, 3);
@@ -723,7 +727,7 @@ void logOut(char* printstring)
     }
     else
     {
-      Serial.println("WiFi NOT connected - time connection not possible.");
+      Serial.println(F("WiFi NOT connected - time server connection not possible."));
       TimeIsInitialized = false;
     }  
   }
@@ -826,6 +830,7 @@ void outputProgramInfo()
   strcpy(printstring2,"\n This is EnvMonitorBME680.cpp \n"); 
   logOut(printstring2);
   logOut(infoStringShort);
+  logOut(" - ");
   logOut(infoStringLong);
   logOut(printstring);
   #ifdef isBLYNK
@@ -947,14 +952,20 @@ void connectToWiFiNetwork(){
   //Wifi.hostname("VirtuinoHostName");        // so kann man direkt den Hostnamen setzen
   WiFi.config(ip, gateway, subnet);          // If you don't want to config IP manually disable this line
   WiFi.mode(WIFI_STA);                       // Config module as station only.
+
+  // new 22.11.21
+  connectToWiFi(ssid, pass);
+
+  /* old until 22.11.21
   WiFi.begin(ssid, pass);
    while (WiFi.status() != WL_CONNECTED) {
      delay(500);
      Serial.print(".");
     }
    Serial.println("");
-   Serial.println("WiFi connected");
+   Serial.println(F("WiFi connected"));
    Serial.println(WiFi.localIP());
+  */ 
 }
 
 
@@ -1177,6 +1188,7 @@ bool connectToWiFi(char* ssid, char* pass)
     // da hilft die wartende Funktion WiFi.waitForConnectResult();
 
     starttime = millis();
+    // WiFi.mode(WIFI_STA);             // Config module as station only.
     int status = WiFi.status();
     while((status != WL_CONNECTED) && (i<7))
     {
@@ -1201,8 +1213,8 @@ bool connectToWiFi(char* ssid, char* pass)
   endtime = millis();
   if(WiFi.status() == WL_CONNECTED)
   {
-    sprintf(printstring,"Connected after %5.2f sec",(float)(endtime-starttime)/1000);
-    Serial.println(printstring);
+    sprintf(printstring,"Connected after %5.2f sec IP: %s\n",(float)(endtime-starttime)/1000, toStringIp(WiFi.localIP()).c_str());
+    logOut(printstring);
     return(true);
   }  
   else
@@ -1317,9 +1329,11 @@ void setup()
     Serial.print(printstring);
     
     // Check if connection with these data is possible
-       //******** debug always go beyond EEPROM. REMOVE for productive software!!!
-      bool connectPossible = false;
-    //debug, remove - bool connectPossible = connectToWiFi(ssid,  pass);
+    #ifdef debugCaptivePortal
+      bool connectPossible = false; //debug: always go beyond EEPROM. REMOVE for productive software!!!
+    #else  
+      bool connectPossible = connectToWiFi(ssid,  pass);
+    #endif  
     if(connectPossible)
     {
       sprintf(printstring,"Connection successful (Preferences) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
@@ -2935,6 +2949,8 @@ void setup()
 
     // Connect or reconnect to WiFi
     if(WiFi.status() != WL_CONNECTED)
+      connectToWiFi(ssid, pass);  // new 22.11.21
+    /* old until 22.11.21
     // if((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED))
     {
       Serial.print("Attempting to connect to SSID: ");
@@ -2950,6 +2966,7 @@ void setup()
       esp_task_wdt_reset();   // keep watchdog happy
       Serial.println("\nConnected.");
     }
+    */
 
     HTTPClient http; // Initialize our HTTP client
     int httpResponseCode;
@@ -2958,12 +2975,12 @@ void setup()
           
       httpResponseCode = http.GET(); // Send HTTP request          
       if (httpResponseCode > 0){ // Check for good HTTP status code
-        Serial.print("HTTP Response code: ");
-        Serial.print(httpResponseCode);
+        sprintf(printstring, "HTTP Response code: %d ", httpResponseCode);
+        logOut(printstring);
         httpErrorCounter = 0;
       }else{
-        Serial.print("HTTP Error code: ");
-        Serial.print(httpResponseCode);
+        sprintf(printstring, "HTTP Error code: %d ", httpResponseCode);
+        logOut(printstring);
         httpErrorCounter++;
       }
       http.end();
@@ -2975,8 +2992,8 @@ void setup()
     httpErrorCounter = 0;
     if(httpResponseCode <=0)
       sendThingspeakDataErrors++;
-    Serial.print(" HTTP Error Counter: ");  
-    Serial.println(sendThingspeakDataErrors);  
+    sprintf(printstring, "HTTP Error Counter: %d ", sendThingspeakDataErrors);
+    logOut(printstring);
     return(httpResponseCode);
   }
   #endif
@@ -3076,7 +3093,7 @@ void setup()
       // send datum is sufficiently changed or 1000 measurments collected (to get an occasional data point to thingspeak)  
       if(!isEqual(avg,last_air_quality_score,0.5) || air_quality_score_n > 999 || (repeatFlag==true))
       {  
-        sprintf(printstring2," airq : %5.2f %5.2f %d ",avg,air_quality_score_sum,air_quality_score_n);
+        sprintf(printstring2," airq : %5.2f %5.2f %ld ",avg,air_quality_score_sum,air_quality_score_n);
         strcat(printstring, printstring2);
         last_air_quality_score = avg;
         air_quality_score_sum = 0;  // reset sum for average
@@ -3162,6 +3179,29 @@ void setup()
         calDS18B20Temperature_n[1] = 0;
       }
     #endif // isOneDS18B20  
+
+    // CO2ppm transfer if one of the sensors is present
+    #if defined isMHZ14A || defined isSENSEAIR_S8
+      if(CO2ppm_n > 0)
+          avg = (float)CO2ppm_sum / (float)CO2ppm_n;
+        else
+          avg = (float)CO2ppm;
+        if(!isEqual(avg,last_CO2ppm,0.02) || (CO2ppm_n > 99) || (repeatFlag==true)){  
+          last_CO2ppm = avg;
+          sprintf(printstring2," CO2ppm: %5.2f",avg);
+          strcat(printstring, printstring2);
+          CO2ppm_sum=0; CO2ppm_n=0;
+          url = url+ "&field8=" + avg;
+          thingspeakCounter++;
+        }  
+        else{
+          sprintf(printstring2," CO2ppm: notMeas ");
+          strcat(printstring, printstring2);
+          CO2ppm_sum=0; CO2ppm_n=0;
+        }
+
+    #endif
+
     sprintf(printstring2," Sent Item# : %ld \n", thingspeakCounter);
     strcat(printstring, printstring2);
     logOut(printstring);
@@ -3702,6 +3742,8 @@ void main_handler()
         sprintf(printstring,"--------- %3.1f MH-Z14A CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
         logOut(printstring); 
         timer1 = millis();
+        CO2ppm_n ++;
+        CO2ppm_sum += CO2ppm;
       } 
       #ifdef isBLYNK 
         Blynk.virtualWrite(V9, CO2ppm);
