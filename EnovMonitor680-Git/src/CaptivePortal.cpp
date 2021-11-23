@@ -956,24 +956,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     }
   }
 
-  /**************************************************!
-     @brief    function to convert an IP address into a string
-    @details  Bluetooth connection is opened by caller. Then listens for ssid:[ID] and pass:[pw], and returns these
-              can also use a scan, but since that makes wifi unreliable on ESP32: better not.
-    @param IPAddress ip : Object containing the IP address
-    @return String containing the IP address
-    ***************************************************/
-  /** IP to String? */
-  String toStringIp(IPAddress ip)
-  {
-    String res = "";
-    for (int i = 0; i < 3; i++)
-    {
-      res += String((ip >> (8 * i)) & 0xFF) + ".";
-    }
-    res += String(((ip >> 8 * 3)) & 0xFF);
-    return res;
-  }
+
 
   /**************************************************!
     @brief    function to generate a readable representation of memory size
@@ -1021,3 +1004,23 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   }
 
 #endif //   #ifdef isCaptivePortal
+
+  /**************************************************!
+     @brief    function to convert an IP address into a string
+    @details  Bluetooth connection is opened by caller. Then listens for ssid:[ID] and pass:[pw], and returns these
+              can also use a scan, but since that makes wifi unreliable on ESP32: better not.
+              Not included in #defines for Captive portal, since also used without it.
+    @param IPAddress ip : Object containing the IP address
+    @return String containing the IP address
+    ***************************************************/
+  /** IP to String? */
+  String toStringIp(IPAddress ip)
+  {
+    String res = "";
+    for (int i = 0; i < 3; i++)
+    {
+      res += String((ip >> (8 * i)) & 0xFF) + ".";
+    }
+    res += String(((ip >> 8 * 3)) & 0xFF);
+    return res;
+  }

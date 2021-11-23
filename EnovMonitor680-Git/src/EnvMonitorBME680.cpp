@@ -830,7 +830,6 @@ void outputProgramInfo()
   strcpy(printstring2,"\n This is EnvMonitorBME680.cpp \n"); 
   logOut(printstring2);
   logOut(infoStringShort);
-  logOut(" - ");
   logOut(infoStringLong);
   logOut(printstring);
   #ifdef isBLYNK
@@ -3014,15 +3013,27 @@ void setup()
   ***************************************************/
   void thingspeak_handler() 
   {
+    #define minDiffTemperature  0.05
+    #define minDiffHumidity     0.1
+    #define minDiffPressure     0.05
+    #define minDiffAirQuality   0.3
+    #define minDiffDS18B20      0.05
+    #define minDiffCO2ppm       3.0
+    #define minDiffExtTemp      0.1
+    #define minDiffExtHumid     1.0
+
+    
     // build thingspeak string and then send it 
     double limit = -110.0;
     static float last_temperature=0, last_humidity=0, last_pressure=0; 
-    int httpResponseCode;
-    static bool repeatFlag = false;
+    int httpResponseCode, i;
+    static bool repeatFlag = false; // first time is never a repeat
     #if defined isBME680 || defined isBME680_BSECLib
       static float last_air_quality_score=0;
     #endif   
     static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
+    static float last_InfactoryT[3] = {-111, -111, -111};
+    static float last_InfactoryH[3] = {-111, -111, -111};
     static long thingspeakCounter = 0;
     String url=ThingspeakServerName + thingspeakWriteAPIKey; 
     // average since last transfer
@@ -3034,7 +3045,7 @@ void setup()
       avg = temperature_sum / temperature_n;
     else
       avg = temperature;
-    if(!isEqual(avg,last_temperature,0.02) || (temperature_n > 999) || (repeatFlag==true)){  
+    if(!isEqual(avg,last_temperature,minDiffTemperature) || (temperature_n > 999) || (repeatFlag==true)){  
       last_temperature = avg;
       sprintf(printstring2," temp: %5.2f",avg);
       strcat(printstring, printstring2);
@@ -3052,7 +3063,7 @@ void setup()
       avg = humidity_sum / humidity_n;
     else
       avg = humidity;
-    if(!isEqual(avg,last_humidity,0.03) || (humidity_n > 999) || (repeatFlag==true)){  
+    if(!isEqual(avg,last_humidity,minDiffHumidity) || (humidity_n > 999) || (repeatFlag==true)){  
       last_humidity = avg;
       sprintf(printstring2," hum: %5.2f",avg);
       strcat(printstring, printstring2);
@@ -3070,7 +3081,7 @@ void setup()
       avg = pressure_sum / pressure_n;
     else
       avg = pressure;
-    if(!isEqual(avg,last_pressure,0.05) || (pressure_n > 999) || (repeatFlag==true)){  
+    if(!isEqual(avg,last_pressure,minDiffPressure) || (pressure_n > 999) || (repeatFlag==true)){  
       last_pressure = avg;
       sprintf(printstring2," pres: %5.2f",avg);
       strcat(printstring, printstring2);
@@ -3091,7 +3102,7 @@ void setup()
       else
         avg = air_quality_score;
       // send datum is sufficiently changed or 1000 measurments collected (to get an occasional data point to thingspeak)  
-      if(!isEqual(avg,last_air_quality_score,0.5) || air_quality_score_n > 999 || (repeatFlag==true))
+      if(!isEqual(avg,last_air_quality_score,minDiffAirQuality) || air_quality_score_n > 999 || (repeatFlag==true))
       {  
         sprintf(printstring2," airq : %5.2f %5.2f %ld ",avg,air_quality_score_sum,air_quality_score_n);
         strcat(printstring, printstring2);
@@ -3118,7 +3129,7 @@ void setup()
         temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
       else
         temp = -111.11;  
-      if((temp > limit) && ((!isEqual(temp,last_DSTemp0,0.05)) || (repeatFlag==true)))
+      if((temp > limit) && ((!isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true)))
       {
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
           calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
@@ -3141,7 +3152,7 @@ void setup()
         temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
       else
         temp = -111.11;  
-      if((temp > limit) && ((!isEqual(temp,last_DSTemp1,0.05)) || (repeatFlag==true)))
+      if((temp > limit) && ((!isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)))
       {  
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
@@ -3162,7 +3173,7 @@ void setup()
         temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
       else
         temp = -111.11;        
-      if((temp > limit) && ((!isEqual(temp,last_DSTemp2,0.05)) || (repeatFlag==true)))
+      if((temp > limit) && ((!isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)))
       {  
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
@@ -3186,7 +3197,7 @@ void setup()
           avg = (float)CO2ppm_sum / (float)CO2ppm_n;
         else
           avg = (float)CO2ppm;
-        if(!isEqual(avg,last_CO2ppm,0.02) || (CO2ppm_n > 99) || (repeatFlag==true)){  
+        if(!isEqual(avg,last_CO2ppm,minDiffCO2ppm) || (CO2ppm_n > 99) || (repeatFlag==true)){  
           last_CO2ppm = avg;
           sprintf(printstring2," CO2ppm: %5.2f",avg);
           strcat(printstring, printstring2);
@@ -3199,7 +3210,45 @@ void setup()
           strcat(printstring, printstring2);
           CO2ppm_sum=0; CO2ppm_n=0;
         }
+    #endif
 
+    // external Infactory 433MHz sensors for temp and pressure
+    #ifdef receiveSERIAL
+      for(i=0;i<3;i++)
+      {
+        sprintf(printstring2,"<<<<< SerialData %5.2f (%5.2f) %5.2f %5.2f (%5.2f) %5.2f\n,",
+          InfactoryT[0],last_InfactoryT[0],InfactoryH[0], InfactoryT[1], last_InfactoryT[1], InfactoryH[1]);
+        logOut(printstring2);
+        switch(i){
+          case 0: // attach temperature and humidity for Channel 1 (Index 0)
+            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true)){  
+              sprintf(printstring2," Infactory T Ch1: %5.2f",InfactoryT[i]);
+              strcat(printstring, printstring2);
+              url = url+ "&field7=" + InfactoryT[i];
+              thingspeakCounter++;
+              last_InfactoryT[i] = InfactoryT[i]; 
+            }  
+            if(!isEqual(InfactoryT[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true)){  
+              sprintf(printstring2," Infactory H Ch1: %5.2f",InfactoryH[i]);
+              strcat(printstring, printstring2);
+              url = url+ "&field4=" + InfactoryH[i];
+              thingspeakCounter++;
+              last_InfactoryH[i] = InfactoryH[i];
+            }  
+          break;
+          case 1: // attach temperature only for Channel 2 (Index 1)
+            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true)){  
+              sprintf(printstring, "Infactory T Ch2: %5.2f",InfactoryT[i]);
+              strcat(printstring, printstring2);
+              url = url+ "&field8=" + InfactoryT[i];
+              thingspeakCounter++;
+              last_InfactoryT[i] = InfactoryT[i];
+            } 
+          break;
+          default:
+            ;  
+        }
+      }
     #endif
 
     sprintf(printstring2," Sent Item# : %ld \n", thingspeakCounter);
@@ -3210,7 +3259,7 @@ void setup()
     if(httpResponseCode == 200) 
       repeatFlag=false;
     else 
-      repeatFlag = false;
+      repeatFlag = true;
     sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
       httpResponseCode, repeatFlag);
     logOut(printstring);
@@ -3337,10 +3386,9 @@ void main_handler()
       if(serialReceived)
       {         
         if(lastInfactoryTempC[serialChannel]<-110) 
-          lastInfactoryTempC[serialChannel] = InfactoryTempC; // get out of default
+          lastInfactoryTempC[serialChannel] = InfactoryTempC - 4.5; // get out of default
         if(abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0)  // too large difference-improbable value
         {
-          lastInfactoryTempC[serialChannel] = InfactoryTempC;
           // restart Blynk
           esp_task_wdt_reset(); // reset watchdog in case it takes longer
           // testxxxxx Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
@@ -3385,6 +3433,7 @@ void main_handler()
             esp_task_wdt_reset(); // reset watchdog in case it takes longer
             Blynk.run();
             vTaskDelay(200 / portTICK_PERIOD_MS); // wait 200ms
+            lastInfactoryTempC[serialChannel] = InfactoryTempC;
             serialReceived = processSerialData(&InfactoryTempC, &InfactoryHumidity, &serialChannel, &charsReceived);
           } while(serialReceived);  
           Blynk.run();
@@ -3721,6 +3770,20 @@ void main_handler()
     sprintf(printstring,"BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
         Temperature, Humidity, Pressure, Altitude); 
     logOut(printstring);    
+
+    // get the data, and collect the required sums for averaging 
+    temperature = Temperature;    // sensor temperature in C
+    temperature_sum += temperature;         // for averaging in thingspeak
+    temperature_n++;                        // for averaging in thingspeak
+
+    pressure    = Pressure;                 // sensor air pressure in mbar
+    pressure_sum += pressure;               // for averaging in thingspeak
+    pressure_n++;                           // for averaging in thingspeak
+
+    humidity    = Humidity;       // humidity in %
+    humidity_sum += humidity;               // for averaging in thingspeak
+    humidity_n++;                           // for averaging in thingspeak
+
     #ifdef isBLYNK
       // get the data to blynk
       Blynk.virtualWrite(V5, Temperature); 
