@@ -3228,7 +3228,7 @@ void setup()
               thingspeakCounter++;
               last_InfactoryT[i] = InfactoryT[i]; 
             }  
-            if(!isEqual(InfactoryT[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true)){  
+            if(!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true)){  
               sprintf(printstring2," Infactory H Ch1: %5.2f",InfactoryH[i]);
               strcat(printstring, printstring2);
               url = url+ "&field4=" + InfactoryH[i];
