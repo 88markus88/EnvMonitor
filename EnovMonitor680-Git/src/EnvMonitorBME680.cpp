@@ -2938,7 +2938,7 @@ void setup()
   ***************************************************/
   int sendThingspeakData(String url)
   {
-    int i=0;
+    // int i=0;
     static int httpErrorCounter = 0;
     static int sendThingspeakDataErrors = 0;
 
@@ -2995,7 +2995,7 @@ void setup()
     logOut(printstring);
     return(httpResponseCode);
   }
-  #endif
+#endif
 
 #ifdef isThingspeak
   bool isEqual(double a, double b, double limit)
@@ -3019,14 +3019,16 @@ void setup()
     #define minDiffAirQuality   0.3
     #define minDiffDS18B20      0.05
     #define minDiffCO2ppm       3.0
-    #define minDiffExtTemp      0.1
-    #define minDiffExtHumid     1.0
+    #define minDiffExtTemp      0.05
+    #define minDiffExtHumid     0.5
+
+    #define minimumRepeatCounter 30   // at least every 30 calls the data are sent for items without own counter
 
     
     // build thingspeak string and then send it 
     double limit = -110.0;
     static float last_temperature=0, last_humidity=0, last_pressure=0; 
-    int httpResponseCode, i;
+    int httpResponseCode;
     static bool repeatFlag = false; // first time is never a repeat
     #if defined isBME680 || defined isBME680_BSECLib
       static float last_air_quality_score=0;
@@ -3034,11 +3036,14 @@ void setup()
     static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
     static float last_InfactoryT[3] = {-111, -111, -111};
     static float last_InfactoryH[3] = {-111, -111, -111};
-    static long thingspeakCounter = 0;
+    static long thingspeakSendItemCounter = 0, thingspeakCallCounter = 0;
+    int thingspeakItemsCollected = 0;
     String url=ThingspeakServerName + thingspeakWriteAPIKey; 
     // average since last transfer
     float avg;
 
+    thingspeakCallCounter++;      // counter for how often this function has been called
+    thingspeakItemsCollected = 0; // counter for the number of items to be sent during this call
     sprintf(printstring,"ToThingspeak: ");
     // BME 680 stuff
     if(temperature_n > 0)
@@ -3051,7 +3056,8 @@ void setup()
       strcat(printstring, printstring2);
       temperature_sum=0; temperature_n=0;
       url = url+ "&field1=" + avg;
-      thingspeakCounter++;
+      thingspeakSendItemCounter++;
+      thingspeakItemsCollected++;
     }  
     else{
       sprintf(printstring2," temp: notMeas ");
@@ -3069,7 +3075,8 @@ void setup()
       strcat(printstring, printstring2);
       humidity_sum=0; humidity_n=0;
       url = url+ "&field2=" + avg;
-      thingspeakCounter++;
+      thingspeakSendItemCounter++;
+      thingspeakItemsCollected++;
     }  
     else{
       sprintf(printstring2," hum: notMeas ");
@@ -3087,7 +3094,8 @@ void setup()
       strcat(printstring, printstring2);
       pressure_sum=0; pressure_n=0;
       url = url+ "&field3=" + avg;
-      thingspeakCounter++;
+      thingspeakSendItemCounter++;
+      thingspeakItemsCollected++;
     }  
     else{
       sprintf(printstring2," pres: notMeas ");
@@ -3110,7 +3118,8 @@ void setup()
         air_quality_score_sum = 0;  // reset sum for average
         air_quality_score_n = 0;    // rest counter for average
         url = url+ "&field4=" + avg;
-        thingspeakCounter++;          
+        thingspeakSendItemCounter++;      
+        thingspeakItemsCollected++;    
     }  
       else{
         sprintf(printstring2," airq: notMeas (avg: %5.3f) ",avg);
@@ -3129,8 +3138,9 @@ void setup()
         temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
       else
         temp = -111.11;  
-      if((temp > limit) && ((!isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true)))
-      {
+      if( ((temp > limit) && isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true)
+        || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+      {    
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
           calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
         strcat(printstring, printstring2);
@@ -3138,7 +3148,8 @@ void setup()
         calDS18B20Temperature_sum[0] = 0;
         calDS18B20Temperature_n[0] = 0;
         url = url+ "&field5=" + temp;
-        thingspeakCounter++;       
+        thingspeakSendItemCounter++;
+        thingspeakItemsCollected++;       
       }  
       else{
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
@@ -3152,7 +3163,8 @@ void setup()
         temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
       else
         temp = -111.11;  
-      if((temp > limit) && ((!isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)))
+      if( ((temp > limit) && !isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)
+        || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
       {  
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
@@ -3160,7 +3172,8 @@ void setup()
         calDS18B20Temperature_sum[1] = 0;
         calDS18B20Temperature_n[1] = 0;
         url = url+ "&field6=" + temp;
-        thingspeakCounter++;
+        thingspeakSendItemCounter++;
+        thingspeakItemsCollected++;
       }  
       else{
         sprintf(printstring2," Tmp1: notMeas ");
@@ -3173,7 +3186,8 @@ void setup()
         temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
       else
         temp = -111.11;        
-      if((temp > limit) && ((!isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)))
+      if( ((temp > limit) && !isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)
+        || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
       {  
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
@@ -3181,7 +3195,8 @@ void setup()
         calDS18B20Temperature_sum[2] = 0;
         calDS18B20Temperature_n[2] = 0;
         url = url+ "&field7=" + temp;
-        thingspeakCounter++;
+        thingspeakSendItemCounter++;
+        thingspeakItemsCollected++;
       }  
       else{
         sprintf(printstring2," Tmp2: notMeas ");
@@ -3203,7 +3218,8 @@ void setup()
           strcat(printstring, printstring2);
           CO2ppm_sum=0; CO2ppm_n=0;
           url = url+ "&field8=" + avg;
-          thingspeakCounter++;
+          thingspeakSendItemCounter++;
+          thingspeakItemsCollected++;
         }  
         else{
           sprintf(printstring2," CO2ppm: notMeas ");
@@ -3214,6 +3230,7 @@ void setup()
 
     // external Infactory 433MHz sensors for temp and pressure
     #ifdef receiveSERIAL
+      int i;
       for(i=0;i<3;i++)
       {
         sprintf(printstring2,"<<<<< SerialData %5.2f (%5.2f) %5.2f %5.2f (%5.2f) %5.2f\n,",
@@ -3221,27 +3238,36 @@ void setup()
         logOut(printstring2);
         switch(i){
           case 0: // attach temperature and humidity for Channel 1 (Index 0)
-            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true)){  
+            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true)
+              || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+            {  
               sprintf(printstring2," Infactory T Ch1: %5.2f",InfactoryT[i]);
               strcat(printstring, printstring2);
               url = url+ "&field7=" + InfactoryT[i];
-              thingspeakCounter++;
+              thingspeakSendItemCounter++;
+              thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i]; 
             }  
-            if(!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true)){  
+            if(!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true)
+              || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+            {  
               sprintf(printstring2," Infactory H Ch1: %5.2f",InfactoryH[i]);
               strcat(printstring, printstring2);
               url = url+ "&field4=" + InfactoryH[i];
-              thingspeakCounter++;
+              thingspeakSendItemCounter++;
+              thingspeakItemsCollected++;
               last_InfactoryH[i] = InfactoryH[i];
             }  
           break;
           case 1: // attach temperature only for Channel 2 (Index 1)
-            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true)){  
+            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) 
+              || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+            {  
               sprintf(printstring, "Infactory T Ch2: %5.2f",InfactoryT[i]);
               strcat(printstring, printstring2);
               url = url+ "&field8=" + InfactoryT[i];
-              thingspeakCounter++;
+              thingspeakSendItemCounter++;
+              thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i];
             } 
           break;
@@ -3251,18 +3277,26 @@ void setup()
       }
     #endif
 
-    sprintf(printstring2," Sent Item# : %ld \n", thingspeakCounter);
+    sprintf(printstring2," Sent Item# this time: %d overall: %ld \n", thingspeakItemsCollected,thingspeakSendItemCounter);
     strcat(printstring, printstring2);
     logOut(printstring);
-    // send data in collected string to Thingspeak
-    httpResponseCode = sendThingspeakData(url);
-    if(httpResponseCode == 200) 
-      repeatFlag=false;
-    else 
-      repeatFlag = true;
-    sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
-      httpResponseCode, repeatFlag);
-    logOut(printstring);
+    // send data in collected string to Thingspeak, but only if data are available
+    if(thingspeakItemsCollected > 0){
+      httpResponseCode = sendThingspeakData(url);
+      if(httpResponseCode == 200) 
+        repeatFlag=false;
+      else 
+        repeatFlag = true;
+      sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
+        httpResponseCode, repeatFlag);
+      logOut(printstring);
+    }
+    else
+    {
+      sprintf(printstring,"No data sent to Thingspeak. Item this time; %d Overall: %ld\n",
+        thingspeakItemsCollected, thingspeakSendItemCounter);
+      logOut(printstring);
+    }  
   }
 #endif
 
@@ -3622,7 +3656,8 @@ void main_handler()
       lastBME680Time = start_loop_time;
       getBME680SensorData();
       // correct with compensation factors which are specific to each sensor module, defined near auth codes
-      temperature += corrBME680Temp;
+      temperature += corrBMETemp;
+      pressure += corrBMEPressure; 
       getAirQuality();    // get air quality index
       Serial.printf(" %3.1f Temp %3.1f Humid %3.1f Pressure %3.1f Gas %5.0f (Alt %3.1f) Air %f %s \n", 
                     time_sec, temperature, humidity, pressure, gas, altitude, air_quality_score, air_quality_string);
@@ -3650,7 +3685,8 @@ void main_handler()
       /*
       getBME680SensorData();
       // correct with compensation factors which are specific to each sensor module, defined near auth codes
-      temperature += corrBME680Temp;
+      temperature += corrBMETemp;
+      pressure += corrBMEPressure; 
       getAirQuality();    // get air quality index
       Serial.printf(" %3.1f Temp %3.1f Humid %3.1f Pressure %3.1f Gas %5.0f (Alt %3.1f) Air %f %s \n", 
                     time_sec, temperature, humidity, pressure, gas, altitude, air_quality_score, air_quality_string);
@@ -3766,23 +3802,26 @@ void main_handler()
   #ifdef isBME280
     getBME280SensorData();
     // correct with compensation factors which are specific to each sensor module, defined near auth codes
-    Temperature += corrBME280Temp;
+    Temperature += corrBMETemp;
+    Pressure += corrBMEPressure; 
     sprintf(printstring,"BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
         Temperature, Humidity, Pressure, Altitude); 
     logOut(printstring);    
 
-    // get the data, and collect the required sums for averaging 
-    temperature = Temperature;    // sensor temperature in C
-    temperature_sum += temperature;         // for averaging in thingspeak
-    temperature_n++;                        // for averaging in thingspeak
+    // get the data, and collect the required sums for averaging for Thingspeak
+    #ifdef isThingspeak
+      temperature = Temperature;    // sensor temperature in C
+      temperature_sum += temperature;         // for averaging in thingspeak
+      temperature_n++;                        // for averaging in thingspeak
 
-    pressure    = Pressure;                 // sensor air pressure in mbar
-    pressure_sum += pressure;               // for averaging in thingspeak
-    pressure_n++;                           // for averaging in thingspeak
+      pressure    = Pressure;                 // sensor air pressure in mbar
+      pressure_sum += pressure;               // for averaging in thingspeak
+      pressure_n++;                           // for averaging in thingspeak
 
-    humidity    = Humidity;       // humidity in %
-    humidity_sum += humidity;               // for averaging in thingspeak
-    humidity_n++;                           // for averaging in thingspeak
+      humidity    = Humidity;       // humidity in %
+      humidity_sum += humidity;               // for averaging in thingspeak
+      humidity_n++;                           // for averaging in thingspeak
+    #endif // Thingspeak  
 
     #ifdef isBLYNK
       // get the data to blynk

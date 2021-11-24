@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.78"
-#define PROGDATE "2021-11-23"
+#define PROGVERSION "V0.79"
+#define PROGDATE "2021-11-24"
 
 #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
@@ -26,10 +26,10 @@
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
-  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+ // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
- // #define blynkGeneralTestbed
+  #define blynkGeneralTestbed
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
@@ -282,7 +282,7 @@
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
-    #undef isBME280         // BME 280 Sensor (P, T, %) present
+    #define isBME280         // BME 280 Sensor (P, T, %) present
     #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
     #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #undef BME_Secondary_Address   // if defined, use secondary address for BME680
@@ -303,7 +303,7 @@
     #undef isLEDHeartbeat      // LED heartbeat on, Pin 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #define isCaptivePortal  // Code for captive portal
-       #define debugCaptivePortal // if defined, captive portal is always used.
+       #undef debugCaptivePortal // if defined, captive portal is always used.
 
     static char infoStringLong[] = " GeneralTestbed";
     static char infoStringShort[] = " General Testbed for all kinds of stuff";
