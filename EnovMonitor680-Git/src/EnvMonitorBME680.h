@@ -5,6 +5,73 @@
 //*** global defined constants
 #define WDT_TIMEOUT_SECONDS 40  // 40 seconds watchdog timeout. Not too short, or the chip is dead!
 
+//Message ID Codes
+#define msgDefaultID          0
+
+#define msgDS18B20NoMeasFlag  1
+#define msgDS18B20Info        2
+#define msgDS18B20Restart     3
+#define msgDS18B20NotMeasuring 4
+
+#define msgLCDInfo            10
+
+#define msgOLEDInfo           20
+
+#define msgTimeInfo           30
+
+#define msgProgInfo           50
+
+#define msgBlynkInfo          60
+#define msgBlynkConnected     61
+#define msgBlynkNotConnected  62
+#define msgBlynkRestart       63
+#define msgBlynkSend          64
+
+#define msgWifiConnected      70
+#define msgWifiNotConnected   71
+
+#define msgThingspeakInfo     80
+
+#define msgRelayInfo          90
+#define msgTempOffsetChange   91
+
+#define msgBME680Info         100
+#define msgBME680NotFound     101
+#define msgBME680Reset        102
+#define msgBME680Error        103
+
+#define msgSetupInfo          110
+
+#define msgSerialReceived     120
+#define msgSerialFaulty       121
+
+#define msgThingspeakSend     130
+
+#define msgReceiveSerialInfo  140
+
+#define msgInfactoryInfo      150
+#define msgInfactoryReadNVS   151
+#define msgInfactorySyncing   152
+#define msgInfactoryEvaluating 153
+#define msgInfactoryNoData    154
+
+#define msgVirtuinoSend       160
+
+#define msgBME280Info         170
+
+#define msgMHZ14aInfo         180
+#define msgMHZ14aWarmup       181
+
+#define msgSenseAirInfo       190
+
+//Message Severities
+#define msgDefault  0
+#define msgInfo     1
+#define msgWarn     2
+#define msgErr      3
+#define msgStop     4
+
+
 // general rule for globals: defined in module defining their function,
 // otherwise external.
 
@@ -388,6 +455,16 @@ int mainHandlerTimerHandle;
 
 #ifdef isCaptivePortal
   Preferences credentialstorage2;    // permanent storage object for BSEC BME 680 sensor parameter
+#endif
+
+#ifdef isSyslog
+  #include <WiFiUdp.h>
+  #include <Syslog.h>
+
+  // A UDP instance to let us send and receive packets over UDP
+  WiFiUDP udpClient;
+  // Create a new syslog instance with LOG_KERN facility
+  Syslog syslog(udpClient, SYSLOG_SERVER, SYSLOG_PORT, DEVICE_HOSTNAME, APP_NAME, LOG_KERN);
 #endif
 
 /************************************************************

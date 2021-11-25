@@ -64,7 +64,7 @@ void(* resetFunc) (void) = 0; //declare reset function @ address 0 THIS IS VERY 
 #endif  
 
 // function to handle all logging output. To serial, into file on SD, to Blynk terminal
-void logOut(char* printstring)
+void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
   {
     char timestring[50]="";      
     char outstring[230];
@@ -102,6 +102,17 @@ void logOut(char* printstring)
     #ifdef isLEDHeartbeat
       heartbeatStatus = !heartbeatStatus;
       digitalWrite (HEARTBEATPIN, LOW);
+    #endif
+
+    #ifdef isSyslog
+      if(WiFi.status() == WL_CONNECTED)
+      {
+        sprintf(outstring, "%d %d %s", MsgID, MsgSeverity, printstring);
+        syslog.log(LOG_INFO | LOG_USER, outstring);
+        // Log message can be formated like with printf function.
+        // syslog.logf(LOG_ERR,  "This is error message no. %d", iteration);  
+        // Log Levels: LOG_INFO, LOG_ERR, LOG_DAEMON 
+      }
     #endif
   }
 
@@ -215,14 +226,14 @@ void logOut(char* printstring)
         {
           sprintf(printstring,"No DS18B20 Measurement due to flag %d %d\n",
             localInfactoryFlag,stopDS18B20MeasureFlag);
-          logOut(printstring);  
+          logOut(printstring, msgDS18B20NoMeasFlag, msgWarn);  
         }
       }
       else
       {
         vTaskDelay(200 / portTICK_PERIOD_MS); // delay for 200 ms
         // sprintf(printstring,"W %ld %ld ", millis(),LastMeasTimer);    
-        // logOut(printstring);
+        // logOut(printstring, msgDefaultID, msgDefault);
         GetOneDS18B20Counter ++;  
       }  
     }
@@ -258,7 +269,7 @@ void logOut(char* printstring)
     numberOfDevices = sensors.getDeviceCount();
  
     sprintf(printstring,"sensors.getDeviceCount found %d Devices \n", numberOfDevices);
-    logOut(printstring);
+    logOut(printstring, msgDS18B20Info, msgInfo);
 
     numberOfDevices = noDS18B20Sensors;   // number of DS18B20 expected; /// temporary
     // Setzen der Genauigkeit
@@ -274,14 +285,14 @@ void logOut(char* printstring)
     Serial.println("");
     numberOfDevices = sensors.getDeviceCount();   // does not function with OneWire library 2.3.5 (claimed to be ok with 2.3.3)
     sprintf(printstring,"Found %d sensors\n", numberOfDevices);
-    logOut(printstring);
+    logOut(printstring, msgDS18B20Info, msgInfo);
     esp_task_wdt_reset();   // keep watchdog happy
 
     // code 2: find devices by searching on the onewire bus across all addresses. 
     // workaround, works apparently for ESP32
 
     sprintf(printstring,"Searching 1-Wire-Devices...\n\r");// "\n\r" is NewLine
-    logOut(printstring);
+    logOut(printstring, msgDS18B20Info, msgInfo);
     
     //critical section. Could help with incorrect sensor detection
     // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#critical-sections-disabling-interrupts
@@ -299,7 +310,7 @@ void logOut(char* printstring)
       while(sensors.getAddress(addr, noDS18B20Connected)) {  
 
         sprintf(printstring,"1-Wire-Device %d found with Adress: ", noDS18B20Connected);
-        // logOut(printstring);
+        // logOut(printstring, msgDS18B20Info, msgInfo);
         esp_task_wdt_reset();   // keep watchdog happy
 
         checksum[noDS18B20Connected] = 0;
@@ -318,10 +329,10 @@ void logOut(char* printstring)
           */
         }
         // strcat(printstring,"\n");
-        //logOut(printstring);
+        //logOut(printstring, msgDefaultID, msgInfo);
         if ( OneWire::crc8( addr, 7) != addr[7]) {
           // sprintf(printstring,"CRC is not valid!\n\r");
-          // logOut(printstring);
+          // logOut(printstring, msgDS18B20Info, msgWarn);
           return;
         }
         noDS18B20Connected ++;    // one more device found
@@ -345,9 +356,9 @@ void logOut(char* printstring)
     //portEXIT_CRITICAL(&myMutex); // exit critical section
 
     sprintf(printstring,"Check: %d \n", check);
-    logOut(printstring);
+    logOut(printstring, msgDS18B20Info, msgInfo);
     sprintf(printstring,"Found 1-Wire-Devices: %d in %d loop runs\n\r", noDS18B20Connected, j-1);
-    logOut(printstring);
+    logOut(printstring, msgDS18B20Info, msgInfo);
 
     for(j=0 ; j< noDS18B20Connected; j++) 
     {
@@ -360,10 +371,9 @@ void logOut(char* printstring)
         strcat(printstring," ");
       }
       strcat(printstring,"\n");
-      logOut(printstring);
+      logOut(printstring, msgDS18B20Info, msgInfo);
     }  
     oneWire.reset_search(); // reset search of oneWire devices
-
     
     return;
   }
@@ -381,7 +391,7 @@ void logOut(char* printstring)
   {
     noDS18B20Restarts++;
     sprintf(printstring,"XXXX Restarting DS18B20 measuring function XXXX !!! %d \n", noDS18B20Restarts);
-    logOut(printstring);  
+    logOut(printstring, msgDS18B20Restart, msgWarn);  
     stopDS18B20MeasureFlag = true;   // use this flag to stop measurements with DS18B20
     esp_task_wdt_reset();   // keep watchdog happy
 
@@ -422,7 +432,7 @@ void logOut(char* printstring)
     {
       int x = param.asInt();
       sprintf(printstring,"Manual restart of DS18B20 initiated %d\n", x);
-      logOut(printstring);
+      logOut(printstring, msgDS18B20Restart, msgWarn);
       if(x==1)  
         manualDS18B20Restart = 1;
       else  
@@ -446,12 +456,12 @@ void logOut(char* printstring)
     #ifdef isDisplay  
       displayMode = 0;  // for OLED
       sprintf(printstring, "Switching off OLED display since no button pressed. %d\n", displayMode);
-      logOut(printstring);
+      logOut(printstring, msgLCDInfo, msgInfo);
     #endif
     #ifdef isLCD
       lcdDisplayMode = 0; // for LCD
       sprintf(printstring, "Switching off LCD display since no button pressed. %d\n", lcdDisplayMode);
-      logOut(printstring);
+      logOut(printstring, msgLCDInfo, msgInfo);
     #endif
 
   }
@@ -719,7 +729,7 @@ void logOut(char* printstring)
 
       if(TimeIsInitialized){
         printLocalTime(printstring, 3);
-        logOut(printstring);
+        logOut(printstring, msgTimeInfo, msgInfo);
       }  
       //disconnect WiFi as it's no longer needed
       WiFi.disconnect(true);
@@ -826,22 +836,22 @@ void outputProgramInfo()
   strcat( printstring, " \n");
  
   strcpy(printstring2,"\n******************************************************************************");
-  logOut(printstring2);
+  logOut(printstring2, msgProgInfo, msgInfo);
   strcpy(printstring2,"\n This is EnvMonitorBME680.cpp \n"); 
-  logOut(printstring2);
-  logOut(infoStringShort);
-  logOut(infoStringLong);
-  logOut(printstring);
+  logOut(printstring2, msgProgInfo, msgInfo);
+  logOut(infoStringShort, msgProgInfo, msgInfo);
+  logOut(infoStringLong, msgProgInfo, msgInfo);
+  logOut(printstring, msgProgInfo, msgInfo);
   #ifdef isBLYNK
     sprintf(printstring," Blynk Auth Code: %s \n", auth); 
-    logOut(printstring);
+    logOut(printstring, msgProgInfo, msgInfo);
     sprintf(printstring," Blynk Server IP: %s \n", "blynkLocalIP"); 
-    logOut(printstring);
+    logOut(printstring, msgProgInfo, msgInfo);
   #endif
   sprintf(printstring," %s  %s  %s \n",PROGNAME, PROGVERSION, PROGDATE);
-  logOut(printstring);
+  logOut(printstring, msgProgInfo, msgInfo);
   strcpy(printstring2,"******************************************************************************\n");
-  logOut(printstring2);
+  logOut(printstring2, msgProgInfo, msgInfo);
   delay(200);
 }
 
@@ -863,7 +873,7 @@ void outputProgramInfo()
     */
 
     sprintf(printstring,"extended Blynk setup function entered\n");
-    logOut(printstring);
+    logOut(printstring, msgBlynkInfo, msgInfo);
     #ifdef isDisplay
       display.clearDisplay(); 
       display.setTextSize(1);
@@ -901,7 +911,7 @@ void outputProgramInfo()
       #endif  
       if(Blynk.connected()){
         sprintf(printstring,"Blynk connected\n");
-        logOut(printstring);
+        logOut(printstring, msgBlynkInfo, msgInfo);
         #ifdef isDisplay        
           display.setCursor(0, 12);
           sprintf(printstring,"Blynk connected");
@@ -911,7 +921,7 @@ void outputProgramInfo()
       }
       else{
         sprintf(printstring,"Blynk NOT connected. Retry in %d [s]\n", delayTime);
-        logOut(printstring);
+        logOut(printstring, msgBlynkInfo, msgWarn);
         #ifdef isDisplay
           sprintf(printstring,"Blynk NOT connected");
           display.setCursor(0, 24);
@@ -1213,7 +1223,7 @@ bool connectToWiFi(char* ssid, char* pass)
   if(WiFi.status() == WL_CONNECTED)
   {
     sprintf(printstring,"Connected after %5.2f sec IP: %s\n",(float)(endtime-starttime)/1000, toStringIp(WiFi.localIP()).c_str());
-    logOut(printstring);
+    logOut(printstring, msgWifiConnected, msgInfo);
     return(true);
   }  
   else
@@ -1336,12 +1346,12 @@ void setup()
     if(connectPossible)
     {
       sprintf(printstring,"Connection successful (Preferences) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
-      logOut(printstring);
+      logOut(printstring, msgWifiConnected, msgInfo);
     }
     else
     {
       sprintf(printstring,"Connection NOT successful (Preferences) for ssid _%s_ pass _%s_ => Captive Portal\n", ssid, pass);
-      logOut(printstring);
+      logOut(printstring, msgWifiNotConnected, msgErr);
       
       setupCaptivePortal(); // start the captive portal
       loopCaptivePortal(ssid, pass); // and it's main event loop
@@ -1349,7 +1359,7 @@ void setup()
       if(connectPossible)
       { 
         sprintf(printstring,"Connection successful (Data from Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
-        logOut(printstring);
+        logOut(printstring, msgWifiConnected, msgInfo);
         // write credentials to EEPROM
         credentialstorage2.begin("credentials", false);    
         ssid_len = credentialstorage2.putBytes("ssid", ssid, strlen(ssid)+1); 
@@ -1362,7 +1372,7 @@ void setup()
       else
       {
         sprintf(printstring,"Connection NOT successful (Data from Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
-        logOut(printstring);
+        logOut(printstring, msgWifiNotConnected, msgErr);
       }
     }  
     if(!connectPossible)  // did not work, use data from default
@@ -1373,12 +1383,12 @@ void setup()
       if(connectPossible)
       {
         sprintf(printstring,"Connection successful (using Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
-        logOut(printstring);
+        logOut(printstring, msgWifiConnected, msgInfo);
       }
       else
       {
         sprintf(printstring,"Connection NOT successful (using Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
-        logOut(printstring);
+        logOut(printstring, msgWifiNotConnected, msgErr);
       }
     }
   #endif
@@ -1390,6 +1400,15 @@ void setup()
     esp_task_wdt_reset();   // keep watchdog happy
   #endif 
   Serial.print("3");
+
+  #ifdef isSyslog
+    // prepare syslog configuration here (can be anywhere before first call of 
+    // log/logf method)
+    syslog.server(SYSLOG_SERVER, SYSLOG_PORT);
+    syslog.deviceHostname(DEVICE_HOSTNAME);
+    syslog.appName(APP_NAME);
+    syslog.defaultPriority(LOG_KERN);
+  #endif  
 
   // get number of reboots so far, is used to set SD filename
   preferences.begin("nvs", false);                 // Open nonvolatile storage (nvs)
@@ -1430,13 +1449,13 @@ void setup()
     // mainHandlerTimerHandle = MyBlynkTimer.setInterval(mainHandlerInterval, main_handler);
     Serial.print("7a ");
     sprintf(printstring, "thingspeakHandlerTimerHandle: %d\n", thingspeakHandlerTimerHandle);
-    logOut(printstring);
+    logOut(printstring, msgThingspeakInfo, msgInfo);
     Serial.print(thingspeakHandlerTimerHandle);
   #endif
 
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
-    logOut(printstring);
+    logOut(printstring, msgBlynkInfo, msgInfo);
     #ifdef isDisplay
       display.clearDisplay(); 
       display.setTextSize(1);
@@ -1478,19 +1497,19 @@ void setup()
     #endif  
     if(Blynk.connected()){
       sprintf(printstring,"Blynk connected\n");
-      logOut(printstring);
+      logOut(printstring, msgBlynkConnected, msgInfo);
       Blynk.syncAll();  // synchronize device with server
     }
     else{
       sprintf(printstring,"Blynk NOT connected\n");
-      logOut(printstring);
+      logOut(printstring, msgBlynkNotConnected, msgInfo);
       extendedBlynkConnect(); // try reconnects with increasing time intervals
     }
   #endif // isBLYNK  
   Serial.print("5");
   // log number of reboots. Do this here, after SD opened and Blynk connection operational (no reboots make up logfilename...)
   sprintf(printstring,"NoReboots=%d\n", NoReboots);
-  logOut(printstring);
+  logOut(printstring, msgDefaultID, msgInfo);
 
   Serial.print("6");
   // set timer for main_handler()
@@ -1505,7 +1524,7 @@ void setup()
 
   Serial.print("7 ");
   sprintf(printstring, "mainHandlerTimerHandle: %d\n", mainHandlerTimerHandle);
-  logOut(printstring);
+  logOut(printstring, msgDefaultID, msgInfo);
   Serial.print(mainHandlerTimerHandle);
 
   #ifdef isDisplay
@@ -1568,7 +1587,7 @@ void setup()
     //oledHandlerTimer.setInterval(lcdHandlerInterval, oled_handler);
     oledTimerHandle = MyBlynkTimer.setInterval(oledHandlerInterval, oled_handler);
     sprintf(printstring, "oledTimerHandle: %d\n", oledTimerHandle);
-    logOut(printstring);
+    logOut(printstring, msgOLEDInfo, msgInfo);
   #endif  // isDisplay
 
   // setup functions for LCD display 4 rows 20 characters
@@ -1586,14 +1605,14 @@ void setup()
     //lcdHandlerTimer.setInterval(lcdHandlerInterval, lcd_handler);
     lcdTimerHandle = MyBlynkTimer.setInterval(lcdHandlerInterval, lcd_handler);
     sprintf(printstring, "lcdTimerHandle: %d\n", lcdTimerHandle);
-    logOut(printstring);
+    logOut(printstring, msgLCDInfo, msgInfo);
   #endif // isLCD
 
   #if defined isLCD || defined isDisplay
     // this timer is triggered when display is to go off. restarted every time a button is pressed
     displayOffTimerHandle = MyBlynkTimer.setInterval(displayOffTimerInterval, displayoff_handler);
     sprintf(printstring, "displayOffTimerHandle: %d\n", displayOffTimerHandle);
-    logOut(printstring);
+    logOut(printstring, msgOLEDInfo, msgInfo);
   #endif
 
   // Program Info to serial Monitor
@@ -1610,7 +1629,7 @@ void setup()
     // fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     fanTimerHandle = fanHandlerTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     sprintf(printstring, "fanTimerHandle: %d\n", fanTimerHandle);
-    logOut(printstring);
+    logOut(printstring, msgRelay, msgInfo);
   #endif
 
   #ifdef isInfactory433     // set input pin and interrupt handler for 433 MHz sensor (conflict with button!)
@@ -1672,18 +1691,18 @@ void setup()
 
   #ifdef isBME680
     sprintf(printstring,"- Initializing BME680 sensor with Zanshin Library\n");
-    logOut(printstring);
+    logOut(printstring, msgBME680Info, msgInfo);
     while (!BME680.begin(I2C_STANDARD_MODE, 0x77)) {  // Start using I2C, use address 0x77 (could also be 0x76)
       sprintf(printstring,"-  Unable to find BME680. Trying again in 5 seconds.\n");
-      logOut(printstring);
+      logOut(printstring, msgBME680NotFound, msgErr);
       delay(5000);
     }  // of loop until device is located
     sprintf(printstring,"- Setting 16x oversampling for all sensors\n");
-    logOut(printstring);
+    logOut(printstring, msgBME680Info,msgInfo);
     sprintf(printstring,"- Setting IIR filter to a value of 4 samples\n");
-    logOut(printstring);
+    logOut(printstring, msgBME680Info, msgInfo);
     sprintf(printstring,"- Turning on gas measurements\n");
-    logOut(printstring);
+    logOut(printstring, msgBME680Info, msgInfo);
     BME680.setOversampling(TemperatureSensor, Oversample16);
     BME680.setOversampling(HumiditySensor, Oversample16);
     BME680.setOversampling(PressureSensor, Oversample16);
@@ -1701,7 +1720,7 @@ void setup()
     int iaqSensorStatus, iaqBME680Status;
     do{
       sprintf(printstring,"- Initializing BME680 sensor with BSEC Library\n");
-      logOut(printstring);
+      logOut(printstring, msgBME680Info, msgInfo);
 
       Wire.begin();
       permstorage.begin("BME680", false);         // open namespace BME680 in permanent storage
@@ -1717,7 +1736,7 @@ void setup()
         "\nBSEC library version %d.%d.%d.%d", 
           iaqSensor.version.major, iaqSensor.version.minor, 
           iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
-      logOut(printstring);
+      logOut(printstring, msgBME680Info, msgInfo);
       checkIaqSensorStatus();
 
       iaqSensor.setConfig(bsec_config_iaq);
@@ -1761,7 +1780,7 @@ void setup()
         Blynk.disconnect();  // we do not want Blynk to disturb the arduino measuring data
         sprintf(printstring,"Blynk disconnected\n");
         //Serial.println("A");
-        logOut(printstring);
+        logOut(printstring, msgBlynkNotConnected, msgInfo);
       #endif  
     #endif
 
@@ -1846,14 +1865,14 @@ void setup()
       // MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
       checkTimerHandle = MyBlynkTimer.setInterval(checkTimerInterval, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
       sprintf(printstring, "checkTimerHandle: %d\n", checkTimerHandle);
-      logOut(printstring);
+      logOut(printstring, msgBlynkInfo, msgInfo);
     #endif  
     // Serial.println("B");
     #ifdef blynkRestartHouly
       // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
       restartTimerHandle = MyBlynkTimer.setInterval(restartTimerInterval, restartBlynk); // attempt to restart Blynk every 3 hours
       sprintf(printstring, "restartTimerHandle: %d\n", restartTimerHandle);
-      logOut(printstring);
+      logOut(printstring, msgBlynkInfo, msgInfo);
     #endif  
   #endif
 
@@ -1882,11 +1901,11 @@ void setup()
   Serial.print("9");
 
   #ifdef serialMonitor
-    logOut("Entering Serial Monitor mode - all other is off\n");
+    logOut("Entering Serial Monitor mode - all other is off\n", msgDefaultID, msgInfo);
     monitorSerial();
   #endif
   sprintf(printstring,"end setup\n");
-  logOut(printstring);
+  logOut(printstring, msgSetupInfo, msgInfo);
   Serial.print(" 10 ");
 } // setup
 
@@ -2018,7 +2037,7 @@ void setup()
     if(countBME680Resets > 500)   
     {
       sprintf(printstring,"resetBME680: Resetting %d times not successful, restarting ESP32\n", countBME680Resets-1);
-      logOut(printstring);
+      logOut(printstring, msgBME680Reset, msgErr);
       delay(2000);
       resetFunc();
     }  
@@ -2028,7 +2047,7 @@ void setup()
       if(countBME680Resets > 5)   
       {
         sprintf(printstring,"resetBME680: Resetting %d times not successful, toggling power to BME680\n", countBME680Resets-1);
-        logOut(printstring);
+        logOut(printstring, msgBME680Reset, msgErr);
         digitalWrite(RELAYPIN2, HIGH);
         delay(2000);
         digitalWrite(RELAYPIN2, LOW);
@@ -2039,12 +2058,12 @@ void setup()
 
     sprintf(printstring,"Resetting BME680 #%d since sensor status: %d BME680 Status: %d\n", 
       countBME680Resets, sensorStatus, bme680Status);
-    logOut(printstring);
+    logOut(printstring, msgBME680Reset, msgInfo);
 
     do{
       ret = Wire.begin(); 
       sprintf(printstring,"%d Wire.begin() returned: %d\n", i, ret);
-      logOut(printstring);
+      logOut(printstring, msgBME680Reset, msgInfo);
       i++;
      }while(!ret && i<5);
 
@@ -2059,7 +2078,7 @@ void setup()
 
     sprintf(printstring,"Sensor and BME680 status after iaqSensor.begin(): %d %d\n", 
         iaqSensor.status, iaqSensor.bme680Status);
-    logOut(printstring);
+    logOut(printstring, msgBME680Reset, msgInfo);
 
     //output = "\nBSEC library version " + String(iaqSensor.version.major) + "." + String(iaqSensor.version.minor) + "." + String(iaqSensor.version.major_bugfix) + "." + String(iaqSensor.version.minor_bugfix);
     //Serial.println(output);
@@ -2067,7 +2086,7 @@ void setup()
       "\nBSEC library version %d.%d.%d.%d\n", 
         iaqSensor.version.major, iaqSensor.version.minor, 
         iaqSensor.version.major_bugfix, iaqSensor.version.minor_bugfix);
-    logOut(printstring);
+    logOut(printstring, msgBME680Reset, msgInfo);
     // checkIaqSensorStatus();
 
     iaqSensor.setConfig(bsec_config_iaq);
@@ -2095,12 +2114,12 @@ void setup()
     if (iaqSensor.status != BSEC_OK) {
       if (iaqSensor.status < BSEC_OK) {
         sprintf(printstring,"BSEC error code : %d\n", iaqSensor.status);
-        logOut(printstring);
+        logOut(printstring, msgBME680Error, msgErr);
         //for (;;)  // we do not want to halt this program, just log output
         //  errLeds(); /* Halt in case of failure */
       } else {
         sprintf(printstring,"BSEC warning code : %d\n", iaqSensor.status);
-        logOut(printstring);
+        logOut(printstring, msgBME680Error, msgWarn);
       }
     }
 
@@ -2109,14 +2128,14 @@ void setup()
         // output = "BME680 error code : " + String(iaqSensor.bme680Status);
         // Serial.println(output);
         sprintf(printstring,"BME680 error code : %d\n", iaqSensor.bme680Status);
-        logOut(printstring);
+        logOut(printstring, msgBME680Error, msgErr);
         //for (;;)  // we do not want to halt this program, just log output
         //  errLeds(); /* Halt in case of failure */
       } else {
         // output = "BME680 warning code : " + String(iaqSensor.bme680Status);
         // Serial.println(output);
         sprintf(printstring,"BME680 warning code : %d\n", iaqSensor.bme680Status);
-        logOut(printstring);
+        logOut(printstring, msgBME680Error, msgWarn);
       }
       iaqSensor.status = iaqSensor.status;
     } 
@@ -2132,28 +2151,28 @@ void setup()
     if (storesize == BSEC_MAX_STATE_BLOB_SIZE) {
       // Existing state in permstorage
       sprintf(printstring,"Reading BME680 state from permstorage\n");
-      logOut(printstring);
+      logOut(printstring, msgBME680Info, msgInfo);
 
       size_t readsize = permstorage.getBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
       Serial.printf("bsecstate expected: %d read: %d\n", storesize, readsize);
       /*
       for (uint8_t i = 0; i < BSEC_MAX_STATE_BLOB_SIZE; i++) {
         sprintf(printstring, " %3d 0x%02X  ",i, bsecState[i]);
-        logOut(printstring);
+        logOut(printstring, msgBME680Info, msgInfo);
         if((i+1)%10==0) {
           sprintf(printstring,"\n");
-          logOut(printstring);
+          logOut(printstring, msgBME680Info, msgInfo);
         }  
       }
       sprintf(printstring,"\n");
-      logOut(printstring);
+      logOut(printstring, , msgBME680Info, msgInfo);
       */
       iaqSensor.setState(bsecState);
       checkIaqSensorStatus();
     } else {
       // Erase the key "bsecstate" 
       sprintf(printstring,"Erasing bsecstate");
-      logOut(printstring);
+      logOut(printstring, msgBME680Info, msgInfo);
       permstorage.remove("bsecstate");  // remove the key
       // permstorage.clear(); // erase the whole namespace
     }
@@ -2185,7 +2204,7 @@ void setup()
 
       // use preferences instead of deprecated eeprom method
       sprintf(printstring,"Writing state into permstorage. Size: %d \n", BSEC_MAX_STATE_BLOB_SIZE);
-      logOut(printstring);
+      logOut(printstring, msgBME680Info, msgInfo);
       /*
       for (uint8_t i = 0; i < BSEC_MAX_STATE_BLOB_SIZE ; i++) {
         sprintf(outstring," %3d 0x%02X  ",i, bsecState[i]);
@@ -2194,13 +2213,13 @@ void setup()
         // Serial.print(bsecState[i], HEX);
         if((i+1)%10==0) {
           strcat(printstring,"\n");
-          logOut(printstring);
+          logOut(printstring, msgBME680Info, msgInfo);
           strcpy(printstring,"");
           printflag = true;
         }  
       }
       if(!printflag) 
-        logOut(printstring);
+        logOut(printstring, msgBME680Info, msgInfo);
       */  
 
       //critical section. Could help with hanging putBytes.
@@ -2211,7 +2230,7 @@ void setup()
       permstorage.putBytes("bsecstate", bsecState, BSEC_MAX_STATE_BLOB_SIZE);
       //portEXIT_CRITICAL(&myMutex);
       sprintf(printstring,"\npermstorage length after writing %d\n",permstorage.getBytesLength("bsecstate"));
-      logOut(printstring);
+      logOut(printstring, msgBME680Info, msgInfo);
     }
   }
 #endif
@@ -2538,7 +2557,7 @@ void setup()
     if(WL_CONNECTED != WiFi.status())
     {   
       sprintf(printstring,"checkBlynk 5: Resetting - no Blynk connection. isConnected: %d Wifi.Status: %d\n", isconnected,  WiFi.status());
-      logOut(printstring);
+      logOut(printstring, msgBlynkNotConnected, msgWarn);
       isconnected = false;
     }
 
@@ -2549,22 +2568,22 @@ void setup()
       if(blynkDisconnects > 5)   
       {
         sprintf(printstring,"checkBlynk 1a: Restart Blynk - no Blynk connection. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
-        logOut(printstring);
+        logOut(printstring, msgBlynkNotConnected, msgWarn);
         restartBlynk();
       }  
       if(blynkDisconnects > 10)   
       {
         sprintf(printstring,"checkBlynk 1b: Resetting - no Blynk connection. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
-        logOut(printstring);
+        logOut(printstring, msgBlynkNotConnected, msgWarn);
         resetFunc();
       }  
 
       sprintf(printstring,"checkBlynk 2: Reconnecting Blynk. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
-      logOut(printstring);  
+      logOut(printstring, msgBlynkNotConnected, msgWarn);  
       if(WiFi.status() != WL_CONNECTED)  
       {
         sprintf(printstring,"checkBlynk 3: Reconnecting Wifi. Wifi.status: %d\n", WiFi.status());
-        logOut(printstring);  
+        logOut(printstring, msgBlynkNotConnected, msgWarn);  
         Blynk.connectWiFi(ssid,pass);
         #ifdef blynkCloud
            Blynk.config(auth);
@@ -2573,17 +2592,17 @@ void setup()
         #endif  
       }  
       sprintf(printstring,"checkBlynk 4: after Blynk.conectWifi. Wifi.status: (3:connected, 6: disconnected) %d\n", WiFi.status());
-      logOut(printstring);  
+      logOut(printstring, msgBlynkNotConnected, msgWarn);  
       Blynk.connect();
       Blynk.syncAll();
       sprintf(printstring,"checkBlynk 6: After Blynk.connect. Wifi.status: %d Blynk.connected: %d\n", WiFi.status(), Blynk.connected() );
-      logOut(printstring);  
+      logOut(printstring, msgBlynkNotConnected, msgWarn);  
     }
     else
     {
       blynkDisconnects = 0;
       sprintf(printstring,"checkBlynk 0: Blynk is connected. isconnected: %d blynkDisconnects: %d\n", isconnected, blynkDisconnects);
-      logOut(printstring);      
+      logOut(printstring, msgBlynkConnected, msgInfo);      
     }
   }
 
@@ -2598,18 +2617,18 @@ void setup()
       if(blynkDisconnects > 10)   
       {
         sprintf(printstring,"checkBlynk: Resetting - no Blynk connection %d %d\n", isconnected, blynkDisconnects);
-        logOut(printstring);
+        logOut(printstring, msgBlynkNotConnected, msgWarn);
         resetFunc();
       }  
       sprintf(printstring,"checkBlynk: Reconnecting Blynk %d %d\n", isconnected, blynkDisconnects);
-      logOut(printstring);  
+      logOut(printstring, msgBlynkNotConnected, msgWarn);  
       Blynk.connect();
     }
     else
     {
       blynkDisconnects = 0;
       sprintf(printstring,"checkBlynk: Blynk is connected %d %d\n", isconnected, blynkDisconnects);
-      logOut(printstring);       
+      logOut(printstring, msgBlynkConnected, msgInfo);       
     }
   }
   */ 
@@ -2625,18 +2644,18 @@ void setup()
       preferences.putInt("NoReboots", NoReboots);
       preferences.end();
       sprintf(printstring,"restartBlynk 1: Incremented Number of Reboots to: %d\n", NoReboots);
-      logOut(printstring); 
+      logOut(printstring, msgBlynkRestart, msgInfo); 
     }
     restartCount ++;
     sprintf(printstring, "restartBlynk 2: Restart Blynk No %d. Reboots: %d  ", restartCount, NoReboots);
-    logOut(printstring); 
+    logOut(printstring, msgBlynkRestart, msgInfo); 
 
     Blynk.disconnect();
     delay(1500);
     if(WiFi.status() != WL_CONNECTED)
     {
       sprintf(printstring,"restartBlynk 3: Reconnecting Wifi. Status: %d\n", WiFi.status());
-      logOut(printstring);  
+      logOut(printstring, msgBlynkRestart, msgInfo);  
       Blynk.connectWiFi(ssid,pass);
       #ifdef blynkCloud
         Blynk.config(auth);
@@ -2645,7 +2664,7 @@ void setup()
       #endif  
     }  
     sprintf(printstring,"restartBlynk 4: Blynk.connect(). Status: %d\n", WiFi.status());
-    logOut(printstring); 
+    logOut(printstring, msgBlynkRestart, msgInfo); 
     Blynk.connect();
     delay(600);
     Blynk.virtualWrite(V12, restartCount); 
@@ -2664,14 +2683,14 @@ void setup()
       preferences.putInt("NoReboots", NoReboots);
       preferences.end();
       sprintf(printstring,"Incremented Number of Reboots to: %d\n", NoReboots);
-      logOut(printstring); 
+      logOut(printstring, msgBlynkRestart, msgInfo); 
     }
 
     restartCount ++;
     Serial.printf("=== Restarting Blynk routinely. No: %d ===\n", restartCount);
  
     sprintf(printstring, "Restart Blynk No %d. Reboots: %d  ", restartCount, NoReboots);
-    logOut(printstring); 
+    logOut(printstring, msgBlynkRestart, msgInfo); 
     Blynk.disconnect();
     delay(1500);
     #ifdef blynkCloud
@@ -2716,7 +2735,7 @@ void setup()
     {
       tempSwitchOffset = param.asFloat();
       sprintf(printstring, "tempSwitchOffset changed to  %4.2f \n", tempSwitchOffset);
-      logOut(printstring);
+      logOut(printstring, msgTempOffsetChange, msgInfo);
       digitalWrite(RELAYPIN1, LOW); // fan off and defined startup state
       fanState=0;
       Blynk.virtualWrite(V40,0) ;   // defined state at app: fan off
@@ -2728,7 +2747,7 @@ void setup()
   BLYNK_CONNECTED()
   {
     sprintf(printstring,"Blynk detected connection. isFirstConnect: %d \n", isFirstConnect);
-    logOut(printstring); 
+    logOut(printstring,msgBlynkConnected, msgInfo); 
     if(isFirstConnect)
       Blynk.syncAll();
     isFirstConnect = false;
@@ -2757,7 +2776,7 @@ void setup()
       #endif  
       sprintf(printstring, "ON_ON_ON_ON Fan switched ON. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
           temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
-      logOut(printstring);
+      logOut(printstring, msgRelayInfo, msgInfo);
     } 
       // fan is on, and temperature has dropped to max. potential for fan: turn it off
     if(temperature < calDS18B20Temperature[tempSwitchSensorSelector] + tempSwitchOffset * (1-fanMaxPotential)
@@ -2770,7 +2789,7 @@ void setup()
       digitalWrite(RELAYPIN1, LOW);
       sprintf(printstring, "OFF_OFF_OFF Fan switched OFF. BME: %4.2f DS18B20: %4.2f Offset: %4.2f Max Pot: %3.1f\n", 
           temperature, calDS18B20Temperature[tempSwitchSensorSelector], tempSwitchOffset, fanMaxPotential);
-      logOut(printstring);
+      logOut(printstring, msgRelayInfo, msgInfo);
     }  
     #ifdef isBLYNK
       Blynk.syncVirtual(V40); // synchronize app and sketch.  
@@ -2899,7 +2918,7 @@ void setup()
         if (NULL != strstr(receivedChars,failure))
           serialFailCount++;
         // sprintf(printstring,"faulty data received, Total Count: %d\n",serialFailCount);
-        // logOut(printstring);  
+        // logOut(printstring, msgSerialFaulty, msgErr);  
         serialTemp=-111.11;
         serialHumidity=-111;
         serialChannel=0;
@@ -2911,7 +2930,7 @@ void setup()
         *sHumidity = serialHumidity;
         // sprintf(printstring,"converted Infactory (Ch: %d) T: %3.1f %3.1f %%\n",
         //   *sChannel, *sTempC, *sHumidity);
-        // logOut(printstring);  
+        // logOut(printstring, msgSerialReceived, msgInfo);  
         ret=true;
       }
       newData = false;
@@ -2944,7 +2963,7 @@ void setup()
 
     //Serial.println(url);
     sprintf(printstring,"sendThingspeakData() URL: %s\n",url.c_str());
-    logOut(printstring);
+    logOut(printstring, msgThingspeakSend, msgInfo);
 
     // Connect or reconnect to WiFi
     if(WiFi.status() != WL_CONNECTED)
@@ -2975,11 +2994,11 @@ void setup()
       httpResponseCode = http.GET(); // Send HTTP request          
       if (httpResponseCode > 0){ // Check for good HTTP status code
         sprintf(printstring, "HTTP Response code: %d ", httpResponseCode);
-        logOut(printstring);
+        logOut(printstring, msgThingspeakSend, msgInfo);
         httpErrorCounter = 0;
       }else{
         sprintf(printstring, "HTTP Error code: %d ", httpResponseCode);
-        logOut(printstring);
+        logOut(printstring, msgThingspeakSend, msgErr);
         httpErrorCounter++;
       }
       http.end();
@@ -2992,7 +3011,7 @@ void setup()
     if(httpResponseCode <=0)
       sendThingspeakDataErrors++;
     sprintf(printstring, "HTTP Error Counter: %d ", sendThingspeakDataErrors);
-    logOut(printstring);
+    logOut(printstring, msgThingspeakSend, msgErr);
     return(httpResponseCode);
   }
 #endif
@@ -3133,7 +3152,7 @@ void setup()
       // DS18B20 data 
       double temp;
       sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum[0],calDS18B20Temperature_n[0]);
-      logOut(printstring);
+      logOut(printstring,msgDS18B20Info, msgInfo);
       if(calDS18B20Temperature_n[0] > 0)
         temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
       else
@@ -3235,11 +3254,14 @@ void setup()
       {
         sprintf(printstring2,"<<<<< SerialData %5.2f (%5.2f) %5.2f %5.2f (%5.2f) %5.2f\n,",
           InfactoryT[0],last_InfactoryT[0],InfactoryH[0], InfactoryT[1], last_InfactoryT[1], InfactoryH[1]);
-        logOut(printstring2);
+        logOut(printstring2, msgReceiveSerialInfo, msgInfo);
         switch(i){
           case 0: // attach temperature and humidity for Channel 1 (Index 0)
-            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true)
-              || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+            if(
+                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+                && InfactoryT[i] > -100
+                && abs(InfactoryT[i]) > 0.01
+              )
             {  
               sprintf(printstring2," Infactory T Ch1: %5.2f",InfactoryT[i]);
               strcat(printstring, printstring2);
@@ -3248,8 +3270,11 @@ void setup()
               thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i]; 
             }  
-            if(!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true)
-              || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+            if(
+              (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+              && InfactoryH[i] > -100
+              && abs(InfactoryH[i]) > 0.01
+            )
             {  
               sprintf(printstring2," Infactory H Ch1: %5.2f",InfactoryH[i]);
               strcat(printstring, printstring2);
@@ -3260,8 +3285,11 @@ void setup()
             }  
           break;
           case 1: // attach temperature only for Channel 2 (Index 1)
-            if(!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) 
-              || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+            if(
+                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+                && InfactoryT[i] > -100
+                && abs(InfactoryT[i]) > 0.01
+              )
             {  
               sprintf(printstring, "Infactory T Ch2: %5.2f",InfactoryT[i]);
               strcat(printstring, printstring2);
@@ -3279,7 +3307,7 @@ void setup()
 
     sprintf(printstring2," Sent Item# this time: %d overall: %ld \n", thingspeakItemsCollected,thingspeakSendItemCounter);
     strcat(printstring, printstring2);
-    logOut(printstring);
+    logOut(printstring, msgThingspeakSend, msgInfo);
     // send data in collected string to Thingspeak, but only if data are available
     if(thingspeakItemsCollected > 0){
       httpResponseCode = sendThingspeakData(url);
@@ -3289,13 +3317,13 @@ void setup()
         repeatFlag = true;
       sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
         httpResponseCode, repeatFlag);
-      logOut(printstring);
+      logOut(printstring, msgThingspeakSend, msgInfo);
     }
     else
     {
       sprintf(printstring,"No data sent to Thingspeak. Item this time; %d Overall: %ld\n",
         thingspeakItemsCollected, thingspeakSendItemCounter);
-      logOut(printstring);
+      logOut(printstring, msgThingspeakSend, msgInfo);
     }  
   }
 #endif
@@ -3323,7 +3351,7 @@ void main_handler()
   start_loop_time = millis();
   // Serial.printf(" ******* Main Loop start at %3.1f sec ********** \n",time_sec);
   sprintf(printstring, " M %3.1f \n",time_sec);
-  logOut(printstring);
+  logOut(printstring, msgDefaultID, msgInfo);
 
   #ifdef isInfactory433
     // if( (millis() > lastInfactoryReception + 45000) || (lastInfactoryReception < 1))
@@ -3338,15 +3366,15 @@ void main_handler()
 
       doInfactoryStuff(70000);   // try to read infactory sensor for 70 sec. intended to block loop
       sprintf(printstring,"\n===== Main Loop after doInfactoryStuff: %d  ", successInfactoryCalc);
-      logOut(printstring);
+      logOut(printstring, msgInfactoryInfo, msgInfo);
       sprintf(printstring,"TempC %3.1f Humidity %3.1f %%  Channel %d:\n", 
           InfactoryTempC, InfactoryHumidity, InfactoryChannel);
-      logOut(printstring);
+      logOut(printstring, msgInfactoryInfo, msgInfo);
       trialsInfactory++;
       if(InfactoryTempC > -110 && InfactoryHumidity > -110) 
         successInfactory++;
       sprintf(printstring,"Infactory Readings %d of %d attempts\n", successInfactory, trialsInfactory);  
-      logOut(printstring);
+      logOut(printstring, msgInfactoryInfo, msgInfo);
 
       // restart Blynk
       #ifdef isBLYNK
@@ -3357,10 +3385,10 @@ void main_handler()
         {         
           Blynk.virtualWrite(V15, InfactoryTempC); //sending to Blynk, if other than the default -111.11
           sprintf(printstring,"Main >>>>>> Sending TempC %3.1f ", InfactoryTempC);
-          logOut(printstring);
+          logOut(printstring, msgInfactoryInfo, msgInfo);
           Blynk.virtualWrite(V16, InfactoryHumidity); //sending to Blynk
           sprintf(printstring,">>>>>> Sending Humidity %3.1f \n", InfactoryHumidity);
-          logOut(printstring);
+          logOut(printstring, msgInfactoryInfo, msgInfo);
         }  
         else
         {
@@ -3373,10 +3401,10 @@ void main_handler()
           {
             Blynk.virtualWrite(V15, InfactoryTempC); //sending to Blynk, if other than the default -111.11
             sprintf(printstring,"Main NVS >->->->->-> Sending TempC %3.1f ", InfactoryTempC);
-            logOut(printstring);
+            logOut(printstring, msgInfactoryReadNVS, msgInfo);
             Blynk.virtualWrite(V16, InfactoryHumidity); //sending to Blynk
             sprintf(printstring,">->->->->-> Sending Humidity %3.1f \n", InfactoryHumidity);
-            logOut(printstring);
+            logOut(printstring, msgInfactoryReadNVS, msgInfo);
             preferences.begin("nvs", false);                    // Open nonvolatile storage (nvs)
             preferences.putFloat("InfTempC", -111.1);           // reset nvs to defaults 
             preferences.putFloat("InfHumidity", -111.11);       // to only read once
@@ -3405,14 +3433,14 @@ void main_handler()
     {
       sprintf(printstring,"converted Infactory (Ch: %d) T: %3.1f %3.1f %%\n",
         serialChannel, InfactoryTempC, InfactoryHumidity);
-      logOut(printstring);  
+      logOut(printstring, msgSerialReceived, msgInfo);  
     }
     else
     {
       if(charsReceived > 0)
       {  
         sprintf(printstring,"faulty data received, Total Count: %d\n",serialFailCount);
-        logOut(printstring);  
+        logOut(printstring, msgSerialReceived, msgWarn);  
       }  
     }
 
@@ -3421,14 +3449,16 @@ void main_handler()
       {         
         if(lastInfactoryTempC[serialChannel]<-110) 
           lastInfactoryTempC[serialChannel] = InfactoryTempC - 4.5; // get out of default
-        if(abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0)  // too large difference-improbable value
+        // too large difference-improbable value.
+        // 0.0 and -111.11 are errors
+        if( (abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0) && InfactoryTempC>-110 && abs(InfactoryTempC) > 0.01 ) 
         {
           // restart Blynk
           esp_task_wdt_reset(); // reset watchdog in case it takes longer
           // testxxxxx Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
           Blynk.connect();
           sprintf(printstring,"Blynk Connected, serialReceived: %d \n",serialReceived);
-          logOut(printstring);  
+          logOut(printstring, msgBlynkConnected, msgInfo);  
           checkBlynk();   // test to ensure that blynk is running
 
           do{
@@ -3438,7 +3468,7 @@ void main_handler()
             // Blynk.virtualWrite(V38, serialFailCount);
             sprintf(printstring,">>>>>> Send TempC %3.1f >>>> Humidity %3.1f Ch: %d (fail: %d)\n",
                 InfactoryTempC, InfactoryHumidity, serialChannel,serialFailCount);
-            logOut(printstring); 
+            logOut(printstring, msgReceiveSerialInfo, msgInfo); 
             // store the channel related data for specialDisplay();
             InfactoryT[serialChannel] = InfactoryTempC;
             InfactoryH[serialChannel] = InfactoryHumidity;
@@ -3482,7 +3512,7 @@ void main_handler()
               Blynk.virtualWrite(V11, calDS18B20Temperature[2]); //sending to Blynk  
             Blynk.run();  
             sprintf(printstring,">>>>> Ds18B20 Temp's: T1: %3.1f T2: %3.1f T3: %3.1f\n",calDS18B20Temperature[0],calDS18B20Temperature[1],calDS18B20Temperature[2]);
-            logOut(printstring);  
+            logOut(printstring, msgReceiveSerialInfo, msgInfo);  
             Blynk.run();  
           #endif
           #ifdef isBME280
@@ -3494,12 +3524,17 @@ void main_handler()
               Blynk.run();  
               sprintf(printstring,">>>>> BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
               Temperature, Humidity, Pressure, Altitude); 
-              logOut(printstring);    
+              logOut(printstring, msgReceiveSerialInfo, msgInfo);    
               Blynk.run();  
             }  
           #endif
           vTaskDelay(500 / portTICK_PERIOD_MS); // wait 500ms before disconnecting
           Blynk.disconnect();
+        }
+        else
+        {
+            InfactoryT[serialChannel] = -111.11;
+            InfactoryH[serialChannel] = -111.11;
         }
       }  
     #endif  // serialReceived
@@ -3521,18 +3556,18 @@ void main_handler()
     sprintf(printstring,"BaseDS18B20 Tmp1 %3.2f Tmp2 %3.2f Tmp3 %3.2f %d %d %d - %d %ld\n", 
       DS18B20Temperature[0], DS18B20Temperature[1], DS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
-     logOut(printstring);
+     logOut(printstring, msgDS18B20Info, msgInfo);
     */ 
     sprintf(printstring,"CalDS18B20 Tmp1  %3.2f Tmp2 %3.2f Tmp3 %3.2f %d %d %d - %d %ld\n", 
       calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2], 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
-     logOut(printstring);
+     logOut(printstring, msgDS18B20Info, msgInfo);
     if(GetOneDS18B20Counter <= previousGetOneDS18B20Counter)  // DS18B20 routine not counting
     {
       notMeasuredDS18B20 ++;
       sprintf(printstring,"!!!! DS18B20 not measuring !!! %ld %ld %ld \n",
         GetOneDS18B20Counter, previousGetOneDS18B20Counter, notMeasuredDS18B20);
-      logOut(printstring);  
+      logOut(printstring, msgDS18B20NotMeasuring, msgWarn);  
       vTaskDelay(notMeasuredDS18B20 * 1000 / portTICK_PERIOD_MS); // progressive delay to give the measuring routine more time
     }  
     else
@@ -3544,7 +3579,7 @@ void main_handler()
 
   //  sprintf(printstring,"Cal.DS18B20 Tmp1 %3.1f Tmp2 %3.1f Tmp3 %3.1f \n", 
   //     calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
-  //  logOut(printstring);
+  //  logOut(printstring, msgDS18B20Info, msgInfo);
     
     #ifdef isBLYNK
 
@@ -3578,7 +3613,7 @@ void main_handler()
         strcat(printstring, printstring2);
       }
       strcat(printstring,"\n");
-      logOut(printstring);
+      logOut(printstring, msgBlynkSend, msgInfo);
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
     #endif  
 
@@ -3613,7 +3648,7 @@ void main_handler()
         strcat(printstring, printstring2);
       }
       strcat(printstring,"\n");
-      logOut(printstring);
+      logOut(printstring, msgVirtuinoSend, msgInfo);
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay 
     #endif  
 
@@ -3639,7 +3674,7 @@ void main_handler()
     {
       sprintf(printstring,"\nRestarting DS18B20. No measurement taken in %d %d cycles - counter not incr: %ld Manual: %d\n",
         notMeasuredCount, notChangedCount, notMeasuredDS18B20, manualDS18B20Restart);
-      logOut(printstring);
+      logOut(printstring, msgDS18B20Restart, msgWarn);
       restartDS18B20MeasurementFunction();
       notMeasuredCount = 0; // reset the counter
       notChangedCount = 0;  // reset the counter
@@ -3714,14 +3749,14 @@ void main_handler()
         sprintf(printstring,"t:%3.1f rT:%3.2f P:%3.0f rH:%3.2f R:%3.1f IAQ %5.1f (%d %s) T:%3.2f h:%3.1f\n",
             time_sec,iaqSensor.rawTemperature,iaqSensor.pressure, iaqSensor.rawHumidity, 
             iaqSensor.gasResistance, iaqSensor.iaq, iaqSensor.iaqAccuracy, iaqString, iaqSensor.temperature, iaqSensor.humidity);
-        logOut(printstring);  
+        logOut(printstring, msgBME680Info, msgInfo);  
         // sprintf(printstring,"BME680 power toggles: %d\n", countBME680PowerToggles);
-        // logOut(printstring);  
+        // logOut(printstring, msgBME680Info, msgInfo);  
         sprintf(printstring," ||");
         for (int i=1;i<iaqSensor.iaq/10;i++)
           strcat(printstring,"=");
         strcat(printstring,"\n");  
-        logOut(printstring);  
+        logOut(printstring, msgBME680Info, msgInfo);  
 
         updateBsecState();    // write sensor date to preferences, if time
       } else {
@@ -3806,7 +3841,7 @@ void main_handler()
     Pressure += corrBMEPressure; 
     sprintf(printstring,"BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
         Temperature, Humidity, Pressure, Altitude); 
-    logOut(printstring);    
+    logOut(printstring, msgBME280Info, msgInfo);    
 
     // get the data, and collect the required sums for averaging for Thingspeak
     #ifdef isThingspeak
@@ -3842,7 +3877,7 @@ void main_handler()
       {
         getCO2Data();
         sprintf(printstring,"--------- %3.1f MH-Z14A CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
-        logOut(printstring); 
+        logOut(printstring, msgMHZ14aInfo, msgInfo); 
         timer1 = millis();
         CO2ppm_n ++;
         CO2ppm_sum += CO2ppm;
@@ -3851,11 +3886,11 @@ void main_handler()
         Blynk.virtualWrite(V9, CO2ppm);
       #endif  
       sprintf(printstring,"%3.1f [sec] ", time_sec);
-      logOut(printstring); 
+      logOut(printstring, msgMHZ14aInfo, msgInfo); 
     }
     else{
       sprintf(printstring," CO2 Sensor still warming up %3.1f of %3.1f\n", (float)MHZ14AWarmingTime, (float)MZH14AWarmupWait);
-      logOut(printstring); 
+      logOut(printstring, msgMHZ14aWarmup, msgInfo); 
     }  
   #endif  // isMHZ14A
 
@@ -3864,7 +3899,7 @@ void main_handler()
     read_Response(7);                      // receive the response from the Sensor
     CO2ppm = get_Value(7);
     sprintf(printstring,"\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
-    logOut(printstring); 
+    logOut(printstring, msgSenseAirInfo, msgInfo); 
     #ifdef isBLYNK 
       Blynk.virtualWrite(V9, CO2ppm);
     #endif  // Blynk
@@ -3897,7 +3932,7 @@ void lcd_handler()
   if(lcdDisplayMode == 0)
   {
     //sprintf(printstring,"displayLCD Mode  is zero: %d\n", lcdDisplayMode);
-    //logOut(printstring);
+    //logOut(printstring, msgLCDInfo, msgInfo);
     lcd.clear();
     lcd.noBacklight();
     lcdDisplayDone = 1;   // makes ready to receive button press again
@@ -3905,7 +3940,7 @@ void lcd_handler()
   if(lcdDisplayMode > 0)
   {
     //sprintf(printstring,"displayLCD Mode %d\n", lcdDisplayMode);
-    //logOut(printstring);
+    //logOut(printstring, , msgLCDInfo, msgInfo);
     printLocalTime(printstring, 6); // local time into printstring for display on LCD
     displayLCD(lcdDisplayMode, 
       Pressure, Temperature, Humidity, 

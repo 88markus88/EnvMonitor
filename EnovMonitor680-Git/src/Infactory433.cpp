@@ -217,11 +217,11 @@ void IRAM_ATTR handler() {
       // if wrong count, let's print it out to check what's going on
       if (changeCount > NO_SIGNAL_PULSES + NO_SYNC_PULSES) {
         sprintf(printstring,"changeCount: %d syncIndex1: %d syncIndex2: %d\n",changeCount,syncIndex1,syncIndex2);
-        logOut(printstring);
+        logOut(printstring, msgInfactoryInfo, msgInfo);
         for(unsigned int i=syncIndex1, c=0; i!=syncIndex2; i=(i+2)%RING_BUFFER_SIZE, c++) {
           unsigned long t0 = timings[i], t1 = timings[(i+1)%RING_BUFFER_SIZE];    
           sprintf(printstring,"c: %d (t0:%ld t1:%ld) ",c,t0,t1);
-          logOut(printstring);
+          logOut(printstring, msgInfactoryInfo, msgInfo);
           if (c%5==0) Serial.println(" ");
           if (c>=200) break;
         }
@@ -231,7 +231,7 @@ void IRAM_ATTR handler() {
       if (changeCount > NO_SIGNAL_PULSES + NO_SYNC_PULSES)
       {
         sprintf(printstring,"\nWrong changeCount %d, trying to find sync. Was: %d - %d\n",changeCount, syncIndex1, syncIndex2);
-        logOut(printstring);
+        logOut(printstring, msgInfactorySyncing, msgInfo);
         for(index=syncIndex1; index!=syncIndex2; index=(index+1)%RING_BUFFER_SIZE)
         {
           //Serial.print("q");
@@ -239,7 +239,7 @@ void IRAM_ATTR handler() {
           {
             syncIndex1=(index+1)%RING_BUFFER_SIZE;
             sprintf(printstring,"\nNew syncIndex1 -2 : %d - %d\n",syncIndex1, syncIndex2);
-            logOut(printstring);
+            logOut(printstring, msgInfactorySyncing, msgInfo);
             break; 
           }
         }
@@ -263,20 +263,20 @@ void IRAM_ATTR handler() {
         } else if (t0>(SYNC_HIGH-TOL1) && t0<(SYNC_HIGH+TOL1) &&
                   t1>(SYNC_LOW-TOL3) && t1<(SYNC_LOW+TOL3)) {
           sprintf(printstring,"S%d (%ld %ld) \n", c, t0, t1);  // sync signal
-          logOut(printstring);
+          logOut(printstring, msgInfactoryEvaluating, msgInfo);
         } else if (t0>(BIT0_HIGH-TOL1) && t0<(BIT0_HIGH+TOL1) &&
                   t1>(SYNC_LENGTH-TOL3) && t1<(SYNC_LENGTH+TOL3)){
           sprintf(printstring,"Y%d (%ld %ld) \n", c, t0,t1); // long pause before sync
-          logOut(printstring);
+          logOut(printstring, msgInfactoryEvaluating, msgInfo);
         } else {
           sprintf(printstring,"?%d (%ld %ld) \n", c, t0,t1);      // undefined timing
-          logOut(printstring);
+          logOut(printstring, msgInfactoryEvaluating, msgInfo);
           // test 01.03.21 // fail = true;
         }
 
         if (c > 88){   // too many bits -> leave, still try to interpret later
           sprintf(printstring," c>88\n");
-          logOut(printstring);
+          logOut(printstring, msgInfactoryEvaluating, msgInfo);
           break;
         }  
         // if (c%8==7) Serial.print(" ");
@@ -326,13 +326,13 @@ void IRAM_ATTR handler() {
         InfactoryChannel =  (resultbuffer[1]>>2) && 0x3;  // channel in bits 5 and 6 of second byte
         
         sprintf(printstring,"Conversion Duration: %3.2f [ms]\n", float(micros()-processStartTime)/1000);  
-        logOut(printstring);
+        logOut(printstring, msgInfactoryInfo, msgInfo);
         if(raw_temp==0 || raw_humidity==0 || tempC < -40)  // faulty values check, no data 
         {
           InfactoryTempC=-111.11;
           InfactoryHumidity=-111.11;
           sprintf(printstring,"No data, temperature and humidity reset\n");
-          logOut(printstring);
+          logOut(printstring, msgInfactoryNoData, msgInfo);
         }
         successInfactoryCalc=true;    // flag to determine successfull measurement
       }
@@ -340,7 +340,7 @@ void IRAM_ATTR handler() {
       // delay for 1 second to avoid repetitions
       vTaskDelay(1000 / portTICK_PERIOD_MS); // non-blocking delay instead
       sprintf(printstring,"---------------------------------------------------------------\n");
-      logOut(printstring);
+      logOut(printstring, msgInfactoryInfo, msgInfo);
       received = false;
       syncIndex1 = 0;
       syncIndex2 = 0;
@@ -364,7 +364,7 @@ void IRAM_ATTR handler() {
     {
       getInfactoryData();
       sprintf(printstring, ".");
-      logOut(printstring);
+      logOut(printstring, msgInfactoryInfo, msgInfo);
 
       // versuch, war 500
       vTaskDelay(3000/ portTICK_PERIOD_MS); // delay for 500 ms, non-blocking
