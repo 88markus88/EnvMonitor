@@ -3053,8 +3053,6 @@ void setup()
       static float last_air_quality_score=0;
     #endif   
     static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
-    static float last_InfactoryT[3] = {-111, -111, -111};
-    static float last_InfactoryH[3] = {-111, -111, -111};
     static long thingspeakSendItemCounter = 0, thingspeakCallCounter = 0;
     int thingspeakItemsCollected = 0;
     String url=ThingspeakServerName + thingspeakWriteAPIKey; 
@@ -3157,8 +3155,10 @@ void setup()
         temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
       else
         temp = -111.11;  
-      if( ((temp > limit) && isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true)
-        || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+      if( 
+          ((isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+          && (temp > limit)
+        )
       {    
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
           calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
@@ -3182,8 +3182,12 @@ void setup()
         temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
       else
         temp = -111.11;  
-      if( ((temp > limit) && !isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)
-        || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+      //if( ((temp > limit) && !isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)
+      //  || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+      if( 
+          ((isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+          && (temp > limit)
+        )  
       {  
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
@@ -3205,8 +3209,12 @@ void setup()
         temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
       else
         temp = -111.11;        
-      if( ((temp > limit) && !isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)
-        || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+      //if( ((temp > limit) && !isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)
+      //  || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
+      if( 
+          ((isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+          && (temp > limit)
+        )  
       {  
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
@@ -3252,28 +3260,27 @@ void setup()
       int i;
       for(i=0;i<3;i++)
       {
-        sprintf(printstring2,"<<<<< SerialData %5.2f (%5.2f) %5.2f %5.2f (%5.2f) %5.2f\n,",
+        sprintf(printstring2,"<<<<< SerialData %5.2f (%5.2f) %5.2f %5.2f (%5.2f) %5.2f\n",
           InfactoryT[0],last_InfactoryT[0],InfactoryH[0], InfactoryT[1], last_InfactoryT[1], InfactoryH[1]);
         logOut(printstring2, msgReceiveSerialInfo, msgInfo);
         switch(i){
           case 0: // attach temperature and humidity for Channel 1 (Index 0)
             if(
-                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
-                && InfactoryT[i] > -100
-                && abs(InfactoryT[i]) > 0.01
+                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+                && (InfactoryT[i] > -100)
+                && (abs(InfactoryT[i]) > 0.01)
               )
             {  
-              sprintf(printstring2," Infactory T Ch1: %5.2f",InfactoryT[i]);
-              strcat(printstring, printstring2);
+              sprintf(printstring,"Infactory T Ch1: %5.2f ",InfactoryT[i]);
               url = url+ "&field7=" + InfactoryT[i];
               thingspeakSendItemCounter++;
               thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i]; 
             }  
             if(
-              (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
-              && InfactoryH[i] > -100
-              && abs(InfactoryH[i]) > 0.01
+              (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+              && (InfactoryH[i] > -100)
+              && (abs(InfactoryH[i]) > 0.01)
             )
             {  
               sprintf(printstring2," Infactory H Ch1: %5.2f",InfactoryH[i]);
@@ -3286,9 +3293,9 @@ void setup()
           break;
           case 1: // attach temperature only for Channel 2 (Index 1)
             if(
-                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
-                && InfactoryT[i] > -100
-                && abs(InfactoryT[i]) > 0.01
+                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+                && (InfactoryT[i] > -100)
+                && (abs(InfactoryT[i]) > 0.01)
               )
             {  
               sprintf(printstring, "Infactory T Ch2: %5.2f",InfactoryT[i]);
@@ -3302,10 +3309,12 @@ void setup()
           default:
             ;  
         }
+        logOut(printstring, msgSerialReceived, msgInfo);
       }
     #endif
 
-    sprintf(printstring2," Sent Item# this time: %d overall: %ld \n", thingspeakItemsCollected,thingspeakSendItemCounter);
+    sprintf(printstring2," Sent Item# this time: %d overall: %ld Call#: %ld \n", 
+        thingspeakItemsCollected,thingspeakSendItemCounter, thingspeakCallCounter);
     strcat(printstring, printstring2);
     logOut(printstring, msgThingspeakSend, msgInfo);
     // send data in collected string to Thingspeak, but only if data are available
@@ -3321,8 +3330,8 @@ void setup()
     }
     else
     {
-      sprintf(printstring,"No data sent to Thingspeak. Item this time; %d Overall: %ld\n",
-        thingspeakItemsCollected, thingspeakSendItemCounter);
+      sprintf(printstring,"No data sent to Thingspeak. Item this time; %d Overall: %ld Call# %ld\n",
+        thingspeakItemsCollected, thingspeakSendItemCounter, thingspeakCallCounter);
       logOut(printstring, msgThingspeakSend, msgInfo);
     }  
   }

@@ -44,10 +44,9 @@
 
 #define msgSerialReceived     120
 #define msgSerialFaulty       121
+#define msgReceiveSerialInfo  140
 
 #define msgThingspeakSend     130
-
-#define msgReceiveSerialInfo  140
 
 #define msgInfactoryInfo      150
 #define msgInfactoryReadNVS   151
@@ -130,6 +129,8 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   int serialChannel;
   float InfactoryT[3];
   float InfactoryH[3];
+  float last_InfactoryT[3] = {-111.22, -111.22, -111.22};
+  float last_InfactoryH[3] = {-111.22, -111.22, -111.22};
   static int serialSentCh1Count=0, serialSentCh2Count=0, serialSentCh3Count=0, serialFailCount=0;
 #endif 
 

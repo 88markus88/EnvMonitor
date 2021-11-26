@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.80"
-#define PROGDATE "2021-11-25"
+#define PROGVERSION "V0.81"
+#define PROGDATE "2021-11-26"
 
 #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
@@ -318,7 +318,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME  infoStringShort // "syslog_hostname" //
         #define APP_NAME PROGVERSION // "syslog_appname" //
-    static char infoStringLong[] = "General Testbed for all kinds of stuff";
+    static char infoStringLong[] = " General Testbed for all kinds of stuff";
     static char infoStringShort[] = "GeneralTestbed";
 #endif 
 
