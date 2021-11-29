@@ -839,8 +839,10 @@ void outputProgramInfo()
   logOut(printstring2, msgProgInfo, msgInfo);
   strcpy(printstring2,"\n This is EnvMonitorBME680.cpp \n"); 
   logOut(printstring2, msgProgInfo, msgInfo);
-  logOut(infoStringShort, msgProgInfo, msgInfo);
-  logOut(infoStringLong, msgProgInfo, msgInfo);
+  sprintf(printstring2,"%s - %s", infoStringShort, infoStringLong);
+  //logOut(infoStringShort, msgProgInfo, msgInfo);
+  //logOut(infoStringLong, msgProgInfo, msgInfo);
+  logOut(printstring2, msgProgInfo, msgInfo);
   logOut(printstring, msgProgInfo, msgInfo);
   #ifdef isBLYNK
     sprintf(printstring," Blynk Auth Code: %s \n", auth); 

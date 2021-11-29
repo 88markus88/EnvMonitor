@@ -3,10 +3,10 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.81"
-#define PROGDATE "2021-11-26"
+#define PROGVERSION "V0.82"
+#define PROGDATE "2021-11-29"
 
-#define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+#undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
@@ -25,8 +25,8 @@
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
- // #define blynkSenseAirRedBox
-  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+  #define blynkSenseAirRedBox
+ // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkGeneralTestbed
@@ -60,7 +60,11 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #undef isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " KombiSensorExtLCD: Black Eurobox with LCD. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExtLCD";
 #endif
@@ -126,7 +130,11 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #define isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " BME680 Küche: Eurobox, OLED, BME680, 3 DS18B20, MH-Z14a, Fan";
     static char infoStringShort[] = "BME680 Küche";
 #endif
@@ -156,9 +164,13 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #undef isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " SenseAirRedBox: Eurobox, OLED, BME280, 3 DS18B20, SenseAir S8";
-    static char infoStringShort[] = "SenseAirRedBox";
+    static char infoStringShort[] = " SenseAirRedBox";
 #endif
 
 #ifdef  blynkEnvLocal2Bad // Bad: small box, no display
@@ -186,9 +198,13 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #undef isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " Small Sensor Bad: Small Box, BME280, 2 DS18B20";
-    static char infoStringShort[] = "Small Sensor Bad";
+    static char infoStringShort[] = " Small Sensor Bad";
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
@@ -216,7 +232,11 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #undef isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " Small Sensor Schlafzimmer: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Schlafzimmer";
 #endif
@@ -247,7 +267,11 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #undef isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " Small Sensor ExHans: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Small Sensor ExHans";
 #endif
@@ -351,7 +375,11 @@
     #undef isBluetoothCredentials  // get credentials via bluetooth
     #define isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
-
+    #undef isSyslog        // syslog logging is enabled   
+        #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"
+        #define SYSLOG_PORT 514
+        #define DEVICE_HOSTNAME infoStringShort
+        #define APP_NAME PROGNAME
     static char infoStringLong[] = " Virtuino Testbed: BME680 und 1 DS18B20 auf V0.4 Platine";
     static char infoStringShort[] = "Virtuino Testbed";
 #endif 

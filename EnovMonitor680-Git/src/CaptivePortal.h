@@ -30,9 +30,9 @@
     void handleWifiNew();
     void handleStatus();
     boolean isIp(String str);
-    String toStringIp(IPAddress IP);
+ 
     void setupCaptivePortal();
     void loopCaptivePortal(char* ss, char* pw);
   #endif
-
+  String toStringIp(IPAddress IP);
 #endif //_Captive

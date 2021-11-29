@@ -8,7 +8,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
 
 #include "GlobalDefines.h"  // needed here to convey the #defines
 
-#ifdef isCaptivePortal
+//#ifdef isCaptivePortal
 
   #include <WiFi.h>
   #include <WiFiClient.h>
@@ -19,7 +19,8 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
   #include <esp_task_wdt.h>       // Load Watchdog-Library
   #include "CaptivePortal.h"
   #include "HelperFunctions.h"  // logOut() contained there
-
+  
+#ifdef isCaptivePortal
   #define GPIO_OUT_W1TS_REG (DR_REG_GPIO_BASE + 0x0008)
   #define GPIO_OUT_W1TC_REG (DR_REG_GPIO_BASE + 0x000c)
 
@@ -1013,7 +1014,7 @@ https://randomnerdtutorials.com/esp32-access-point-ap-web-server/
     @param IPAddress ip : Object containing the IP address
     @return String containing the IP address
     ***************************************************/
-  /** IP to String? */
+
   String toStringIp(IPAddress ip)
   {
     String res = "";
