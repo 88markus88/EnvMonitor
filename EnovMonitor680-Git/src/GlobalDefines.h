@@ -3,11 +3,10 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.82"
-#define PROGDATE "2021-11-29"
+#define PROGVERSION "V0.83"
+#define PROGDATE "2021-11-30"
 
-#undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
-#undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
+
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
@@ -25,8 +24,8 @@
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
-  #define blynkSenseAirRedBox
- // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+ // #define blynkSenseAirRedBox
+  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkGeneralTestbed
@@ -36,6 +35,8 @@
 // hardware configurations defined here
 //***********************************************
 #ifdef blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Eur Box 
+    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -70,6 +71,8 @@
 #endif
 
 #ifdef blynkKombinsensor1  // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -105,6 +108,8 @@
 #endif
 
 #ifdef blynkBME680Kueche  // Küche in black Euro Box 
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #define isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -140,6 +145,8 @@
 #endif
 
 #ifdef blynkSenseAirRedBox  // Red Euro Box. OLED, Senseair CO2 sensor, 3 DS18B20
+    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #define isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -174,6 +181,8 @@
 #endif
 
 #ifdef  blynkEnvLocal2Bad // Bad: small box, no display
+    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -208,6 +217,8 @@
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
+    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -243,6 +254,8 @@
 
 
 #ifdef  blynkExPapaKleineBox // Ex Papa kleine Box : small box, OLED display, 2 DS18B20, BME280
+    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -277,6 +290,8 @@
 #endif
 
 #ifdef blynkBME680BreadBoard  // EnvMonitor BME680 Testbead on Breadboard
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -312,6 +327,8 @@
 #endif
 
 #ifdef blynkGeneralTestbed
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
     #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
@@ -346,9 +363,10 @@
     static char infoStringShort[] = "GeneralTestbed";
 #endif 
 
-#ifdef virtuinoTestbed  // Virtuino and MQTT Testbead
+#ifdef virtuinoTestbed  // Virtuino and MQTT Testbed
     #undef isBLYNK          // this one without Blynk
     #define isVirtuino      // this one is with Virtuino
+    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2

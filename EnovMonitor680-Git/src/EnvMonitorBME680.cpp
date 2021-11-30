@@ -800,7 +800,7 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
 ***************************************************/
 void outputProgramInfo()
 {
-  sprintf(printstring,"\n with ");
+  sprintf(printstring," with ");
   sprintf(printstring2,":");
   #ifdef isOneDS18B20  
     strcat(printstring, " DS18B20 (T) -");
@@ -835,19 +835,23 @@ void outputProgramInfo()
   #endif
   strcat( printstring, " \n");
  
-  strcpy(printstring2,"\n******************************************************************************");
+  strcpy(printstring2,"\n******************************************************************************\n");
   logOut(printstring2, msgProgInfo, msgInfo);
-  strcpy(printstring2,"\n This is EnvMonitorBME680.cpp \n"); 
+  strcpy(printstring2," This is EnvMonitorBME680.cpp \n"); 
   logOut(printstring2, msgProgInfo, msgInfo);
-  sprintf(printstring2,"%s - %s", infoStringShort, infoStringLong);
-  //logOut(infoStringShort, msgProgInfo, msgInfo);
-  //logOut(infoStringLong, msgProgInfo, msgInfo);
+  sprintf(printstring2," %s\n", infoStringShort);
+  logOut(printstring2, msgProgInfo, msgInfo);
+  sprintf(printstring2,"%s\n", infoStringLong);
   logOut(printstring2, msgProgInfo, msgInfo);
   logOut(printstring, msgProgInfo, msgInfo);
   #ifdef isBLYNK
     sprintf(printstring," Blynk Auth Code: %s \n", auth); 
     logOut(printstring, msgProgInfo, msgInfo);
     sprintf(printstring," Blynk Server IP: %s \n", "blynkLocalIP"); 
+    logOut(printstring, msgProgInfo, msgInfo);
+  #endif
+  #ifdef isThingspeak 
+    sprintf(printstring," Thingspeak enabled. WriteApiKey: %s \n", thingspeakWriteAPIKey); 
     logOut(printstring, msgProgInfo, msgInfo);
   #endif
   sprintf(printstring," %s  %s  %s \n",PROGNAME, PROGVERSION, PROGDATE);
@@ -1631,7 +1635,7 @@ void setup()
     // fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     fanTimerHandle = fanHandlerTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     sprintf(printstring, "fanTimerHandle: %d\n", fanTimerHandle);
-    logOut(printstring, msgRelay, msgInfo);
+    logOut(printstring, msgRelayInfo, msgInfo);
   #endif
 
   #ifdef isInfactory433     // set input pin and interrupt handler for 433 MHz sensor (conflict with button!)
@@ -3158,7 +3162,7 @@ void setup()
       else
         temp = -111.11;  
       if( 
-          ((isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+          ((!isEqual(temp,last_DSTemp0,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
           && (temp > limit)
         )
       {    
@@ -3187,7 +3191,7 @@ void setup()
       //if( ((temp > limit) && !isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)
       //  || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
       if( 
-          ((isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+          ((!isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
           && (temp > limit)
         )  
       {  
@@ -3214,7 +3218,7 @@ void setup()
       //if( ((temp > limit) && !isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)
       //  || (thingspeakSendItemCounter % minimumRepeatCounter == 0))
       if( 
-          ((isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+          ((!isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
           && (temp > limit)
         )  
       {  
