@@ -2996,6 +2996,8 @@ void setup()
     int httpResponseCode;
     do {         
       http.begin(url.c_str()); // Initialize our HTTP request
+      // http.setConnectTimeout(10000); // does not work: set connect timeout: to establish the connection
+      http.setTimeout(1000);  // set timeout for http to 10 sec: to transfer data
           
       httpResponseCode = http.GET(); // Send HTTP request          
       if (httpResponseCode > 0){ // Check for good HTTP status code
@@ -3007,7 +3009,7 @@ void setup()
         logOut(printstring, msgThingspeakSend, msgErr);
         httpErrorCounter++;
       }
-      http.end();
+      http.end();             // free resouces
       // if too many fails: reboot.
       // if(httpErrorCounter > 4)
       //  ESP.restart();
