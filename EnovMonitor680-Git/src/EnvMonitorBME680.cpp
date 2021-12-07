@@ -1630,11 +1630,20 @@ void setup()
     delay(10);
   #endif
 
-  #ifdef isRelay  
+  #if defined isRelay && defined isFan
     // set timer for bme680FanHandler()
     // fanTimerHandle = MyBlynkTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     fanTimerHandle = fanHandlerTimer.setInterval(bme680FanHandlerInterval, bme680FanHandler);
     sprintf(printstring, "fanTimerHandle: %d\n", fanTimerHandle);
+    logOut(printstring, msgRelayInfo, msgInfo);
+  #endif
+
+  #if defined isWindowOpenDetector
+    // set timer for windowOpenHandler()
+    // windowOpenTimerHandle = MyBlynkTimer.setInterval(windowOpenHandlerInterval, windowOpenHandler);
+    
+    windowOpenTimerHandle = windowOpenHandlerTimer.setInterval(windowOpenHandlerInterval, windowOpenHandler);
+    sprintf(printstring, "windowOpenTimerHandle: %d\n", windowOpenTimerHandle);
     logOut(printstring, msgRelayInfo, msgInfo);
   #endif
 
@@ -2715,14 +2724,18 @@ void setup()
     BLYNK_WRITE(V40) 
     {
       int x = param.asInt();
-      Serial.printf("Relay 1 switched to  %d \n", x);
+      // Serial.printf("Relay 1 switched to  %d \n", x);
       if(x==1){  
         digitalWrite(RELAYPIN1, HIGH);
-        fanState=1;
+        #ifdef isFan
+          fanState=1;
+        #endif  
       } else  
       {
         digitalWrite(RELAYPIN1, LOW);
-        fanState=0;
+        #ifdef isFan
+          fanState=0;
+        #endif  
       }  
     }
 
@@ -2730,7 +2743,7 @@ void setup()
     BLYNK_WRITE(V41) 
     {
       int x = param.asInt();
-      Serial.printf("Relay 2 switched to  %d \n", x);
+      // Serial.printf("Relay 2 switched to  %d \n", x);
       if(x==1)  
         digitalWrite(RELAYPIN2, HIGH);
       else  
@@ -2743,10 +2756,29 @@ void setup()
       sprintf(printstring, "tempSwitchOffset changed to  %4.2f \n", tempSwitchOffset);
       logOut(printstring, msgTempOffsetChange, msgInfo);
       digitalWrite(RELAYPIN1, LOW); // fan off and defined startup state
-      fanState=0;
+      #ifdef isFan
+        fanState=0;
+      #endif  
       Blynk.virtualWrite(V40,0) ;   // defined state at app: fan off
     }
   #endif  // relay
+
+  #ifdef isReceiveBlynkWindowOpenAlert
+    BLYNK_WRITE(V70) 
+    {
+      int pinData = param.asInt();
+      sprintf(printstring, "Message received via V70  %d \n", pinData);
+      logOut(printstring, msgAlertReceived, msgInfo);
+      beeperState = pinData;
+      externalAlertState = pinData;
+      #ifdef isBeeperWindowOpenAlert
+        if(beeperState == 1)
+          digitalWrite(RELAYPIN1, HIGH);  
+        else  
+          digitalWrite(RELAYPIN1, LOW);  
+      #endif    
+    }
+  #endif
 
   // this function is called every time that blynk connection is established, and re-syncs widgets if first connection
   bool isFirstConnect = true;
@@ -2757,10 +2789,88 @@ void setup()
     if(isFirstConnect)
       Blynk.syncAll();
     isFirstConnect = false;
+
+    // ensure that bridge is present which can be used to send alerts to another blynk device
+    #ifdef isSendBlynkWindowOpenAlert
+      bridge1.setAuthToken(authAlertReceiver); 
+    #endif
   }  
 #endif  //blynk
 
-#if defined isOneDS18B20 && defined isRelay
+#if defined isOneDS18B20 && defined isWindowOpenDetector
+  /**************************************************!
+  @brief    window open handler
+  @details  checks if window is open, and if yes turns on the alert as #defined
+  @param none
+  @return void
+  ***************************************************/
+  void windowOpenHandler(void)
+  {
+    if(calDS18B20Temperature[tempSwitchSensorSelector] < -110) // invalid DS18B20 Temp, do not try
+      return;
+    float localTemp = calDS18B20Temperature[tempSwitchSensorSelector];
+
+    // temperature dropped enough and beeper off: turn beeper on.
+    if( (localTemp < temperatureAverage - temperatureDropTrigger)
+      && (temperatureAverageCounter > 2*temperatureAverageNumber)
+      && beeperState == 0
+      )     
+    {
+      beeperState = 1;
+      #ifdef isBLYNK
+        Blynk.virtualWrite(V40, 1);   
+        #ifdef isBeeperWindowOpenAlert
+          digitalWrite(RELAYPIN1, HIGH);  
+        #endif  
+        #ifdef isSendBlynkWindowOpenAlert
+          bridge1.virtualWrite(V70, 1); // bridge uses V70. 1: alert on, 0: alert off
+        #endif
+      #endif  
+      sprintf(printstring, "ON_ON_ON_ON Alert switched ON. BME: %4.2f DS18B20: %4.2f\n", 
+          localTemp, calDS18B20Temperature[tempSwitchSensorSelector]);
+      logOut(printstring, msgRelayInfo, msgInfo);
+    } 
+      // Beeper is on, and condition no longer met: turn it off
+    if(localTemp >= temperatureAverage - temperatureDropTrigger
+      && beeperState == 1
+      && externalAlertState == 0)     
+    {  
+      beeperState = 0;
+      #ifdef isBLYNK
+        Blynk.virtualWrite(V40, 0); 
+      #endif   
+      #ifdef isBeeperWindowOpenAlert
+        digitalWrite(RELAYPIN1, LOW);
+      #endif  
+      #ifdef isSendBlynkWindowOpenAlert
+        bridge1.virtualWrite(V70, 0);  // bridge uses V70. 1: alert on, 0: alert off
+      #endif
+      sprintf(printstring, "OFF_OFF_OFF Alert switched OFF. BME: %4.2f DS18B20: %4.2f\n", 
+          localTemp, calDS18B20Temperature[tempSwitchSensorSelector]);
+      logOut(printstring, msgRelayInfo, msgInfo);
+    }  
+    #ifdef isBLYNK
+      Blynk.syncVirtual(V40); // synchronize app and sketch.  
+    #endif
+    #if defined isReceiveBlynkWindowOpenAlert
+      if(externalAlertState == 1) // if there is an external alert as well, overwrite
+      {
+        Blynk.virtualWrite(V40, 0);   // set in app
+        digitalWrite(RELAYPIN1, HIGH);// set port for beeper
+      }  
+    #endif
+    // update temperature average
+    temperatureAverageCounter ++;
+    float tmp = (temperatureAverageNumber-1)*temperatureAverage/(temperatureAverageNumber);
+    temperatureAverage = tmp + localTemp / temperatureAverageNumber;
+    sprintf(printstring, "Act Temp: %4.2f Temp average: %4.2f Counter: %ld beeperState: %d\n", 
+          localTemp,temperatureAverage, temperatureAverageCounter, beeperState);
+      logOut(printstring, msgRelayInfo, msgInfo);
+  }
+#endif  // DS18B20 & relay  & beeper
+
+
+#if defined isOneDS18B20 && defined isRelay && defined isFan
   /**************************************************!
   @brief    fan handler
   @details  handles the function of the fan, if built in, based on temp difference 
@@ -2801,7 +2911,7 @@ void setup()
       Blynk.syncVirtual(V40); // synchronize app and sketch.  
     #endif
   }
-#endif  // DS18B20 & relay 
+#endif  // DS18B20 & relay  & fan
 
 #if defined sendSERIAL || defined receiveSERIAL
   // serial stuff for sending / receiving external sensor data
@@ -4077,8 +4187,11 @@ void loop()
   #if defined isThingspeak || defined isVirtuino
     mainHandlerTimer.run();   // simple timer for main handler
   #endif
-  #ifdef isRelay
+  #if defined isRelay && defined isFan
     fanHandlerTimer.run();    // simple timer for fan handler 
+  #endif  
+  #if defined isWindowOpenDetector
+    windowOpenHandlerTimer.run();    // simple timer for window open handler 
   #endif  
   #ifdef isThingspeak
     thingspeakHandlerTimer.run(); // simple timer for thingspeak data sender handler

@@ -63,6 +63,8 @@
 
 #define msgSenseAirInfo       190
 
+#define msgAlertReceived      200
+
 //Message Severities
 #define msgDefault  0
 #define msgInfo     1
@@ -93,19 +95,38 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
   int heartbeatStatus = 0;
 #endif
 
+// global, since used by #isFan and #isWindowOpenDetector 
+volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched off. 2.4 - 2.6 proven ok
+int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan and beeper switching
+
 #ifdef isRelay  // relais connected to GPIO 26 (R1) and 27 (R2)
   #define RELAYPIN1 26
   #define RELAYPIN2 27
 
-  volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched off. 2.4 - 2.6 proven ok
-  int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan switching
-
-  SimpleTimer fanHandlerTimer;
-  int fanTimerHandle;               // timer handle for fan handling        
-  #define bme680FanHandlerInterval  500L
-  int fanState = 0;                 // present state of fan
-  float fanMaxPotential =0.3;       // maximum potential in % of tempSwitchOffset for fan to cool sensor   
+  #ifdef isFan
+    SimpleTimer fanHandlerTimer;
+    int fanTimerHandle;               // timer handle for fan handling        
+    #define bme680FanHandlerInterval  500L
+    int fanState = 0;                 // present state of fan
+    float fanMaxPotential =0.3;       // maximum potential in % of tempSwitchOffset for fan to cool sensor   
           // if 0.3 and tempSwitch Offset = 2.5, fan is switched off at BME680 0.7*2.5 = 1,75°C above room temp  
+   #endif // isFan       
+#endif  // isRelay
+
+#ifdef isWindowOpenDetector
+  SimpleTimer windowOpenHandlerTimer;
+  int windowOpenTimerHandle;               // timer handle for fan handling        
+  // #define windowOpenHandlerInterval  1000
+  int windowOpenHandlerInterval = 1000;
+  int beeperState = 0;              // present state of beeper
+  float temperatureAverage = -111;   // long term average of temperature
+  long int temperatureAverageNumber = 100;  // over this number of measurements the average is taken
+  long int temperatureAverageCounter =0;     // counter for temperatures taken
+  float temperatureDropTrigger = 3.0;       // if temperature drops more than this below average, beeper is triggered
+#endif
+
+#ifdef isReceiveBlynkWindowOpenAlert
+  int externalAlertState = 0;         // indicates that there is an external alert via bridge
 #endif
 
 #ifdef getNTPTIME
@@ -271,6 +292,9 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
   // terminal object
   WidgetTerminal myBlynkTerminal(V50);
+
+  // bridge object to transfer alert data via V71
+  WidgetBridge bridge1(V71);
 #endif
 
 #ifdef isVirtuino
@@ -484,6 +508,7 @@ void thingspeak_handler();
 void lcd_handler();
 void oled_handler();
 void bme680FanHandler(void);
+void windowOpenHandler(void);
 void resetBME680(int sensorStatus, int bme680Status);
 void restartDS18B20MeasurementFunction();
 bool connectToWiFi(char* ssid, char* pass);

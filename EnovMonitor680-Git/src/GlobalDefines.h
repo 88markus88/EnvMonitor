@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.84"
-#define PROGDATE "2021-12-01"
+#define PROGVERSION "V0.85"
+#define PROGDATE "2021-12-07"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -25,10 +25,10 @@
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
-  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+ // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
- // #define blynkGeneralTestbed
+  #define blynkGeneralTestbed
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
@@ -49,6 +49,7 @@
     #define isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #define receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -85,6 +86,7 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #define receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -123,6 +125,8 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
+    #define isFan           // Fan ist connected
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -159,6 +163,7 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -195,6 +200,7 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -231,6 +237,13 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
+    
+    #define isWindowOpenDetector        // run routine to check window open alert
+    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+    #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+    #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -268,6 +281,13 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
+
+    #define isWindowOpenDetector        // run routine to check window open alert
+    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+    #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+    #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -305,6 +325,7 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -341,7 +362,14 @@
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
-    #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #define isRelay         // relais connected to GPIO 26 (Fan via Transistor R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
+
+    #define isWindowOpenDetector        // run routine to check window open alert
+    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+    #define isBeeperWindowOpenAlert     // if alert, activate beeper
+    #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -381,6 +409,7 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
+    #undef isFan           // Fan ist connected to RELAYPIN1
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
