@@ -18,6 +18,8 @@ V41 | Relay 2 (was V19)
 V42 | tempSwitchOffset (Fan on if temp BS680 this much too high)
 V20 | Start CO2 Sensor Calibration
 V60 | Manual restart of 1Wire bus (DS18B20 Sensors)
+V70 | Used for data transfer by bridge1. Transfer temperature alerts.
+V71 | Connector for bridge1
 
 **Outputs**
 VPin  |Function
