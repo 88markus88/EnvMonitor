@@ -496,6 +496,8 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     }  
     // restart display off timer
     MyBlynkTimer.restartTimer(displayOffTimerHandle);
+
+    beeperQuietCounter = beeperQuietCycles; // button is pressed: keep beeper quiet for this number of cacles
     
     // Serial.printf("************** Button Pressed %d *************************%d %d \n",  displayMode, displayDone);  
   }
@@ -524,6 +526,8 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     
     // restart display off timer
     MyBlynkTimer.restartTimer(displayOffTimerHandle);
+      
+    beeperQuietCounter = beeperQuietCycles; // button is pressed: keep beeper quiet for this number of cacles
   }
 #endif
 
@@ -1624,10 +1628,15 @@ void setup()
   // Program Info to serial Monitor
   outputProgramInfo(); 
 
-  #ifdef isRelay
+  #if defined isRelay || defined isBeeperWindowOpenAlert
     pinMode(RELAYPIN1,OUTPUT);
     pinMode(RELAYPIN2,OUTPUT);
     delay(10);
+    digitalWrite(RELAYPIN1, HIGH);
+    digitalWrite(RELAYPIN2, HIGH);
+    delay(500);
+    digitalWrite(RELAYPIN1, LOW);
+    digitalWrite(RELAYPIN2, LOW);
   #endif
 
   #if defined isRelay && defined isFan
@@ -2812,7 +2821,7 @@ void setup()
 
     // temperature dropped enough and beeper off: turn beeper on.
     if( (localTemp < temperatureAverage - temperatureDropTrigger)
-      && (temperatureAverageCounter > 2*temperatureAverageNumber)
+      && (temperatureAverageCounter > 0.2*temperatureAverageNumber)
       && beeperState == 0
       )     
     {
@@ -2820,7 +2829,9 @@ void setup()
       #ifdef isBLYNK
         Blynk.virtualWrite(V40, 1);   
         #ifdef isBeeperWindowOpenAlert
-          digitalWrite(RELAYPIN1, HIGH);  
+          if(beeperQuietCounter < 1)
+            digitalWrite(RELAYPIN1, HIGH);  
+          beeperQuietCounter--;  
         #endif  
         #ifdef isSendBlynkWindowOpenAlert
           bridge1.virtualWrite(V70, 1); // bridge uses V70. 1: alert on, 0: alert off
@@ -2859,6 +2870,11 @@ void setup()
         digitalWrite(RELAYPIN1, HIGH);// set port for beeper
       }  
     #endif
+
+    // initiate temperature average to speed up start phase. Use present temp minus 
+    if(temperatureAverage < -110)    // startup value is -111
+      temperatureAverage = localTemp - 5;
+    
     // update temperature average
     temperatureAverageCounter ++;
     float tmp = (temperatureAverageNumber-1)*temperatureAverage/(temperatureAverageNumber);
