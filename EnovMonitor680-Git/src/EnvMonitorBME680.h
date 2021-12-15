@@ -119,7 +119,7 @@ int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan and beeper sw
   // #define windowOpenHandlerInterval  1000
   int windowOpenHandlerInterval = 2000;
   int beeperState = 0;              // present state of beeper
-  int beeperQuietCounter = 0;       // does not beep if this one is above 0 (quiet if button pressed)
+  volatile int beeperQuietCounter = 0;       // does not beep if this one is above 0 (quiet if button pressed)
   int beeperQuietCycles = 50;       // keeps quiet for this number of cycles if button pressed
   float temperatureAverage = -111;   // long term average of temperature
   long int temperatureAverageNumber = 200;  // over this number of measurements the average is taken

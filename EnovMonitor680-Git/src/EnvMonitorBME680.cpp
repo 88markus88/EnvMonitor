@@ -2825,13 +2825,19 @@ void setup()
       && beeperState == 0
       )     
     {
-      beeperState = 1;
       #ifdef isBLYNK
         Blynk.virtualWrite(V40, 1);   
         #ifdef isBeeperWindowOpenAlert
-          if(beeperQuietCounter < 1)
+          if(beeperQuietCounter < 1)    // if button has been recently pressed: no beeping
+          {
+            beeperState = 1;
             digitalWrite(RELAYPIN1, HIGH);  
-          beeperQuietCounter--;  
+          }  
+          else  
+          {
+            beeperState = 0;
+            digitalWrite(RELAYPIN1, LOW); 
+          }  
         #endif  
         #ifdef isSendBlynkWindowOpenAlert
           bridge1.virtualWrite(V70, 1); // bridge uses V70. 1: alert on, 0: alert off
@@ -2860,6 +2866,9 @@ void setup()
           localTemp, calDS18B20Temperature[tempSwitchSensorSelector]);
       logOut(printstring, msgRelayInfo, msgInfo);
     }  
+    if(beeperQuietCounter > 0)
+      beeperQuietCounter--;  // decrement counter for "button recently pressed"
+
     #ifdef isBLYNK
       Blynk.syncVirtual(V40); // synchronize app and sketch.  
     #endif
@@ -2879,8 +2888,8 @@ void setup()
     temperatureAverageCounter ++;
     float tmp = (temperatureAverageNumber-1)*temperatureAverage/(temperatureAverageNumber);
     temperatureAverage = tmp + localTemp / temperatureAverageNumber;
-    sprintf(printstring, "Act Temp: %4.2f Temp average: %4.2f Counter: %ld beeperState: %d\n", 
-          localTemp,temperatureAverage, temperatureAverageCounter, beeperState);
+    sprintf(printstring, "ActTemp: %4.2f TAvg: %4.2f Cntr: %ld beepSt: %d bQuietCnt: %d\n", 
+          localTemp,temperatureAverage, temperatureAverageCounter, beeperState, beeperQuietCounter);
       logOut(printstring, msgRelayInfo, msgInfo);
   }
 #endif  // DS18B20 & relay  & beeper
