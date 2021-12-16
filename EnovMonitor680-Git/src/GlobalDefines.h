@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.87"
-#define PROGDATE "2021-12-15"
+#define PROGVERSION "V0.88"
+#define PROGDATE "2021-12-16"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -166,9 +166,10 @@
     #undef isFan           // Fan ist connected to RELAYPIN1
 
     #define isWindowOpenDetector        // run routine to check window open alert
-    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
-    #define isBeeperWindowOpenAlert     // if alert, activate beeper
-    #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
+        #define isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
@@ -375,6 +376,7 @@
     #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
     #define isBeeperWindowOpenAlert     // if alert, activate beeper
     #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+    #define isStartupBeepTest  // if enabled, 500 ms Beep during setup
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino

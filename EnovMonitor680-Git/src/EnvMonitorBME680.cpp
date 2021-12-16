@@ -1632,11 +1632,15 @@ void setup()
     pinMode(RELAYPIN1,OUTPUT);
     pinMode(RELAYPIN2,OUTPUT);
     delay(10);
-    digitalWrite(RELAYPIN1, HIGH);
-    digitalWrite(RELAYPIN2, HIGH);
-    delay(500);
+
+    #ifdef isStartupBeepTest
+      digitalWrite(RELAYPIN1, HIGH);
+      digitalWrite(RELAYPIN2, HIGH);
+      delay(500);
+    #endif
     digitalWrite(RELAYPIN1, LOW);
     digitalWrite(RELAYPIN2, LOW);
+
   #endif
 
   #if defined isRelay && defined isFan
@@ -1654,6 +1658,9 @@ void setup()
     windowOpenTimerHandle = windowOpenHandlerTimer.setInterval(windowOpenHandlerInterval, windowOpenHandler);
     sprintf(printstring, "windowOpenTimerHandle: %d\n", windowOpenTimerHandle);
     logOut(printstring, msgRelayInfo, msgInfo);
+    #ifdef isSendBlynkWindowOpenAlert // reset alert via bridge
+      bridge1.virtualWrite(V70, 0);  // bridge uses V70. 1: alert on, 0: alert off
+    #endif
   #endif
 
   #ifdef isInfactory433     // set input pin and interrupt handler for 433 MHz sensor (conflict with button!)
@@ -2866,8 +2873,16 @@ void setup()
           localTemp, calDS18B20Temperature[tempSwitchSensorSelector]);
       logOut(printstring, msgRelayInfo, msgInfo);
     }  
-    if(beeperQuietCounter > 0)
+    // button has been pushed recently => Beeper off
+    if(beeperQuietCounter > 0)  
+    {
+      beeperState = 0;
+      digitalWrite(RELAYPIN1, LOW); 
       beeperQuietCounter--;  // decrement counter for "button recently pressed"
+      #ifdef isSendBlynkWindowOpenAlert
+        bridge1.virtualWrite(V70, 0);  // bridge uses V70. 1: alert on, 0: alert off
+      #endif
+    }  
 
     #ifdef isBLYNK
       Blynk.syncVirtual(V40); // synchronize app and sketch.  
