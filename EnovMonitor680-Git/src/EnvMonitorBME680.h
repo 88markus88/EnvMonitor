@@ -297,6 +297,7 @@ int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan and beeper sw
 
   // bridge object to transfer alert data via V71
   WidgetBridge bridge1(V71);
+  WidgetBridge bridge2(V81);
 #endif
 
 #ifdef isVirtuino

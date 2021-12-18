@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.88"
-#define PROGDATE "2021-12-16"
+#define PROGVERSION "V0.89"
+#define PROGDATE "2021-12-18"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -157,6 +157,7 @@
     #define isBME280         // BME 280 Sensor (P, T, %) present
     #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
     #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib   
+    #undef BME_Secondary_Address   // if defined, use secondary address for BME680
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
         #define noDS18B20Sensors 3  // number of DS18B20 expected
     #define isDisplay       // Adafruit SSD 1306 display is present
@@ -168,7 +169,7 @@
     #define isWindowOpenDetector        // run routine to check window open alert
         #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
         #define isBeeperWindowOpenAlert     // if alert, activate beeper
-        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
         #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
@@ -188,7 +189,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
-    static char infoStringLong[] = " SenseAirRedBox: Eurobox, OLED, BME280, 3 DS18B20, SenseAir S8";
+    static char infoStringLong[] = " SenseAirRedBox: Eurobox, OLED, BME280, 3 DS18B20, SenseAir S8, Beeper";
     static char infoStringShort[] = " SenseAirRedBox";
 #endif
 
@@ -333,6 +334,13 @@
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
+
+    #define isWindowOpenDetector        // run routine to check window open alert
+        #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -373,10 +381,10 @@
     #undef isFan           // Fan ist connected to RELAYPIN1
 
     #define isWindowOpenDetector        // run routine to check window open alert
-    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
-    #define isBeeperWindowOpenAlert     // if alert, activate beeper
-    #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
-    #define isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
+        #define isBeeperWindowOpenAlert     // if alert, activate beeper
+        #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #define isStartupBeepTest  // if enabled, 500 ms Beep during setup
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino

@@ -1659,7 +1659,8 @@ void setup()
     sprintf(printstring, "windowOpenTimerHandle: %d\n", windowOpenTimerHandle);
     logOut(printstring, msgRelayInfo, msgInfo);
     #ifdef isSendBlynkWindowOpenAlert // reset alert via bridge
-      bridge1.virtualWrite(V70, 0);  // bridge uses V70. 1: alert on, 0: alert off
+      bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
+      bridge2.virtualWrite(V80, 0); // bridge2 uses V80. 1: alert on, 0: alert off
     #endif
   #endif
 
@@ -2794,6 +2795,21 @@ void setup()
           digitalWrite(RELAYPIN1, LOW);  
       #endif    
     }
+    
+    BLYNK_WRITE(V80) 
+    {
+      int pinData = param.asInt();
+      sprintf(printstring, "Message received via V80  %d \n", pinData);
+      logOut(printstring, msgAlertReceived, msgInfo);
+      beeperState = pinData;
+      externalAlertState = pinData;
+      #ifdef isBeeperWindowOpenAlert
+        if(beeperState == 1)
+          digitalWrite(RELAYPIN1, HIGH);  
+        else  
+          digitalWrite(RELAYPIN1, LOW);  
+      #endif    
+    }
   #endif
 
   // this function is called every time that blynk connection is established, and re-syncs widgets if first connection
@@ -2808,7 +2824,8 @@ void setup()
 
     // ensure that bridge is present which can be used to send alerts to another blynk device
     #ifdef isSendBlynkWindowOpenAlert
-      bridge1.setAuthToken(authAlertReceiver); 
+      bridge1.setAuthToken(authAlertReceiver[0]); 
+      bridge2.setAuthToken(authAlertReceiver[1]); 
     #endif
   }  
 #endif  //blynk
@@ -2847,7 +2864,8 @@ void setup()
           }  
         #endif  
         #ifdef isSendBlynkWindowOpenAlert
-          bridge1.virtualWrite(V70, 1); // bridge uses V70. 1: alert on, 0: alert off
+          bridge1.virtualWrite(V70, 1); // bridge1 uses V70. 1: alert on, 0: alert off
+          bridge2.virtualWrite(V80, 1); // bridge2 uses V80. 1: alert on, 0: alert off
         #endif
       #endif  
       sprintf(printstring, "ON_ON_ON_ON Alert switched ON. BME: %4.2f DS18B20: %4.2f\n", 
@@ -2867,7 +2885,8 @@ void setup()
         digitalWrite(RELAYPIN1, LOW);
       #endif  
       #ifdef isSendBlynkWindowOpenAlert
-        bridge1.virtualWrite(V70, 0);  // bridge uses V70. 1: alert on, 0: alert off
+        bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
+        bridge2.virtualWrite(V80, 0); // bridge2 uses V80. 1: alert on, 0: alert off
       #endif
       sprintf(printstring, "OFF_OFF_OFF Alert switched OFF. BME: %4.2f DS18B20: %4.2f\n", 
           localTemp, calDS18B20Temperature[tempSwitchSensorSelector]);
@@ -2880,7 +2899,8 @@ void setup()
       digitalWrite(RELAYPIN1, LOW); 
       beeperQuietCounter--;  // decrement counter for "button recently pressed"
       #ifdef isSendBlynkWindowOpenAlert
-        bridge1.virtualWrite(V70, 0);  // bridge uses V70. 1: alert on, 0: alert off
+        bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
+        bridge2.virtualWrite(V80, 0); // bridge2 uses V80. 1: alert on, 0: alert off
       #endif
     }  
 
