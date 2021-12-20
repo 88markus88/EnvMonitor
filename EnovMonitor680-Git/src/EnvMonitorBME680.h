@@ -397,6 +397,7 @@ long temperature_n, humidity_n, pressure_n; // counters for averaging
   int Test_len = 7;               // length of Testrequest in case of function 44 only 7 otherwise 8
     
   int CO2ppm = 0;
+  unsigned long CO2ppm_sum = 0, CO2ppm_n = 0, last_CO2ppm = 0;
 #endif
 
 #ifdef isSD
