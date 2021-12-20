@@ -367,7 +367,7 @@
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
-    #undef isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
+    #define isSENSEAIR_S8    // alternate CO2 sensor present, communication via serial2
     #define isBME280         // BME 280 Sensor (P, T, %) present
     #undef isBME680        // BME 680 sensor (P, T, %, Gas) present auf I2C, Zanshin_BME680.h Lib
     #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
