@@ -3,7 +3,7 @@ This project aims to create an environmental monitoring system, using ESP32 and 
 
 The project consists of both software code and the hardware description as KiCad and (partly) Fritzing files.
 
-It is presently work in progress, but already functional. Development is being done using Platformio with the Arduino platform. 
+It is work in progress, but already functional. Development is being done using Platformio with the Arduino platform. 
 ![PCB](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Pictures/EnvMonitor%203D%20V0.6.jpg)
 
 ## Visualization:
@@ -11,7 +11,8 @@ Visualization is done via Blynk, a commercial service that can also be used with
 All data that the EnvMonitor provides can be shown via the Blynk App - very simple and powerful. Since the service is cloud based, the data can be viewed at every location.
 Blynk also supports a local server (e.g. on a Raspberry) - this eliminates the costs for the Blynk service.
 
-Now also beginning to add support vor Thingspeak and for Virtuino
+Support is also implemented for Thingspeak (all devices) and for Virtuino (early prototype).
+Thingspeak is one-way only for BME280, BME600, DS18B20, 433 MHz external sensors and CO2 sensors. Each ESP32 board can be connected to one Thingspeak channel, up to 8 data per devices (data streams) are supported by Thingspeak.
 
 ## Sensors:
 So far the following sensors and devices on the following list can be included. Selection is done by modification of the #defines in *GlobalDefines.h*:
@@ -24,7 +25,7 @@ So far the following sensors and devices on the following list can be included. 
 - Infactory NV5849 (433 MHz Temperature / Humidity sender) directly received via 433MHz receiver at GPIO 33. This option is supported by the software, ut not implemented on the board. 
 
 ## Devices:
-- Relays / Transistor switches (2)
+- Relays / Transistor switches (2). Used for fan and for piezo buzzers.
 - OLED Display 0.94" (SS1306) via I2C
 - LCD Display 4 x 20 via I2C
 - Button to be able to switch content of displays, or mute display light
@@ -42,18 +43,18 @@ All components are optional. They can be used in a large varity of combinations,
 - Multiple devices can be combined on the I2C interface. E.g. BME280 and OLED display can be used together. Or LCD display and BME680. Or BME280 and no display.
 - Up to 3 DS18B20 temperature sensors are supported. 3 connectors are provided, where they are connected in parallel. 
 - Only one serial port (Serial2) is supported. Therefore only one CO2 sensor, or alternatively one Arduino, can be connected.
-- Running a fan etc. via BC547 transistor, or other devices via relay, is supported by the hardware. Could also be used for a buzzer.
+- Running a fan, piezo buzzer etc. via BC547 transistor, or other devices via relay, is supported by the hardware. Can also be used for a buzzer which gives an alarm uf window remains open too long.
 - An internal power source can be used, which requires 7V-36V input from an external power supply.
 Components that are not used do not have to be placed on the board. They can be configured out in the software via #defines
 
 The board can be powered via USB. However, the USB power is relatively unstable. Most USB power supplies are not stabilized and should not be used, at least with multiple components connected - this can lead to brownouts and system failure. Raspberry Pi power supplies are better suited. 
-Best is to use the option to add an internal DCDC converter <I>Traco TSR 1-2450E</I> that can be driven with 7-36V and provides excellent power conditioning. If this is not chosen, just leave the comoponents (DCDC converter, capacitor, diode, terminal block) out.
+Best is to use the option to add an internal DCDC converter <I>Traco TSR 1-2450E</I> that can be driven with 7-36V and provides excellent power conditioning. If this is not chosen, just leave the components (DCDC converter, capacitor, diode, terminal block) out.
 
 It is possible to receive data from a 433 MHz transmitter via serial (e.g. received from an Arduino). (The serial port is not included in the Fritzing drawing.) 
 The Arduino board, as well as it's software are described in a separate section. 
 
 The board allows power selection for the 1Wire bus: either directly from 3.3V, or via GPIO32 of the ESP32. (In default configuration each GPIO can drive 20 mA).
-This is useful to be able to completely reset the 1Wire bus - often necessary if cheap DS18B20 ("fake sesnors") are being used. These have a tendency to hang after extended use, the only viable option is then to completely cut the power.
+This is useful to be able to completely reset the 1Wire bus - often necessary if cheap DS18B20 ("fake sensors") are being used. These have a tendency to hang after extended use, the only viable option is then to completely cut the power.
 
 KiCad files are provided for the electrical schemas and the PCB boards. 
 
