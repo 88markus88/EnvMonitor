@@ -81,6 +81,10 @@ In order to compile the code, the following adaptations have to be made:
   - determine if OTA (over the air) updates shall be used
  4. modify *platformio.ini* as needed: set _default_envs_ to determine which environment is to be used. This is largely required to determine if USB  upload or OTA upload to a given IP are to be used.
 
+## Libraries
+For listing of used libraries see 
+See  [Libraries](https://github.com/88markus88/EnvMonitor/blob/main/EnovMonitor680-Git/Doc/Libraries.md)
+
 ## Connectivity 
 In order to transmit data to a web service the ESP32 needs to log into a local network. At present, three services can be supported
 - <b>Blynk</b>: Commercial service to which the data are sent, and shown on mobile device in an app that can be configured very fleibly. The data can either be sent to the Blynk web service or to a local server. fully implemented for all data. Temperature, Humidity, Pressure etc. for all sensors are transmitted via "Virtual Pins" (see below for details). Blynk Auth Codes, which are specific for any devices and generated within the Blynk App on a mobile device, need to be put into the file <i>Credentials.h</i>
