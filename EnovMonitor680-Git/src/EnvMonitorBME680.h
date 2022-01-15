@@ -97,7 +97,7 @@ const int PushButton = 15;  // GPIO 15 for Pushbutton
 
 // global, since used by #isFan and #isWindowOpenDetector 
 volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched off. 2.4 - 2.6 proven ok
-int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan and beeper switching
+// int tempSwitchSensorSelector = 0; // index of DS18B20 used for fan and beeper switching
 
 #if defined isRelay || defined isBeeperWindowOpenAlert // relais or alert beeper connected to GPIO 26 (R1) and 27 (R2)
   #define RELAYPIN1 26

@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.90"
-#define PROGDATE "2021-12-20"
+#define PROGVERSION "V0.91"
+#define PROGDATE "2022-01-15"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -50,6 +50,14 @@
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
+    
+    #undef isWindowOpenDetector        // run routine to check window open alert
+        #undef isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #define receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -87,6 +95,14 @@
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
+    
+    #undef isWindowOpenDetector        // run routine to check window open alert
+        #undef isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #define receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -125,8 +141,15 @@
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
-    #undef isFan           // Fan ist connected to RELAYPIN1
-    #define isFan           // Fan ist connected
+    #define isFan           // Fan ist connected to RELAYPIN1
+
+    #undef isWindowOpenDetector        // run routine to check window open alert
+        #undef isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -171,6 +194,7 @@
         #define isBeeperWindowOpenAlert     // if alert, activate beeper
         #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
         #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
@@ -209,6 +233,14 @@
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
+        
+    #undef isWindowOpenDetector        // run routine to check window open alert
+        #undef isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
+
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
     #undef serialMonitor    // debugging routine - program does nothing but listen to serial and log it
@@ -247,10 +279,12 @@
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
     
-    #define isWindowOpenDetector        // run routine to check window open alert
-    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
-    #undef isBeeperWindowOpenAlert     // if alert, activate beeper
-    #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+    #undef isWindowOpenDetector        // run routine to check window open alert
+        #undef isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
@@ -291,10 +325,12 @@
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
 
-    #define isWindowOpenDetector        // run routine to check window open alert
-    #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
-    #undef isBeeperWindowOpenAlert     // if alert, activate beeper
-    #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+    #undef isWindowOpenDetector        // run routine to check window open alert
+        #undef isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk
+        #undef isBeeperWindowOpenAlert     // if alert, activate beeper
+        #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
@@ -335,11 +371,12 @@
     #define isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
 
-    #define isWindowOpenDetector        // run routine to check window open alert
+    #undef isWindowOpenDetector        // run routine to check window open alert
         #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
         #undef isBeeperWindowOpenAlert     // if alert, activate beeper
         #undef isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
         #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 0  // select DS18B20 for temperature sensing
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
@@ -373,7 +410,7 @@
     #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #undef BME_Secondary_Address   // if defined, use secondary address for BME680
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
-        #define noDS18B20Sensors 1  // number of DS18B20 expected
+        #define noDS18B20Sensors 2  // number of DS18B20 expected
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
@@ -385,6 +422,7 @@
         #define isBeeperWindowOpenAlert     // if alert, activate beeper
         #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
         #define isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #define tempSwitchSensorSelector 1  // select DS18B20 for temperature sensing
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
     #undef receiveSERIAL    // enable if data to be sent via serial2 (temp, humidity) from Arduino
