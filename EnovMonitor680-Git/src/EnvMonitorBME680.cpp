@@ -497,7 +497,9 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     // restart display off timer
     MyBlynkTimer.restartTimer(displayOffTimerHandle);
 
-    beeperQuietCounter = beeperQuietCycles; // button is pressed: keep beeper quiet for this number of cacles
+    #ifdef isBeeperWindowOpenAlert
+      beeperQuietCounter = beeperQuietCycles; // button is pressed: keep beeper quiet for this number of cacles
+    #endif  
     
     // Serial.printf("************** Button Pressed %d *************************%d %d \n",  displayMode, displayDone);  
   }
@@ -3131,11 +3133,14 @@ void setup()
     @param    String url : completed url string to be sent via internet to Thingspeak api 
     @return   int httpResponseCode. OK if above zero.
   ***************************************************/
+  char lastThingspeakSendSuccessString[50]="unknown";
+  
   int sendThingspeakData(String url)
   {
     // int i=0;
     static int httpErrorCounter = 0;
     static int sendThingspeakDataErrors = 0;
+    char timestring[50]="";    
 
     //Serial.println(url);
     sprintf(printstring,"sendThingspeakData() URL: %s\n",url.c_str());
@@ -3164,18 +3169,43 @@ void setup()
 
     HTTPClient http; // Initialize our HTTP client
     int httpResponseCode;
-    do {         
-      http.begin(url.c_str()); // Initialize our HTTP request
+    do {      
+      esp_task_wdt_reset();   // keep watchdog happy   
+      bool success = Ping.ping("https://api.thingspeak.com", 3);
+      if(!success)
+        sprintf(printstring,"Ping https://api.thingspeak.com failed\n");
+      else 
+        sprintf(printstring,"Ping https://api.thingspeak.com successful\n");
+      logOut(printstring, msgThingspeakSend, msgInfo);
+
+      delay(500 + 5000 * httpErrorCounter);
+      httpResponseCode = http.begin(url.c_str()); // Initialize our HTTP request
+      sprintf(printstring, "HTTP Begin Response code: %d \n", httpResponseCode);
+      logOut(printstring, msgThingspeakSend, msgInfo);
+
       // http.setConnectTimeout(10000); // does not work: set connect timeout: to establish the connection
-      http.setTimeout(1000);  // set timeout for http to 10 sec: to transfer data
-          
+      http.setTimeout(10000);  // set timeout for http to 10 sec: to transfer data
       httpResponseCode = http.GET(); // Send HTTP request          
+
+      #ifdef getNTPTIME
+        if(TimeIsInitialized)
+        {
+          printLocalTime(timestring, 5);  // get the present time
+          sprintf(printstring, "printLocalTime returned: %s \n", timestring);
+          logOut(printstring, msgThingspeakSend, msgInfo);
+        }  
+        else
+          strcpy(timestring,"time not initialized");
+      #endif 
       if (httpResponseCode > 0){ // Check for good HTTP status code
-        sprintf(printstring, "HTTP Response code: %d ", httpResponseCode);
-        logOut(printstring, msgThingspeakSend, msgInfo);
+        sprintf(printstring, "HTTP Resp: %d Prev OK send: %s\n", httpResponseCode, lastThingspeakSendSuccessString);
+        logOut(printstring, msgThingspeakSend, msgErr);
         httpErrorCounter = 0;
+        strcpy(lastThingspeakSendSuccessString, timestring);
+        // sprintf(printstring, "HTTP Resp: %d Last OK send: %s timestring: %s\n", httpResponseCode, lastThingspeakSendSuccessString, timestring);
+        // logOut(printstring, msgThingspeakSend, msgErr);
       }else{
-        sprintf(printstring, "HTTP Error code: %d ", httpResponseCode);
+        sprintf(printstring, "HTTP Error code: %d Last OK send: %s\n", httpResponseCode, lastThingspeakSendSuccessString);
         logOut(printstring, msgThingspeakSend, msgErr);
         httpErrorCounter++;
       }
@@ -3183,12 +3213,11 @@ void setup()
       // if too many fails: reboot.
       // if(httpErrorCounter > 4)
       //  ESP.restart();
-      delay(500);
-    } while (httpResponseCode <=0 && httpErrorCounter <= 3 );
+    } while (httpResponseCode <=0 && httpErrorCounter <= 1 );  // was 3 for 3 repeats
     httpErrorCounter = 0;
     if(httpResponseCode <=0)
       sendThingspeakDataErrors++;
-    sprintf(printstring, "HTTP Error Counter: %d ", sendThingspeakDataErrors);
+    sprintf(printstring, "HTTP Error Counter: %d \n", sendThingspeakDataErrors);
     logOut(printstring, msgThingspeakSend, msgErr);
     return(httpResponseCode);
   }
@@ -3508,7 +3537,7 @@ void setup()
     }
     else
     {
-      sprintf(printstring,"No data sent to Thingspeak. Item this time; %d Overall: %ld Call# %ld\n",
+      sprintf(printstring,"No data to Thingspeak. Item this time: %d Total: %ld Call# %ld\n",
         thingspeakItemsCollected, thingspeakSendItemCounter, thingspeakCallCounter);
       logOut(printstring, msgThingspeakSend, msgInfo);
     }  

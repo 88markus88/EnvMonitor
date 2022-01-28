@@ -469,7 +469,7 @@ SimpleTimer mainHandlerTimer;
 int mainHandlerTimerHandle;
 
 #ifdef isThingspeak
-  #define thingspeakHandlerInterval 60000L
+  #define thingspeakHandlerInterval 30000L // was 60000L
 
   SimpleTimer thingspeakHandlerTimer;
   int thingspeakHandlerTimerHandle=1;
