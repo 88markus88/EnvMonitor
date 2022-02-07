@@ -1199,10 +1199,27 @@ bool connectToWiFi(char* ssid, char* pass)
   //{
     sprintf(printstring,"Attempting to connect to SSID: _%s_ PASS: _%s_\n", ssid, pass);
     Serial.println(printstring);
+
+    #ifdef isDisplay
+      display.clearDisplay(); 
+      display.setTextSize(1);
+      sprintf(printstring,"Connecting to SSID: ");
+      display.setCursor(0, 0);
+      display.println(printstring);
+      sprintf(printstring,"%s ", ssid);
+      display.setCursor(0, 12);
+      display.println(printstring);
+      display.display();          // transfer buffer content to display
+    #endif 
+
     // 0 = WL_IDLE_STATUS
+    // 1 = WL_NO_SSID_AVAIL 
+    // 2 = WL_SCAN_COMPLETED
     // 3 = WL_CONNECTED 
     // 4 = WL_CONNECT_FAILED 
+    // 5 = WL_CONNECTION_LOST
     // 6 = WL_DISCONNECTED 
+
     // see following link for discussion of connection issues
     // https://github.com/espressif/arduino-esp32/issues/2501
     // der entscheidende Punkt, war nach dem WiFi.begin() lange genug zu warten
@@ -1228,6 +1245,11 @@ bool connectToWiFi(char* ssid, char* pass)
 
       sprintf(printstring,".%d ",status);
       Serial.print(printstring);
+       #ifdef isDisplay
+        display.setCursor(15*(i-1), 24);
+        display.println(printstring);
+        display.display();          // transfer buffer content to display
+      #endif  
     } 
     esp_task_wdt_reset();   // keep watchdog happy
   //}
@@ -1236,12 +1258,26 @@ bool connectToWiFi(char* ssid, char* pass)
   {
     sprintf(printstring,"Connected after %5.2f sec IP: %s\n",(float)(endtime-starttime)/1000, toStringIp(WiFi.localIP()).c_str());
     logOut(printstring, msgWifiConnected, msgInfo);
+    #ifdef isDisplay
+      sprintf(printstring,"Connected in %5.2f s ",(float)(endtime-starttime)/1000);
+      display.setCursor(0, 36);
+      display.println(printstring);
+      sprintf(printstring,"IP: %s ",toStringIp(WiFi.localIP()).c_str());
+      display.setCursor(0, 48);
+      display.println(printstring);
+      display.display();          // transfer buffer content to display
+    #endif  
     return(true);
   }  
   else
   {
     sprintf(printstring,"NOT Connected after %5.2f sec",(float)(endtime-starttime)/1000);
     Serial.println(printstring);
+    #ifdef isDisplay
+      display.setCursor(0, 48);
+      display.println(printstring);
+      display.display();          // transfer buffer content to display
+    #endif  
     return(false);
   }  
 }  
@@ -1271,6 +1307,14 @@ void setup()
 
   startTime = millis(); // remember the start time
   Serial.print("2");
+
+  #ifdef isDisplay
+    // Start the display
+    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Initialize with the I2C addr 0x3C (for the 128x64 from Conrad else 3D)
+    display.setTextColor(WHITE);
+    display.clearDisplay(); 
+    display.setTextSize(1);
+  #endif  
 
   #ifdef isBluetoothCredentials
     // get ssid and pass via bluetooth
@@ -1339,6 +1383,14 @@ void setup()
   #endif
 
   #ifdef isCaptivePortal // captive portal is credentials are not present
+    #ifdef isDisplay
+      display.clearDisplay(); 
+      display.setTextSize(1);
+      sprintf(printstring,"Credentials from Captive Portal");
+      display.setCursor(0, 0);
+      display.println(printstring);
+      display.display();          // transfer buffer content to display
+    #endif 
     // try to get from credential storage (EEPROM)
     credentialstorage2.begin("credentials", false);    
     int ssid_len = 0; 
@@ -1436,14 +1488,6 @@ void setup()
     // Create a file on the SD card and write the data labels
     sprintf(logfilename,"/log%04d.txt",NoReboots);
     initSDCard(logfilename);
-  #endif  
-
-  #ifdef isDisplay
-    // Start the display
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // Initialize with the I2C addr 0x3C (for the 128x64 from Conrad else 3D)
-    display.setTextColor(WHITE);
-    display.clearDisplay(); 
-    display.setTextSize(1);
   #endif  
 
   #ifdef isVirtuino
