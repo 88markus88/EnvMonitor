@@ -427,7 +427,7 @@ long temperature_n, humidity_n, pressure_n; // counters for averaging
   volatile unsigned long lastButtonTime = 0; // time when button was last pressed, for dimming of display
   unsigned int displayDimmDelay = 30000; // time delay in ms after which the display is switched off
                                         // on again with next button press
-  int maxDisplayMode = 1;
+  int maxDisplayMode = 2;
 
   // timer for oled_handler, and interval for it
   #define oledHandlerInterval 400L

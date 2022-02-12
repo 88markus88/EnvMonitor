@@ -1631,13 +1631,13 @@ void setup()
 
     // set the maximum display Mode for use in switchDisplay(), depending on sensors present
     #if defined isBME280 || defined isBME680 || defined isBME680_BSECLib
-      maxDisplayMode =3;
+      maxDisplayMode =3+1;
     #endif
     #if defined isOneDS18B20
-      maxDisplayMode =4;
+      maxDisplayMode =4+1;
     #endif
     #if defined isMHZ14A || defined isSENSEAIR_S8 || defined receiveSERIAL
-      maxDisplayMode =5;
+      maxDisplayMode =5+1;
     #endif
     // set timer for oled_handler()
     //oledHandlerTimer.setInterval(lcdHandlerInterval, oled_handler);
@@ -2456,18 +2456,36 @@ void setup()
   /**************************************************!
    @brief    Display handing routine for OLED display, based on displayMode
    @details  determines which exactly is presently visible on the display. displayMode toggled by button
-   @param displayMode determines the present content of the display. 0: off, 1: all
+   @param displayMode determines the present content of the display. 0: off, 1: all, 2: versin etc.
    @return   void
   ***************************************************/
   void specialDisplay(int displayMode)
   {
     static float TempC0=-111.11, TempC1 = -111.11, TempC2=-111.11;
+    char timestring[50]="unknown";    
     char printstring[80];
     display.clearDisplay(); 
     switch (displayMode)
     {
+      case 2:     // Version stuff etc. 
+        display.setTextSize(1);
+        sprintf(printstring,"%s",PROGNAME);
+        display.setCursor(0, 0); display.println(printstring);
+        sprintf(printstring,"Version:   %s",PROGVERSION);
+        display.setCursor(0, 12); display.println(printstring);
+        sprintf(printstring,"Prog Date: %s",PROGDATE);
+        display.setCursor(0, 24); display.println(printstring);
+        #ifdef getNTPTIME
+          if(TimeIsInitialized)
+            printLocalTime(timestring, 5);
+        #endif 
+        sprintf(printstring,"Time:%s",timestring);
+        display.setCursor(0, 36); display.println(printstring);
+        sprintf(printstring,"Seconds: %3.1f ",(float)millis()/1000);
+        display.setCursor(0, 48); display.println(printstring); 
+        break;
       #if defined isBME680 || defined isBME680_BSECLib
-      case 2:
+      case 3:
         sprintf(printstring,"Pressure [mbar]");
         display.setTextSize(1);
         display.setCursor(0, 0);
@@ -2505,7 +2523,7 @@ void setup()
         break;
       #endif   // BME680
       #ifdef isBME280 
-      case 2:
+      case 3:
         sprintf(printstring,"Pressure [mbar]");
         display.setTextSize(1);
         display.setCursor(0, 0);
@@ -2523,7 +2541,7 @@ void setup()
         display.setCursor(0, 44);
         display.println(printstring);
         break;
-      case 3:
+      case 4:
         sprintf(printstring,"Humidity ");
         display.setTextSize(1);
         display.setCursor(0, 0);
@@ -2534,7 +2552,7 @@ void setup()
         display.println(printstring);  
         break;
       #endif   // BME280
-      case 4:
+      case 5:
       #ifdef isOneDS18B20
         sprintf(printstring,"Temp DS18B20 1/2/3");
         display.setTextSize(1);
@@ -2576,7 +2594,7 @@ void setup()
         }
         break;    
       #endif  
-      case 5:
+      case 6:
       #if defined isMHZ14A || defined isSENSEAIR_S8
         #ifdef isMHZ14A
           sprintf(printstring,"CO2 Sensor MZH14A");
