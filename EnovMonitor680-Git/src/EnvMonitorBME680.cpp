@@ -2471,7 +2471,7 @@ void setup()
         display.setTextSize(1);
         sprintf(printstring,"%s",PROGNAME);
         display.setCursor(0, 0); display.println(printstring);
-        sprintf(printstring,"Version:   %s",PROGVERSION);
+        sprintf(printstring,"Version  : %s",PROGVERSION);
         display.setCursor(0, 12); display.println(printstring);
         sprintf(printstring,"Prog Date: %s",PROGDATE);
         display.setCursor(0, 24); display.println(printstring);

@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.93"
-#define PROGDATE "2022-02-07"
+#define PROGVERSION "V0.94"
+#define PROGDATE "2022-02-12"
 
 
 // !!! use only one option that sends or receives data from serial!
