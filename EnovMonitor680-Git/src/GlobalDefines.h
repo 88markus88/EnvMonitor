@@ -4,7 +4,7 @@
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
 #define PROGVERSION "V0.95"
-#define PROGDATE "2022-02-12"
+#define PROGDATE "2022-02-13"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -20,7 +20,7 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
-  #define blynkBME680Kueche
+ // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
@@ -28,7 +28,7 @@
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
- // #define blynkGeneralTestbed
+  #define blynkGeneralTestbed
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************

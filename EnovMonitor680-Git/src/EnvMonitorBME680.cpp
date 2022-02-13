@@ -529,7 +529,9 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     // restart display off timer
     MyBlynkTimer.restartTimer(displayOffTimerHandle);
       
-    beeperQuietCounter = beeperQuietCycles; // button is pressed: keep beeper quiet for this number of cacles
+    #ifdef isBeeperWindowOpenAlert  
+      beeperQuietCounter = beeperQuietCycles; // button is pressed: keep beeper quiet for this number of cacles
+    #endif  
   }
 #endif
 
