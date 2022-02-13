@@ -3,7 +3,7 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.94"
+#define PROGVERSION "V0.95"
 #define PROGDATE "2022-02-12"
 
 
@@ -20,11 +20,11 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
- // #define blynkBME680Kueche
+  #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
-  #define blynkSenseAirRedBox
+ // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
@@ -168,7 +168,7 @@
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
     static char infoStringLong[] = " BME680 Küche: Eurobox, OLED, BME680, 3 DS18B20, MH-Z14a, Fan";
-    static char infoStringShort[] = "BME680 Küche";
+    static char infoStringShort[] = "BME680 Kueche";
 #endif
 
 #ifdef blynkSenseAirRedBox  // Red Euro Box. OLED, Senseair CO2 sensor, 3 DS18B20

@@ -2469,7 +2469,8 @@ void setup()
     {
       case 2:     // Version stuff etc. 
         display.setTextSize(1);
-        sprintf(printstring,"%s",PROGNAME);
+        // sprintf(printstring,"%s",PROGNAME);
+        sprintf(printstring,"%s",infoStringShort);
         display.setCursor(0, 0); display.println(printstring);
         sprintf(printstring,"Version  : %s",PROGVERSION);
         display.setCursor(0, 12); display.println(printstring);
@@ -2503,7 +2504,7 @@ void setup()
         display.setCursor(0, 44);
         display.println(printstring);
         break;
-      case 3:
+      case 4:
         sprintf(printstring,"Humidity ");
         display.setTextSize(1);
         display.setCursor(0, 0);
