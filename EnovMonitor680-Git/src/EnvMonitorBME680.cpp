@@ -1737,29 +1737,45 @@ void setup()
   #endif
   
   #ifdef isSENSEAIR_S8
+    unsigned long retVal;
     Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);      // UART to Sensair CO2 Sensor
     
-    Serial.println();
-    Serial.print("SenseAir S8 ABC-Value: ");  
     send_Request(ABCreq, 8);                     // Request ABC-Information from the Sensor
     read_Response(7);
-    Serial.printf("%02ld", get_Value(7));
+    retVal = get_Value(7);
+
+    Serial.println();
+    Serial.print("SenseAir S8 ABC-Value: ");
+    Serial.printf("%02ld", retVal);
     Serial.println("");
 
-    Serial.print("SenseAir S8 Sensor ID : ");                // 071dbfe4
-    send_Request(ID_Hi, 8);
-    read_Response(7);
-    Serial.printf("%02x%02x", Response[3], Response[4]);
-    send_Request(ID_Lo, 8);
-    read_Response(7);
-    Serial.printf("%02x%02x", Response[3], Response[4]);
-    Serial.println("");
+    if(retVal != 99)  // no error returned
+    {
+      senseAirPresentFlag = true;
 
-    Serial.print("SenseAir S8 FirmWare  : ");
-    send_Request(FWreq, 8);                // Send Request for Firmwar to the Sensor
-    read_Response(7);                   // get Response (Firmware 334) from the Sensor
-    Serial.printf("%02d%02d", Response[3], Response[4]);
-    Serial.println("");
+      sprintf(printstring,"SenseAir S8 ABC-Value: %02ld\n", retVal);
+      logOut(printstring, msgSenseAirInfo, msgInfo);
+      Serial.print("SenseAir S8 Sensor ID : ");                // 071dbfe4
+      send_Request(ID_Hi, 8);
+      read_Response(7);
+      Serial.printf("%02x%02x", Response[3], Response[4]);
+      send_Request(ID_Lo, 8);
+      read_Response(7);
+      Serial.printf("%02x%02x", Response[3], Response[4]);
+      Serial.println("");
+
+      Serial.print("SenseAir S8 FirmWare  : ");
+      send_Request(FWreq, 8);                // Send Request for Firmwar to the Sensor
+      read_Response(7);                   // get Response (Firmware 334) from the Sensor
+      Serial.printf("%02d%02d", Response[3], Response[4]);
+      Serial.println("");
+    }  
+    else
+    {
+      senseAirPresentFlag = false;
+      sprintf(printstring,"SenseAir S8 ABC-Value Error: %02ld", retVal);
+      logOut(printstring, msgSenseAirMissing, msgErr);
+    }  
   #endif
 
   #ifdef isMHZ14A
@@ -2853,13 +2869,16 @@ void setup()
       int pinData = param.asInt();
       sprintf(printstring, "Message received via V70  %d \n", pinData);
       logOut(printstring, msgAlertReceived, msgInfo);
-      beeperState = pinData;
+      /* beeperState = pinData; */
       externalAlertState = pinData;
       #ifdef isBeeperWindowOpenAlert
+        windowSetBeeper(pinData); // sets beeperState, switches beeper on if beeperQuietCounter not running
+        /*
         if(beeperState == 1)
           digitalWrite(RELAYPIN1, HIGH);  
         else  
           digitalWrite(RELAYPIN1, LOW);  
+        */  
       #endif    
     }
     
@@ -2868,14 +2887,17 @@ void setup()
       int pinData = param.asInt();
       sprintf(printstring, "Message received via V80  %d \n", pinData);
       logOut(printstring, msgAlertReceived, msgInfo);
-      beeperState = pinData;
+      /* beeperState = pinData; */
       externalAlertState = pinData;
       #ifdef isBeeperWindowOpenAlert
+        windowSetBeeper(pinData); // sets beeperState, switches beeper on if beeperQuietCounter not running
+        /*
         if(beeperState == 1)
           digitalWrite(RELAYPIN1, HIGH);  
         else  
           digitalWrite(RELAYPIN1, LOW);  
-      #endif    
+        */  
+      #endif  
     }
   #endif
 
@@ -2899,6 +2921,27 @@ void setup()
 
 #if defined isOneDS18B20 && defined isWindowOpenDetector
   /**************************************************!
+  @brief    helper function to actually set the beeper
+  @details  based on desiredValue. Sets beeperState, respects beeperQuietCounter
+  @param none
+  @return void
+  ***************************************************/
+  void windowSetBeeper(int desiredValue)
+  {
+      #ifdef isBeeperWindowOpenAlert
+      // turn on beeper if desiredValue==1 and beeper quiet counter not running
+        if((desiredValue == 1) && (beeperQuietCounter < 1)){
+          digitalWrite(RELAYPIN1, HIGH);  
+          beeperState = 1;
+        }  
+        else{
+          digitalWrite(RELAYPIN1, LOW);  
+          beeperState = 0;
+        }  
+      #endif 
+  }
+
+  /**************************************************!
   @brief    window open handler
   @details  checks if window is open, and if yes turns on the alert as #defined
   @param none
@@ -2919,6 +2962,8 @@ void setup()
       #ifdef isBLYNK
         Blynk.virtualWrite(V40, 1);   
         #ifdef isBeeperWindowOpenAlert
+          windowSetBeeper(1);
+          /*
           if(beeperQuietCounter < 1)    // if button has been recently pressed: no beeping
           {
             beeperState = 1;
@@ -2928,7 +2973,8 @@ void setup()
           {
             beeperState = 0;
             digitalWrite(RELAYPIN1, LOW); 
-          }  
+          } 
+          */ 
         #endif  
         #ifdef isSendBlynkWindowOpenAlert
           bridge1.virtualWrite(V70, 1); // bridge1 uses V70. 1: alert on, 0: alert off
@@ -2939,18 +2985,21 @@ void setup()
           localTemp, calDS18B20Temperature[tempSwitchSensorSelector]);
       logOut(printstring, msgRelayInfo, msgInfo);
     } 
-      // Beeper is on, and condition no longer met: turn it off
+      // Beeper is on, and condition no longer met, and no external alert: turn it off
     if(localTemp >= temperatureAverage - temperatureDropTrigger
       && beeperState == 1
       && externalAlertState == 0)     
     {  
-      beeperState = 0;
+      windowSetBeeper(0); // beeper off, beeperState off
+      // beeperState = 0;
       #ifdef isBLYNK
         Blynk.virtualWrite(V40, 0); 
       #endif   
+      /*
       #ifdef isBeeperWindowOpenAlert
         digitalWrite(RELAYPIN1, LOW);
       #endif  
+      */ 
       #ifdef isSendBlynkWindowOpenAlert
         bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
         bridge2.virtualWrite(V80, 0); // bridge2 uses V80. 1: alert on, 0: alert off
@@ -2962,8 +3011,9 @@ void setup()
     // button has been pushed recently => Beeper off
     if(beeperQuietCounter > 0)  
     {
-      beeperState = 0;
-      digitalWrite(RELAYPIN1, LOW); 
+      windowSetBeeper(0); // beeper off, beeperState off
+      // beeperState = 0;
+      // digitalWrite(RELAYPIN1, LOW); 
       beeperQuietCounter--;  // decrement counter for "button recently pressed"
       #ifdef isSendBlynkWindowOpenAlert
         bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
@@ -2974,11 +3024,13 @@ void setup()
     #ifdef isBLYNK
       Blynk.syncVirtual(V40); // synchronize app and sketch.  
     #endif
+
     #if defined isReceiveBlynkWindowOpenAlert
       if(externalAlertState == 1) // if there is an external alert as well, overwrite
       {
+        windowSetBeeper(0); // beeper on, beeperState on
         Blynk.virtualWrite(V40, 0);   // set in app
-        digitalWrite(RELAYPIN1, HIGH);// set port for beeper
+        // digitalWrite(RELAYPIN1, HIGH);// set port for beeper
       }  
     #endif
 
@@ -2990,8 +3042,8 @@ void setup()
     temperatureAverageCounter ++;
     float tmp = (temperatureAverageNumber-1)*temperatureAverage/(temperatureAverageNumber);
     temperatureAverage = tmp + localTemp / temperatureAverageNumber;
-    sprintf(printstring, "ActTemp: %4.2f TAvg: %4.2f Cntr: %ld beepSt: %d bQuietCnt: %d\n", 
-          localTemp,temperatureAverage, temperatureAverageCounter, beeperState, beeperQuietCounter);
+    sprintf(printstring, "ActTemp: %4.2f TAvg: %4.2f Cntr: %ld beepSt: %d bQuietCnt: %d extAlertSt: %d\n", 
+          localTemp,temperatureAverage, temperatureAverageCounter, beeperState, beeperQuietCounter, externalAlertState);
       logOut(printstring, msgRelayInfo, msgInfo);
   }
 #endif  // DS18B20 & relay  & beeper
@@ -4176,14 +4228,19 @@ void main_handler()
   #endif  // isMHZ14A
 
   #ifdef isSENSEAIR_S8
-    send_Request(CO2req, 8);               // send request for CO2-Data to the Sensor
-    read_Response(7);                      // receive the response from the Sensor
-    CO2ppm = get_Value(7);
-    sprintf(printstring,"\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
-    logOut(printstring, msgSenseAirInfo, msgInfo); 
-    #ifdef isBLYNK 
-      Blynk.virtualWrite(V9, CO2ppm);
-    #endif  // Blynk
+    if(senseAirPresentFlag)
+    {
+      send_Request(CO2req, 8);               // send request for CO2-Data to the Sensor
+      read_Response(7);                      // receive the response from the Sensor
+      CO2ppm = get_Value(7);
+      sprintf(printstring,"\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
+      logOut(printstring, msgSenseAirInfo, msgInfo); 
+      #ifdef isBLYNK 
+        Blynk.virtualWrite(V9, CO2ppm);
+      #endif  // Blynk
+    }
+    else
+      CO2ppm = -1;
   #endif    // SENSEAIR
 
   sprintf(printstring,"%ld %ld",start_loop_time, end_loop_time);

@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.95"
-#define PROGDATE "2022-02-13"
+#define PROGVERSION "V0.96"
+#define PROGDATE "2022-02-17"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -28,7 +28,7 @@
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
-  #define blynkGeneralTestbed
+  #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
@@ -399,7 +399,7 @@
     static char infoStringShort[] = "BME680 Breadboard";
 #endif
 
-#ifdef blynkGeneralTestbed
+#ifdef blynkRedBoxYellowButton    // was blynkGeneralTestbed
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -411,7 +411,7 @@
     #undef BME_Secondary_Address   // if defined, use secondary address for BME680
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
         #define noDS18B20Sensors 2  // number of DS18B20 expected
-    #undef isDisplay       // Adafruit SSD 1306 display is present
+    #define isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #define isRelay         // relais connected to GPIO 26 (Fan via Transistor R1) and 27 (R2)
@@ -441,8 +441,8 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME  infoStringShort // "syslog_hostname" //
         #define APP_NAME PROGVERSION // "syslog_appname" //
-    static char infoStringLong[] = " General Testbed for all kinds of stuff";
-    static char infoStringShort[] = "GeneralTestbed";
+    static char infoStringLong[] = "Red Box Yellow Button with SenseAir";// " General Testbed for all kinds of stuff";
+    static char infoStringShort[] = "RedBoxYellowBtn"; // "GeneralTestbed";
 #endif 
 
 #ifdef virtuinoTestbed  // Virtuino and MQTT Testbed

@@ -62,6 +62,7 @@
 #define msgMHZ14aWarmup       181
 
 #define msgSenseAirInfo       190
+#define msgSenseAirMissing     191
 
 #define msgAlertReceived      200
 
@@ -398,6 +399,8 @@ long temperature_n, humidity_n, pressure_n; // counters for averaging
     
   int CO2ppm = 0;
   unsigned long CO2ppm_sum = 0, CO2ppm_n = 0, last_CO2ppm = 0;
+
+  bool senseAirPresentFlag = 0;  // is set to 1 if sensor is present during setup
 #endif
 
 #ifdef isSD
@@ -516,7 +519,8 @@ void windowOpenHandler(void);
 void resetBME680(int sensorStatus, int bme680Status);
 void restartDS18B20MeasurementFunction();
 bool connectToWiFi(char* ssid, char* pass);
- String toStringIp(IPAddress ip);
+String toStringIp(IPAddress ip);
+void windowSetBeeper(int desiredValue); 
 
 //*** specific forward declarations
 #ifdef getNTPTIME

@@ -6,7 +6,9 @@
   #define _Captive
 
   #ifdef isCaptivePortal
-    #include <LiquidCrystal_I2C.h>
+    #ifdef isLCD
+      #include <LiquidCrystal_I2C.h>
+    #endif  
 
     // module global variables  
     // 'static' prevents the linker from complaining, see
