@@ -62,9 +62,10 @@
 #define msgMHZ14aWarmup       181
 
 #define msgSenseAirInfo       190
-#define msgSenseAirMissing     191
+#define msgSenseAirMissing    191
 
 #define msgAlertReceived      200
+#define msgBeeperTriggered    201
 
 //Message Severities
 #define msgDefault  0
@@ -518,7 +519,7 @@ void bme680FanHandler(void);
 void windowOpenHandler(void);
 void resetBME680(int sensorStatus, int bme680Status);
 void restartDS18B20MeasurementFunction();
-bool connectToWiFi(char* ssid, char* pass);
+bool connectToWiFi(char* ssid, char* pass, int noRetries);
 String toStringIp(IPAddress ip);
 void windowSetBeeper(int desiredValue); 
 

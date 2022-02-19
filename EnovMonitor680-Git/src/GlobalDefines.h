@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.96"
-#define PROGDATE "2022-02-17"
+#define PROGVERSION "V0.97"
+#define PROGDATE "2022-02-19"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -172,7 +172,7 @@
 #endif
 
 #ifdef blynkSenseAirRedBox  // Red Euro Box. OLED, Senseair CO2 sensor, 3 DS18B20
-    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
@@ -218,7 +218,7 @@
 #endif
 
 #ifdef  blynkEnvLocal2Bad // Bad: small box, no display
-    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
@@ -263,7 +263,7 @@
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
-    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
@@ -309,7 +309,7 @@
 
 
 #ifdef  blynkExPapaKleineBox // Ex Papa kleine Box : small box, OLED display, 2 DS18B20, BME280
-    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
@@ -410,7 +410,7 @@
     #undef isBME680_BSECLib // BME 680 Sensor present, use with BSEC Lib
     #undef BME_Secondary_Address   // if defined, use secondary address for BME680
     #define isOneDS18B20    // one or more DS18B20 OneWire temperature sensor present
-        #define noDS18B20Sensors 2  // number of DS18B20 expected
+        #define noDS18B20Sensors 3  // number of DS18B20 expected
     #define isDisplay       // Adafruit SSD 1306 display is present
     #undef isLCD            // LCD display present
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32

@@ -160,8 +160,6 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
             Uses global variables:
             - measuringInfactoryOngoing : If this flag is set, no measurements are taken (to not disturb timing)
             - stopDS18B20MeasureFlag : If this flag is set, no measurements are taken (to not disturb timing)
-
-            - LastMeasTimer : timer mark when last measurement has been done
             - noDS18B20Connected : Number of DS18B20 which are connected
             - DS18B20Address[i][j] :  Address of Sensor i, each 8 bytes long (j= 0..7)
             Returns global variables
@@ -255,109 +253,131 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
   @return   void
   ***************************************************/
    void adresseAusgeben(void) {
-    byte i, j;
+    byte i, j, k;
     uint8_t addr[8];          // uint8_t = unsigned char, 8 bit integer
-    int numberOfDevices;
+    int numberOfDevices, noRepeats;
     char ps[80];
-    long checksum[5];         // address checksums
-    bool check = true;
+    long checksum[5], sum1, sum2;         // address checksums
+    bool check, crcCheck;
 
-    // code 1: devices finden.
-    // this method does not work for ESP32
-    delay(1000);
-    oneWire.reset_search(); // reset search of oneWire devices
-    numberOfDevices = sensors.getDeviceCount();
- 
-    sprintf(printstring,"sensors.getDeviceCount found %d Devices \n", numberOfDevices);
-    logOut(printstring, msgDS18B20Info, msgInfo);
-
-    numberOfDevices = noDS18B20Sensors;   // number of DS18B20 expected; /// temporary
-    // Setzen der Genauigkeit
-    for(i=0; i<numberOfDevices; i++) {
-      if(sensors.getAddress(tempDeviceAddress, i)) {
-         sensors.setResolution(tempDeviceAddress, TEMPERATURE_PRECISION);
-         Serial.print(F("Sensor "));
-         Serial.print(i);
-         Serial.print(F(" had a resolution of "));
-         Serial.println(sensors.getResolution(tempDeviceAddress), DEC);
-      }
-    }
-    Serial.println("");
-    numberOfDevices = sensors.getDeviceCount();   // does not function with OneWire library 2.3.5 (claimed to be ok with 2.3.3)
-    sprintf(printstring,"Found %d sensors\n", numberOfDevices);
-    logOut(printstring, msgDS18B20Info, msgInfo);
-    esp_task_wdt_reset();   // keep watchdog happy
-
-    // code 2: find devices by searching on the onewire bus across all addresses. 
-    // workaround, works apparently for ESP32
-
-    sprintf(printstring,"Searching 1-Wire-Devices...\n\r");// "\n\r" is NewLine
-    logOut(printstring, msgDS18B20Info, msgInfo);
-    
-    //critical section. Could help with incorrect sensor detection
-    // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#critical-sections-disabling-interrupts
-    //portMUX_TYPE myMutex = portMUX_INITIALIZER_UNLOCKED;
-    //portENTER_CRITICAL(&myMutex);
-    #ifdef isBLYNK
-      Blynk.disconnect();
-      delay(1500);
-    #endif  
-    for(j=1; j<=20 ; j++)
-    {
-      noDS18B20Connected = 0;
+    // loop to determine the addresses of the DS18B20 sensors. 
+    // Repeat in case of crc check failure or duplicate addresses
+    noRepeats = 0;
+    do{
+      esp_task_wdt_reset();   // keep watchdog happy
+      // code 1: devices finden.
+      // this method does not work for ESP32
+      delay(1000);
       oneWire.reset_search(); // reset search of oneWire devices
-      delay(100);
-      while(sensors.getAddress(addr, noDS18B20Connected)) {  
+      numberOfDevices = sensors.getDeviceCount();
+  
+      sprintf(printstring,"sensors.getDeviceCount found %d Devices \n", numberOfDevices);
+      logOut(printstring, msgDS18B20Info, msgInfo);
 
-        sprintf(printstring,"1-Wire-Device %d found with Adress: ", noDS18B20Connected);
-        // logOut(printstring, msgDS18B20Info, msgInfo);
-        esp_task_wdt_reset();   // keep watchdog happy
-
-        checksum[noDS18B20Connected] = 0;
-        for( i = 0; i < 8; i++) {
-          DS18B20Address[noDS18B20Connected][i] = addr[i];
-          checksum[noDS18B20Connected] += addr[i];
-          // Serial.print("0x");
-          /*
-          if (addr[i] < 16) {
-          strcat(printstring,"0");
-          }
-          sprintf(printstring,"%s%d",printstring, addr[i]);
-          if (i < 7) {
-            strcat(printstring," ");
-          }
-          */
+      numberOfDevices = noDS18B20Sensors;   // number of DS18B20 expected; /// temporary
+      // Setzen der Genauigkeit
+      for(i=0; i<numberOfDevices; i++) {
+        if(sensors.getAddress(tempDeviceAddress, i)) {
+          sensors.setResolution(tempDeviceAddress, TEMPERATURE_PRECISION);
+          Serial.print(F("Sensor "));
+          Serial.print(i);
+          Serial.print(F(" had a resolution of "));
+          Serial.println(sensors.getResolution(tempDeviceAddress), DEC);
         }
-        // strcat(printstring,"\n");
-        //logOut(printstring, msgDefaultID, msgInfo);
-        if ( OneWire::crc8( addr, 7) != addr[7]) {
-          // sprintf(printstring,"CRC is not valid!\n\r");
-          // logOut(printstring, msgDS18B20Info, msgWarn);
-          return;
-        }
-        noDS18B20Connected ++;    // one more device found
-      } // while
-
-      // check if no two addresses are identical
-      check = true;
-      for(i = 1; i<noDS18B20Connected; i++){
-        if(checksum[i] == checksum[i-1])
-          check = false; 
       }
+      Serial.println("");
+      numberOfDevices = sensors.getDeviceCount();   // does not function with OneWire library 2.3.5 (claimed to be ok with 2.3.3)
+      sprintf(printstring,"Found %d sensors\n", numberOfDevices);
+      logOut(printstring, msgDS18B20Info, msgInfo);
+      esp_task_wdt_reset();   // keep watchdog happy
 
-      if ((noDS18B20Connected >= noDS18B20Sensors) && (check == true)) // exit for loop if expected number of sensors has been found
-        break;
-      delay(j * 100);
-    } // for j
-    #ifdef isBLYNK
-      Blynk.connect();
-      delay(600);
-    #endif  
-    //portEXIT_CRITICAL(&myMutex); // exit critical section
+      // code 2: find devices by searching on the onewire bus across all addresses. 
+      // workaround, works apparently for ESP32
+
+      sprintf(printstring,"Searching 1-Wire-Devices...\n\r");// "\n\r" is NewLine
+      logOut(printstring, msgDS18B20Info, msgInfo);
+      
+      //critical section. Could help with incorrect sensor detection
+      // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/freertos-smp.html#critical-sections-disabling-interrupts
+      //portMUX_TYPE myMutex = portMUX_INITIALIZER_UNLOCKED;
+      //portENTER_CRITICAL(&myMutex);
+      #ifdef isBLYNK
+        Blynk.disconnect();
+        delay(1500);
+      #endif  
+
+      crcCheck = true;  // reset crc Check flag
+      for(j=1; j<=20 ; j++)
+      {
+        noDS18B20Connected = 0;
+        oneWire.reset_search(); // reset search of oneWire devices
+        delay(100);
+        while(sensors.getAddress(addr, noDS18B20Connected)) {  
+
+          sprintf(printstring,"1-Wire-Device %d found with Adress: ", noDS18B20Connected);
+          // logOut(printstring, msgDS18B20Info, msgInfo);
+          esp_task_wdt_reset();   // keep watchdog happy
+
+          // Fletcher checksum algorithm https://de.wikipedia.org/wiki/Fletcher%E2%80%99s_Checksum 
+          checksum[noDS18B20Connected] = 0;
+          sum1=0;
+          sum2=0;
+          for( i = 0; i < 8; i++) {
+            DS18B20Address[noDS18B20Connected][i] = addr[i];
+            sum1 = (sum1 + addr[i]) % 255;
+            sum2 = (sum2 + sum1) % 255;
+            //checksum[noDS18B20Connected] += (i+1)*addr[i];
+            // Serial.print("0x");
+            /*
+            if (addr[i] < 16) {
+            strcat(printstring,"0");
+            }
+            sprintf(printstring,"%s%d",printstring, addr[i]);
+            if (i < 7) {
+              strcat(printstring," ");
+            }
+            */
+          }
+          checksum[noDS18B20Connected] = 256 * sum1 + sum2; // checksum is two sub-sums combined
+          // strcat(printstring,"\n");
+          //logOut(printstring, msgDefaultID, msgInfo);
+          if ( OneWire::crc8( addr, 7) != addr[7]) {
+            // sprintf(printstring,"CRC is not valid!\n\r");
+            // logOut(printstring, msgDS18B20Info, msgWarn);
+            crcCheck = false;
+            //return;
+          }
+          noDS18B20Connected ++;    // one more device found
+        } // while
+
+        // check if no two addresses are identical
+        check = true;
+        /*
+        for(i = 1; i<noDS18B20Connected; i++){
+          if(checksum[i] == checksum[i-1])
+            check = false; 
+        }
+        */
+        for(i = 1; i<noDS18B20Connected; i++)
+          for(k = 0; k<i; k++)
+            if(checksum[i] == checksum[k])
+              check = false; 
+
+        if ((noDS18B20Connected >= noDS18B20Sensors) && (check == true)) // exit for loop if expected number of sensors has been found
+          break;
+        delay(j * 100);
+      } // for j
+      #ifdef isBLYNK
+        Blynk.connect();
+        delay(600);
+      #endif  
+      //portEXIT_CRITICAL(&myMutex); // exit critical section
+      noRepeats++;
+    }while((check==false || crcCheck==false) && noRepeats < 3); // repeat until the check is true
 
     sprintf(printstring,"Check: %d \n", check);
     logOut(printstring, msgDS18B20Info, msgInfo);
-    sprintf(printstring,"Found 1-Wire-Devices: %d in %d loop runs\n\r", noDS18B20Connected, j-1);
+    sprintf(printstring,"Found 1-Wire-Devices: %d in %d loop runs\n", noDS18B20Connected, j);
     logOut(printstring, msgDS18B20Info, msgInfo);
 
     for(j=0 ; j< noDS18B20Connected; j++) 
@@ -654,7 +674,7 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     Serial.println(ssid);
 
     // new 22.11.21
-    connectToWiFi(ssid, pass);
+    connectToWiFi(ssid, pass, 7);
 
     /* old until 22.11.21
     // while ((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED)) 
@@ -977,7 +997,7 @@ void connectToWiFiNetwork(){
   WiFi.mode(WIFI_STA);                       // Config module as station only.
 
   // new 22.11.21
-  connectToWiFi(ssid, pass);
+  connectToWiFi(ssid, pass, 7);
 
   /* old until 22.11.21
   WiFi.begin(ssid, pass);
@@ -1190,8 +1210,18 @@ bool checkBluetoothCredentials(char* ssid, char* pass, int* noOfNetwork, int noN
 } 
 #endif
 
+  /**************************************************!
+  @brief    Connect or reconnect to WiFi
+  @details  gets ssid and password for the network to connect to.
+            function attempts 6 times to connect to the network
+            If not successfull after the sixth time, returns false.
+  @param    char* ssid  - SSID of the network to connect to
+  @param    char* pass  - password of the network to connect to
+  @param    int noRetries - number of retries in connecting. Default is 7.
+  @return   bool : true if connected, false if not.
+  ***************************************************/
 // Connect or reconnect to WiFi
-bool connectToWiFi(char* ssid, char* pass)
+bool connectToWiFi(char* ssid, char* pass, int noRetries)
 {
   int i=0;
   long starttime, endtime;
@@ -1230,7 +1260,7 @@ bool connectToWiFi(char* ssid, char* pass)
     starttime = millis();
     // WiFi.mode(WIFI_STA);             // Config module as station only.
     int status = WiFi.status();
-    while((status != WL_CONNECTED) && (i<7))
+    while((status != WL_CONNECTED) && (i<=noRetries))
     {
       i++;
       if(status == WL_CONNECT_FAILED)
@@ -1407,7 +1437,7 @@ void setup()
     #ifdef debugCaptivePortal
       bool connectPossible = false; //debug: always go beyond EEPROM. REMOVE for productive software!!!
     #else  
-      bool connectPossible = connectToWiFi(ssid,  pass);
+      bool connectPossible = connectToWiFi(ssid,  pass, 7);
     #endif  
     if(connectPossible)
     {
@@ -1421,7 +1451,7 @@ void setup()
       
       setupCaptivePortal(); // start the captive portal
       loopCaptivePortal(ssid, pass); // and it's main event loop
-      connectPossible = connectToWiFi(ssid, pass);
+      connectPossible = connectToWiFi(ssid, pass, 7);
       if(connectPossible)
       { 
         sprintf(printstring,"Connection successful (Data from Captive Portal) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
@@ -1445,7 +1475,7 @@ void setup()
     {
       strcpy(ssid,default_ssid);
       strcpy(pass,default_pass);  
-      connectPossible = connectToWiFi(ssid, pass);
+      connectPossible = connectToWiFi(ssid, pass, 7);
       if(connectPossible)
       {
         sprintf(printstring,"Connection successful (using Defaults) for ssid _%s_ pass _%s_ => Proceeding\n", ssid, pass);
@@ -1682,11 +1712,13 @@ void setup()
     delay(10);
 
     #ifdef isStartupBeepTest
-      digitalWrite(RELAYPIN1, HIGH);
+      // digitalWrite(RELAYPIN1, HIGH);
+      windowSetBeeper(1);
       digitalWrite(RELAYPIN2, HIGH);
       delay(500);
     #endif
-    digitalWrite(RELAYPIN1, LOW);
+    // digitalWrite(RELAYPIN1, LOW);
+    windowSetBeeper(0);
     digitalWrite(RELAYPIN2, LOW);
 
   #endif
@@ -2923,12 +2955,14 @@ void setup()
   /**************************************************!
   @brief    helper function to actually set the beeper
   @details  based on desiredValue. Sets beeperState, respects beeperQuietCounter
-  @param none
+  @param  int desiredValue
   @return void
   ***************************************************/
   void windowSetBeeper(int desiredValue)
   {
       #ifdef isBeeperWindowOpenAlert
+      sprintf(printstring,"Beeper set to: %d \n", desiredValue);
+      logOut(printstring, msgBeeperTriggered, msgInfo);
       // turn on beeper if desiredValue==1 and beeper quiet counter not running
         if((desiredValue == 1) && (beeperQuietCounter < 1)){
           digitalWrite(RELAYPIN1, HIGH);  
@@ -3265,7 +3299,7 @@ void setup()
 
     // Connect or reconnect to WiFi
     if(WiFi.status() != WL_CONNECTED)
-      connectToWiFi(ssid, pass);  // new 22.11.21
+      connectToWiFi(ssid, pass, 7);  // new 22.11.21
     /* old until 22.11.21
     // if((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED))
     {
