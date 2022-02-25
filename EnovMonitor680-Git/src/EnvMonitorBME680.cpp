@@ -2532,8 +2532,15 @@ void setup()
         #endif 
         sprintf(printstring,"Time:%s",timestring);
         display.setCursor(0, 36); display.println(printstring);
-        sprintf(printstring,"Seconds: %3.1f ",(float)millis()/1000);
+        sprintf(printstring,"Sec: %3.1f ",(float)millis()/1000);
         display.setCursor(0, 48); display.println(printstring); 
+        if(WiFi.status() == WL_CONNECTED)
+        {
+          int8_t rssi;
+          rssi = WiFi.RSSI();
+          sprintf(printstring,"RSSI: %d",rssi);
+          display.setCursor(48, 48); display.println(printstring); 
+        }  
         break;
       #if defined isBME680 || defined isBME680_BSECLib
       case 3:

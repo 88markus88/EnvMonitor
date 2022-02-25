@@ -3,8 +3,8 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.97"
-#define PROGDATE "2022-02-19"
+#define PROGVERSION "V0.98"
+#define PROGDATE "2022-02-25"
 
 
 // !!! use only one option that sends or receives data from serial!
@@ -24,11 +24,11 @@
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
- // #define blynkSenseAirRedBox
+  #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
-  #define blynkRedBoxYellowButton
+ // #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
@@ -421,7 +421,7 @@
         #define isSendBlynkWindowOpenAlert  // if alert, send it to another device via Blynk (auth: authAlertReceiver[])
         #define isBeeperWindowOpenAlert     // if alert, activate beeper
         #define isReceiveBlynkWindowOpenAlert    // receive alerts from other Blynk connected units
-        #define isStartupBeepTest  // if enabled, 500 ms Beep during setup
+        #undef isStartupBeepTest  // if enabled, 500 ms Beep during setup
         #define tempSwitchSensorSelector 1  // select DS18B20 for temperature sensing
 
     #undef sendSERIAL       // enable if data from external sensors (temp, humdity) to be received via serial2
