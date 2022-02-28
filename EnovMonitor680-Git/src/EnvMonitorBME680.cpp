@@ -3724,8 +3724,32 @@ void main_handler()
 
   start_loop_time = millis();
   // Serial.printf(" ******* Main Loop start at %3.1f sec ********** \n",time_sec);
-  sprintf(printstring, " M %3.1f \n",time_sec);
-  logOut(printstring, msgDefaultID, msgInfo);
+  sprintf(printstring, " M %3.1f ",time_sec);
+  // logOut(printstring, msgDefaultID, msgInfo);
+
+  // transfer Wifi signal strengths, for diagnostics
+  if(WiFi.status() == WL_CONNECTED)
+  {
+    int8_t rssi;
+    rssi = WiFi.RSSI();
+    
+    #ifdef isBLYNK
+      if(Blynk.connected())
+        sprintf(printstring,"%s Blynk connected ", printstring);
+      else   
+        sprintf(printstring,"%s Blynk NOT connected ", printstring);
+      Blynk.virtualWrite(V1, rssi);
+      Blynk.virtualWrite(V2, rssi);
+      Blynk.virtualWrite(V3, rssi);
+      Blynk.virtualWrite(V4, rssi);
+      Blynk.virtualWrite(V0, rssi);
+      Blynk.run();  
+
+      sprintf(printstring,"%s RSSI: %d\n ",printstring,rssi);
+      // sprintf(printstring,"%s toBlynk: %d\n ",printstring,rssi);
+    #endif
+  }  
+  logOut(printstring, msgWiFiRssiInfo, msgInfo);
 
   #ifdef isInfactory433
     // if( (millis() > lastInfactoryReception + 45000) || (lastInfactoryReception < 1))
@@ -4241,7 +4265,7 @@ void main_handler()
     #endif
     vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
   #endif  // isBME280
-	
+
   //*** read data from CO2 sensor
   #ifdef isMHZ14A
     MHZ14AWarmingTime = time_sec - warmingTimer/1000;
