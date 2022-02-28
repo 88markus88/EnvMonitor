@@ -19,11 +19,12 @@ V42 | tempSwitchOffset (Fan on if temp BS680 this much too high)
 V20 | Start CO2 Sensor Calibration
 V60 | Manual restart of 1Wire bus (DS18B20 Sensors)
 V70 | Used for data transfer by bridge1. Transfer temperature alerts.
-V71 | Connector for bridge1
+V80 | Used for data transfer by bridge2. Transfer temperature alerts.
 
 **Outputs**
 VPin  |Function
 ------|---------
+V1  | Wifi Signal strength (RSSI)
 V5  | BME280 / BME680 Temperature
 V6  | BME280 / BME680 Air Pressure
 V7  | BME280 / BME680 Humidity
