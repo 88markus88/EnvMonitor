@@ -3739,10 +3739,11 @@ void main_handler()
       else   
         sprintf(printstring,"%s Blynk NOT connected ", printstring);
       Blynk.virtualWrite(V1, rssi);
-      Blynk.virtualWrite(V2, rssi);
+      /*Blynk.virtualWrite(V2, rssi);
       Blynk.virtualWrite(V3, rssi);
       Blynk.virtualWrite(V4, rssi);
-      Blynk.virtualWrite(V0, rssi);
+      Blynk.virtualWrite(V0, rssi);*/
+      delay(25);
       Blynk.run();  
 
       sprintf(printstring,"%s RSSI: %d\n ",printstring,rssi);

@@ -67,6 +67,8 @@
 #define msgAlertReceived      200
 #define msgBeeperTriggered    201
 
+#define msgWiFiRssiInfo       210
+
 //Message Severities
 #define msgDefault  0
 #define msgInfo     1
