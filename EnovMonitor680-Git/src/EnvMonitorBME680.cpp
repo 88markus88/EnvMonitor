@@ -1716,9 +1716,9 @@ void setup()
       windowSetBeeper(1);
       digitalWrite(RELAYPIN2, HIGH);
       delay(500);
+      windowSetBeeper(0);
     #endif
     // digitalWrite(RELAYPIN1, LOW);
-    windowSetBeeper(0);
     digitalWrite(RELAYPIN2, LOW);
 
   #endif
@@ -2538,8 +2538,8 @@ void setup()
         {
           int8_t rssi;
           rssi = WiFi.RSSI();
-          sprintf(printstring,"RSSI: %d",rssi);
-          display.setCursor(48, 48); display.println(printstring); 
+          sprintf(printstring,"RS:%d",rssi);
+          display.setCursor(88, 48); display.println(printstring); 
         }  
         break;
       #if defined isBME680 || defined isBME680_BSECLib
@@ -3715,6 +3715,7 @@ void main_handler()
 
   // float time_sec;
   long start_loop_time, end_loop_time = 0;
+  int8_t rssi;
   
   #if defined  isBME680  || defined isBME680_BSECLib
     static long lastBME680Time;
@@ -3730,9 +3731,8 @@ void main_handler()
   // transfer Wifi signal strengths, for diagnostics
   if(WiFi.status() == WL_CONNECTED)
   {
-    int8_t rssi;
     rssi = WiFi.RSSI();
-    
+
     #ifdef isBLYNK
       if(Blynk.connected())
         sprintf(printstring,"%s Blynk connected ", printstring);
@@ -3743,6 +3743,7 @@ void main_handler()
       Blynk.virtualWrite(V3, rssi);
       Blynk.virtualWrite(V4, rssi);
       Blynk.virtualWrite(V0, rssi);*/
+      // Blynk.syncAll();
       delay(25);
       Blynk.run();  
 
@@ -4013,6 +4014,7 @@ void main_handler()
       }
       strcat(printstring,"\n");
       logOut(printstring, msgBlynkSend, msgInfo);
+      
       vTaskDelay(300 / portTICK_PERIOD_MS); // non-blocking delay instead
     #endif  
 
