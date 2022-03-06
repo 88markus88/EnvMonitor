@@ -2536,9 +2536,9 @@ void setup()
         display.setCursor(0, 48); display.println(printstring); 
         if(WiFi.status() == WL_CONNECTED)
         {
-          int8_t rssi;
-          rssi = WiFi.RSSI();
-          sprintf(printstring,"RS:%d",rssi);
+          // int8_t rssi;
+          // rssi = WiFi.RSSI();
+          sprintf(printstring,"RS:%2.0f",rssi);
           display.setCursor(88, 48); display.println(printstring); 
         }  
         break;
@@ -3402,9 +3402,10 @@ void setup()
     #define minDiffPressure     0.05
     #define minDiffAirQuality   0.3
     #define minDiffDS18B20      0.05
-    #define minDiffCO2ppm       3.0
+    #define minDiffCO2ppm       5.0
     #define minDiffExtTemp      0.05
     #define minDiffExtHumid     0.5
+    #define minDiffRSSI         0.3
 
     #define minimumRepeatCounter 30   // at least every 30 calls the data are sent for items without own counter
 
@@ -3509,6 +3510,21 @@ void setup()
         air_quality_score_sum = 0;  // reset sum for average
         air_quality_score_n = 0;    // rest counter for average
       }
+    #else
+      // Wifi RSSI to Thingspeak 
+      if(rssi_n > 0)
+        avg = rssi_sum / rssi_n;
+      else
+        avg = rssi;
+      if(!isEqual(avg,last_rssi,minDiffRSSI) || (rssi_n > 999) || (repeatFlag==true)){  
+        last_rssi = avg;
+        sprintf(printstring2," RSSI: %5.2f",avg);
+        strcat(printstring, printstring2);
+        rssi_sum=0; rssi_n=0;
+        url = url+ "&field4=" + avg;
+        thingspeakSendItemCounter++;
+        thingspeakItemsCollected++;
+      }  
     #endif 
 
     #ifdef isOneDS18B20
@@ -3715,7 +3731,6 @@ void main_handler()
 
   // float time_sec;
   long start_loop_time, end_loop_time = 0;
-  int8_t rssi;
   
   #if defined  isBME680  || defined isBME680_BSECLib
     static long lastBME680Time;
@@ -3729,29 +3744,28 @@ void main_handler()
   // logOut(printstring, msgDefaultID, msgInfo);
 
   // transfer Wifi signal strengths, for diagnostics
-  if(WiFi.status() == WL_CONNECTED)
-  {
-    rssi = WiFi.RSSI();
+  #ifdef isMeasureRSSI
+    if(WiFi.status() == WL_CONNECTED)
+    {
+       rssi = WiFi.RSSI();
+       rssi_sum += rssi;
+       rssi_n++;
+       #ifdef isBLYNK
+        if(Blynk.connected())
+          sprintf(printstring,"%s Blynk connected ", printstring);
+        else   
+          sprintf(printstring,"%s Blynk NOT connected ", printstring);
+        Blynk.virtualWrite(V1, rssi);
+        // Blynk.syncAll();
+        // delay(25);
+        // Blynk.run();  
 
-    #ifdef isBLYNK
-      if(Blynk.connected())
-        sprintf(printstring,"%s Blynk connected ", printstring);
-      else   
-        sprintf(printstring,"%s Blynk NOT connected ", printstring);
-      Blynk.virtualWrite(V1, rssi);
-      /*Blynk.virtualWrite(V2, rssi);
-      Blynk.virtualWrite(V3, rssi);
-      Blynk.virtualWrite(V4, rssi);
-      Blynk.virtualWrite(V0, rssi);*/
-      // Blynk.syncAll();
-      delay(25);
-      Blynk.run();  
-
-      sprintf(printstring,"%s RSSI: %d\n ",printstring,rssi);
-      // sprintf(printstring,"%s toBlynk: %d\n ",printstring,rssi);
-    #endif
-  }  
-  logOut(printstring, msgWiFiRssiInfo, msgInfo);
+        sprintf(printstring,"%s RSSI: %3.0f\n ",printstring,rssi);
+        // sprintf(printstring,"%s toBlynk: %d\n ",printstring,rssi);
+      #endif
+    }  
+    logOut(printstring, msgWiFiRssiInfo, msgInfo);
+  #endif
 
   #ifdef isInfactory433
     // if( (millis() > lastInfactoryReception + 45000) || (lastInfactoryReception < 1))
@@ -4229,7 +4243,7 @@ void main_handler()
         V[8] = air_quality_score; 
         // V[12] = air_quality_string; 
       #endif
-     
+    
       // delay(300); // give blynk time to send the stuff
       vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
     } // if start_loop_time  

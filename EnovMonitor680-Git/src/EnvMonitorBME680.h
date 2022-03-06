@@ -215,6 +215,11 @@ volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched
   char air_quality_shortstring[80];
 #endif  
 
+// stuff for RSSI measurements transfer to Thiingspeak
+float rssi, last_rssi=0;
+float rssi_sum=0;
+unsigned long rssi_n=0; 
+
 #ifdef isBME680_BSECLib
   // Include files for BME280 using BSEC original lib, available as object code only
   #include <SPI.h>              // < Include the SPI standard library

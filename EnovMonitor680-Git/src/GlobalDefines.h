@@ -3,7 +3,7 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.100"
+#define PROGVERSION "V0.101"
 #define PROGDATE "2022-03-06"
 
 
@@ -20,7 +20,7 @@
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // #define blynkWebHinkelhurz
-  #define blynkBME680Kueche
+ // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
@@ -28,7 +28,7 @@
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
- // #define blynkRedBoxYellowButton
+  #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************
@@ -75,6 +75,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)   
     static char infoStringLong[] = " KombiSensorExtLCD: Black Eurobox with LCD. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExtLCD";
 #endif
@@ -120,7 +121,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
-
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)
     static char infoStringLong[] = " KombiSensorExt: Black Velleman Box with OLED. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExt";
 #endif
@@ -167,6 +168,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " BME680 Küche: Eurobox, OLED, BME680, 3 DS18B20, MH-Z14a, Fan";
     static char infoStringShort[] = "BME680 Kueche";
 #endif
@@ -213,6 +215,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " SenseAirRedBox: Eurobox, OLED, BME280, 3 DS18B20, SenseAir S8, Beeper";
     static char infoStringShort[] = " SenseAirRedBox";
 #endif
@@ -258,6 +261,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " Small Sensor Bad: Small Box, BME280, 2 DS18B20";
     static char infoStringShort[] = " Small Sensor Bad";
 #endif
@@ -303,6 +307,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " Small Sensor Schlafzimmer: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Schlafzimmer";
 #endif
@@ -349,6 +354,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " Small Sensor ExHans: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Small Sensor ExHans";
 #endif
@@ -395,6 +401,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " BME680 Breadboard: BME680, 1 DS18B20 auf Breadboard";
     static char infoStringShort[] = "BME680 Breadboard";
 #endif
@@ -441,6 +448,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME  infoStringShort // "syslog_hostname" //
         #define APP_NAME PROGVERSION // "syslog_appname" //
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = "Red Box Yellow Button with SenseAir";// " General Testbed for all kinds of stuff";
     static char infoStringShort[] = "RedBoxYellowBtn"; // "GeneralTestbed";
 #endif 
@@ -481,6 +489,7 @@
         #define SYSLOG_PORT 514
         #define DEVICE_HOSTNAME infoStringShort
         #define APP_NAME PROGNAME
+    #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     static char infoStringLong[] = " Virtuino Testbed: BME680 und 1 DS18B20 auf V0.4 Platine";
     static char infoStringShort[] = "Virtuino Testbed";
 #endif 
