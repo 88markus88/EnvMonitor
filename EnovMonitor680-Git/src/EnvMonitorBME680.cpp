@@ -3003,19 +3003,7 @@ void setup()
       #ifdef isBLYNK
         Blynk.virtualWrite(V40, 1);   
         #ifdef isBeeperWindowOpenAlert
-          windowSetBeeper(1);
-          /*
-          if(beeperQuietCounter < 1)    // if button has been recently pressed: no beeping
-          {
-            beeperState = 1;
-            digitalWrite(RELAYPIN1, HIGH);  
-          }  
-          else  
-          {
-            beeperState = 0;
-            digitalWrite(RELAYPIN1, LOW); 
-          } 
-          */ 
+          windowSetBeeper(1); // sets beeper, respects quiet counter
         #endif  
         #ifdef isSendBlynkWindowOpenAlert
           bridge1.virtualWrite(V70, 1); // bridge1 uses V70. 1: alert on, 0: alert off
@@ -4189,7 +4177,7 @@ void main_handler()
       temperature_sum += temperature;         // for averaging in thingspeak
       temperature_n++;                        // for averaging in thingspeak
 
-      pressure    = iaqSensor.pressure / 100; // sensor air pressure in mbar
+      pressure    = (iaqSensor.pressure / 100) + corrBMEPressure; // sensor air pressure in mbar
       pressure_sum += pressure;               // for averaging in thingspeak
       pressure_n++;                           // for averaging in thingspeak
 

@@ -3,7 +3,7 @@
 *******************************************************/
 
 //*** global defined constants
-#define WDT_TIMEOUT_SECONDS 45  // 40 seconds watchdog timeout. Not too short, or the chip is dead!
+#define WDT_TIMEOUT_SECONDS 55  // 40 seconds watchdog timeout. Not too short, or the chip is dead!
 
 //Message ID Codes
 #define msgDefaultID          0
