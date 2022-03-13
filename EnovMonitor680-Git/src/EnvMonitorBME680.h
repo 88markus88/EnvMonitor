@@ -146,6 +146,10 @@ volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched
   const char* ntpServer3 = "pool.ntp.org";
   const long  gmtOffset_sec = 3600;             // Germany_ UTC + 1 = +3600 sec
   const int   daylightOffset_sec = 3600;
+  // improved for setting to the correct time zone directly
+  // https://github.com/espressif/arduino-esp32/issues/3797 
+  // https://remotemonitoringsystems.ca/time-zone-abbreviations.php
+  const char* defaultTimezone = "CET-1CEST,M3.5.0/2,M10.5.0/3";
   int TimeIsInitialized = false;
 #endif // getNPTTIME
  
