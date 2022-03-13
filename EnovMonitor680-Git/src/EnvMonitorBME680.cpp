@@ -618,7 +618,7 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
         sprintf(printstring,"%s.%s.%s-%s:%s:%s ", 
           timeDay,timeMonthShort,timeYearShort,timeHour,timeMinute,timeSecond);
       case 5: 
-        sprintf(printstring,"%s%s%s-%s:%s:%s ", 
+        sprintf(printstring,"%d %s%s%s-%s:%s:%s ", timeinfo.tm_isdst,
           timeDay,timeMonth,timeYearShort,timeHour,timeMinute,timeSecond);    
         // Serial.print(printstring); 
         break;  
@@ -665,6 +665,9 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
   @param    none
   @return   void
   ***************************************************/
+ // Issue: incorrect setting of day when switching to daylight saving time
+ // See: https://github.com/espressif/arduino-esp32/issues/3797
+
   void getNTPTime()
   {
     char printstring[80];
@@ -674,7 +677,8 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     Serial.println(ssid);
 
     // new 22.11.21
-    connectToWiFi(ssid, pass, 7);
+    if(WiFi.status() != WL_CONNECTED)
+      connectToWiFi(ssid, pass, 7);
 
     /* old until 22.11.21
     // while ((!wifiClient.connected()) || (WiFi.status() != WL_CONNECTED)) 
@@ -721,8 +725,14 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
       struct tm timeinfo;
       // Init and get the time. try all 3 time servers in sequence, if first not successful
       // configTime(gmtOffset_sec, daylightOffset_sec, ntpServer, ntpServer2, ntpServer3);
+      // works for one server:
+      // configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
-      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+      // improved for setting to the correct time zone directly
+      // https://github.com/espressif/arduino-esp32/issues/3797 
+      // https://remotemonitoringsystems.ca/time-zone-abbreviations.php
+      configTzTime( defaultTimezone, ntpServer); //sets TZ and starts NTP sync
+
       if(getLocalTime(&timeinfo))
       {
         TimeIsInitialized = true;
@@ -732,7 +742,8 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
       else{  
         sprintf(printstring,"Failed to obtain time from first server %s",ntpServer);  
         Serial.println(printstring);   
-        configTime(gmtOffset_sec, daylightOffset_sec, ntpServer2);
+        // configTime(gmtOffset_sec, daylightOffset_sec, ntpServer2);
+        configTzTime( defaultTimezone, ntpServer2); //sets TZ and starts NTP sync
         if(getLocalTime(&timeinfo)){
           TimeIsInitialized = true;
           sprintf(printstring,"Successfully obtained time from 2nd server %s",ntpServer2);
@@ -741,7 +752,8 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
         else{
           sprintf(printstring,"Failed to obtain time from 2nd server %s",ntpServer2);  
           Serial.println(printstring);  
-          configTime(gmtOffset_sec, daylightOffset_sec, ntpServer3);
+          // configTime(gmtOffset_sec, daylightOffset_sec, ntpServer3);
+          configTzTime( defaultTimezone, ntpServer3); //sets TZ and starts NTP sync
           if(getLocalTime(&timeinfo)){
             sprintf(printstring,"Successfully obtained time from 3rd server %s",ntpServer3);
             Serial.println(printstring);  
@@ -760,8 +772,9 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
         logOut(printstring, msgTimeInfo, msgInfo);
       }  
       //disconnect WiFi as it's no longer needed
-      WiFi.disconnect(true);
-      WiFi.mode(WIFI_OFF);
+      //in EnvMonitor we do not disconnect
+      // WiFi.disconnect(true);
+      // WiFi.mode(WIFI_OFF);
     }
     else
     {
@@ -3390,9 +3403,9 @@ void setup()
     #define minDiffTemperature  0.05
     #define minDiffHumidity     0.1
     #define minDiffPressure     0.05
-    #define minDiffAirQuality   0.3
+    #define minDiffAirQuality   1.0
     #define minDiffDS18B20      0.05
-    #define minDiffCO2ppm       5.0
+    #define minDiffCO2ppm       10.0
     #define minDiffExtTemp      0.05
     #define minDiffExtHumid     0.5
     #define minDiffRSSI         0.3
