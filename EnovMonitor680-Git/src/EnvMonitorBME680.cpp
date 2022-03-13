@@ -873,13 +873,15 @@ void outputProgramInfo()
   logOut(printstring2, msgProgInfo, msgInfo);
   logOut(printstring, msgProgInfo, msgInfo);
   #ifdef isBLYNK
-    sprintf(printstring," Blynk Auth Code: %s \n", auth); 
+    // sprintf(printstring," Blynk Auth Code: %s \n", auth); 
+    sprintf(printstring," Blynk Auth Code: xxxxxxxxxxx \n"); 
     logOut(printstring, msgProgInfo, msgInfo);
     sprintf(printstring," Blynk Server IP: %s \n", "blynkLocalIP"); 
     logOut(printstring, msgProgInfo, msgInfo);
   #endif
   #ifdef isThingspeak 
-    sprintf(printstring," Thingspeak enabled. WriteApiKey: %s \n", thingspeakWriteAPIKey); 
+    // sprintf(printstring," Thingspeak enabled. WriteApiKey: %s \n", thingspeakWriteAPIKey); 
+    sprintf(printstring," Thingspeak enabled. WriteApiKey: ................. \n"); 
     logOut(printstring, msgProgInfo, msgInfo);
   #endif
   sprintf(printstring," %s  %s  %s \n",PROGNAME, PROGVERSION, PROGDATE);
@@ -3498,7 +3500,9 @@ void setup()
         air_quality_score_sum = 0;  // reset sum for average
         air_quality_score_n = 0;    // rest counter for average
       }
-    #else
+    #endif   
+
+    #ifdef isThingspeakRSSI  // on field4. NOT if air quality, or external 466MHz sensors with ext humidity on field 4
       // Wifi RSSI to Thingspeak 
       if(rssi_n > 0)
         avg = rssi_sum / rssi_n;
