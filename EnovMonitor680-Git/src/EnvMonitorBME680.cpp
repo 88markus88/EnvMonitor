@@ -3256,8 +3256,8 @@ void setup()
       {
         if (NULL != strstr(receivedChars,failure))
           serialFailCount++;
-        // sprintf(printstring,"faulty data received, Total Count: %d\n",serialFailCount);
-        // logOut(printstring, msgSerialFaulty, msgErr);  
+        sprintf(printstring,"faulty data received, Total Count: %d - %s\n",serialFailCount, receivedChars);
+         logOut(printstring, msgSerialFaulty, msgErr);  
         serialTemp=-111.11;
         serialHumidity=-111;
         serialChannel=0;
@@ -3267,9 +3267,9 @@ void setup()
       {
         *sTempC =  serialTemp;
         *sHumidity = serialHumidity;
-        // sprintf(printstring,"converted Infactory (Ch: %d) T: %3.1f %3.1f %%\n",
-        //   *sChannel, *sTempC, *sHumidity);
-        // logOut(printstring, msgSerialReceived, msgInfo);  
+        sprintf(printstring,"converted Infactory (Ch: %d) T: %3.1f %3.1f %%\n",
+          *sChannel, *sTempC, *sHumidity);
+        logOut(printstring, msgSerialReceived, msgInfo);  
         ret=true;
       }
       newData = false;
@@ -3952,8 +3952,11 @@ void main_handler()
         }
         else
         {
-            InfactoryT[serialChannel] = -111.11;
-            InfactoryH[serialChannel] = -111.11;
+          //if( (abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0) && InfactoryTempC>-110 && abs(InfactoryTempC) > 0.01 )
+          sprintf(printstring,"##### Serial data rejected: Ch: %d TempC: %3.1f lastTempC: %3.1f\n",serialChannel, InfactoryTempC, lastInfactoryTempC[serialChannel]);
+          logOut(printstring, msgBlynkConnected, msgInfo);  
+          InfactoryT[serialChannel] = -111.11;
+          InfactoryH[serialChannel] = -111.11;
         }
       }  
     #endif  // serialReceived
@@ -4320,6 +4323,8 @@ void main_handler()
       send_Request(CO2req, 8);               // send request for CO2-Data to the Sensor
       read_Response(7);                      // receive the response from the Sensor
       CO2ppm = get_Value(7);
+      if(CO2ppm > 32767)                     // can overflow, needs to be considered
+        CO2ppm = CO2ppm-65535;               // signed int, overflow converted to negative
       sprintf(printstring,"\n %3.1f SenseAir CO2 Sensor value: %d PPM \n", time_sec, CO2ppm);
       logOut(printstring, msgSenseAirInfo, msgInfo); 
       #ifdef isBLYNK 
