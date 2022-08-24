@@ -6,16 +6,23 @@
 // http://rayshobby.net/?p=8998
 // https://rayshobby.net/reverse-engineer-wireless-temperature-humidity-rain-sensors-part-1/ 
 //********************************************************************************************
-
+// 16.08.22: did not work at high temperatures. changes:
+// doubled tolerances (particularly for 8000 ms Sync Impulses - tend to get to 8400
+// Added upper tolerance of 20000 to get rid of long signals (translated to -1 = 65535)
+// Still, signals appear to be pretty bad.
+//
+//
+//********************************************************************************************
 #include <SoftwareSerial.h>
 #define sendSERIAL        // send data via serial
 #undef receiveSERIAL      // not used, for future enhancement
-#define sendSERIALERRORS  // only if this is set errors are sent via serial to ESP32
+#undef sendSERIALERRORS  // only if this is set errors are sent via serial to ESP32
 
 // ring buffer size has to be large enough to fit
 // data between two successive sync signals
 #define RING_BUFFER_SIZE  256
-#define FILTER 200 // all smaller are ignored
+#define HI_FILTER 20000 // all larger are ignored
+#define LO_FILTER 200 // all smaller are ignored
 int bitsReceived = 0;
 
 //                          __                 __                  
@@ -29,10 +36,11 @@ int bitsReceived = 0;
 //  time in ms       .6  2.0
 
 #define PROGNAME  "Sniffer433_real.cpp"
-#define PROGDATE  "2021-04-10"
-#define PROGVERSION "V0.10"
+#define PROGDATE  "2022-08-16"
+#define PROGVERSION "V0.11a"
 
 #undef outputDATA
+#undef  outputSERIALDEBUG
 
 #define NO_SYNC_PULSES 6   // the sync sequence is 4 levels long, plus 1 bit (2 level after the signal = 6)
 #define NO_SIGNAL_PULSES 82 // signal is 41 bit long  
@@ -47,9 +55,9 @@ int bitsReceived = 0;
 #define BIT0_HIGH  540
 #define BIT0_LOW   2050
 
-#define TOL1  80  // tolerance values
-#define TOL2 150   
-#define TOL3 250 
+#define TOL1  2*80  // tolerance values
+#define TOL2 2*150   
+#define TOL3 2*250 
 
 #define DATAPIN  3  // D3 is interrupt 1
 #define TRIGGERPIN 12 // to trigger scope
@@ -70,7 +78,7 @@ unsigned int Bit0_High_Lengths = BIT0_HIGH;
 unsigned int Bit0_Low_Lengths = BIT0_LOW;
 
 // Variables for pulse statistics
-/*
+
 unsigned long lastOutput=0;
 unsigned int messagesReceived=0, messagesDropped=0;
 unsigned int count1=0,  sum1HI=0,  sum1LO=0, max1HI=0,  min1HI=1000000,  max1LO=0, min1LO=1000000;
@@ -78,7 +86,7 @@ unsigned int count0=0,  sum0HI=0,  sum0LO=0, max0HI=0,  min0HI=1000000,  max0LO=
 unsigned int counts2=0, sums2HI=0, sums2LO=0,maxs2HI=0, mins2HI=1000000, maxs2LO=0, mins2LO=1000000;
 unsigned int counts1=0, sums1HI=0, sums1LO=0,maxs1HI=0, mins1HI=1000000, maxs1LO=0, mins1LO=1000000;
 unsigned int countsy=0, sumsyHI=0, sumsyLO=0,maxsyHI=0, minsyHI=1000000, maxsyLO=0, minsyLO=1000000;
-*/ 
+ 
 
 // other global ariables
 char printstring[100];
@@ -150,16 +158,17 @@ void handler() {
   duration = time - lastTime;
   lastTime = time;
 
-  if(duration > FILTER)
+  if(duration > LO_FILTER && duration < HI_FILTER)
   {
     // store data in ring buffer
     ringIndex = (ringIndex + 1) % RING_BUFFER_SIZE;
     timings[ringIndex] = min(duration, 65535);    // safely cast long to int
 
     // detect sync signal
+    //Serial.print(",");
     if (isSync3489(ringIndex)) {
       syncCount ++;
-      
+      Serial.print(":");
       // first time sync is seen, record buffer index
       Serial.print("s1 ");
       if (syncCount == 1) {
@@ -230,7 +239,7 @@ void handler() {
     #ifdef sendSERIALERRORS
       bytesSent= mySerial.write(sendString);
     #endif
-    Serial.print("SerErr: "); Serial.print(bytesSent);Serial.print(" "); Serial.print(sendString);
+    //Serial.print("SerErr: "); Serial.print(bytesSent);Serial.print(" "); Serial.print(sendString);
   }
 #endif // sendSERIAL
 
@@ -292,12 +301,12 @@ void handler() {
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("\n*************");
+  Serial.println("\n**********");
   sprintf(printstring," Decoder for 'Infactory NC-5849-675' on PIN %d\n",DATAPIN);
   Serial.print(printstring);
   sprintf(printstring, " %s %s %s \n",PROGNAME,PROGVERSION,PROGDATE);
   Serial.print(printstring);
-  Serial.println("*************");
+  Serial.println("**********");
 
   // Empfänger und Interrupt handler aufsetzen
   pinMode(DATAPIN, INPUT);
@@ -314,37 +323,48 @@ void setup() {
 // new routine to extract values exactly from this area within input buffer "timings"
 bool calcValuesNew(int localsyncIndex1, int localsyncIndex2, int* Channel, float* tempC, float* tempF, int* raw_humidity)
 {
-  bool fail = false;
+  bool fail;
   bitsReceived = 0;
-  for (unsigned int i=0; i<10; i++)
-    resultbuffer[i]=0;
 
   unsigned long Bit1_High_Sum=0, Bit1_Count=0;
   unsigned long Bit1_Low_Sum=0; 
   unsigned long Bit0_High_Sum=0, Bit0_Count=0;
   unsigned long Bit0_Low_Sum=0; 
+  unsigned int c, i, t0, t1;
+
+  int raw_temp=0;
+  unsigned int nibble0, nibble1, nibble2;
+
+  sprintf(printstring,"calcValuesNew si0:%d si1:%d  \n",localsyncIndex1,localsyncIndex2);  
+  Serial.print(printstring);
+
+  for (i=0; i<10; i++)
+    resultbuffer[i]=0;
     
   if(abs(localsyncIndex2-localsyncIndex1)%2 != 0)
     localsyncIndex2++;
   if(localsyncIndex2 > RING_BUFFER_SIZE-1)
     localsyncIndex2 = 0;
+
+  fail = false;  
   // loop over buffer data
-  unsigned int c=12; // this is the actual start position, where the data starts within the telegram. localsyncIndex1 now directly points to this
-  for(unsigned int i=localsyncIndex1; i!=localsyncIndex2; i=(i+2)%RING_BUFFER_SIZE, c++) 
+  c = 12; // this is the actual start position, where the data starts within the telegram. localsyncIndex1 now directly points to this
+  for(i=localsyncIndex1; i!=localsyncIndex2; i=(i+2)%RING_BUFFER_SIZE, c++) 
   {
-    unsigned int t0 = timings[i], t1 = timings[(i+1)%RING_BUFFER_SIZE];
+    t0 = timings[i];
+    t1 = timings[(i+1)%RING_BUFFER_SIZE];
     if (t0>(Bit1_High_Lengths - TOL1) && t0<(Bit1_High_Lengths + TOL1) &&
         t1>(Bit1_Low_Lengths - TOL3) && t1<(Bit1_Low_Lengths + TOL3)) {
-      //Serial.print("1");
+      Serial.print("1");
       SetBit(resultbuffer, c);
-      // Serial.printf(" %d ",c);
+      // Serial.print(c);
       Bit1_Count +=1;
       Bit1_High_Sum += t0; 
       Bit1_Low_Sum += t1; 
       bitsReceived ++; 
     } else if (t0>(Bit0_High_Lengths - TOL1) && t0<(Bit0_High_Lengths + TOL1) &&
                t1>(Bit0_Low_Lengths - TOL3) && t1<(Bit0_Low_Lengths + TOL3)){
-      //Serial.print("0");
+      Serial.print("0");
       ClearBit(resultbuffer, c);
       Bit0_Count +=1;
       Bit0_High_Sum += t0; 
@@ -365,7 +385,7 @@ bool calcValuesNew(int localsyncIndex1, int localsyncIndex2, int* Channel, float
       Serial.print(printstring);
       fail = true;
     }
-    if (c%8==7) Serial.print(" ");
+    if ((c-12)%8==7) Serial.print(" ");
   }
 
   // collect data for bit lengths adaptation, moving average over 4 measurements
@@ -375,27 +395,30 @@ bool calcValuesNew(int localsyncIndex1, int localsyncIndex2, int* Channel, float
     Bit1_Low_Lengths =  (3 * Bit1_Low_Lengths  + Bit1_Low_Sum  / Bit1_Count)/4;
     Bit0_High_Lengths = (3 * Bit0_High_Lengths + Bit0_High_Sum / Bit0_Count)/4;
     Bit0_Low_Lengths =  (3 * Bit0_Low_Lengths  + Bit0_Low_Sum  / Bit0_Count)/4;
-    sprintf(printstring,"Adapted to Bit1: %d %d - Bit0: %d  %d \n",Bit1_High_Lengths,Bit1_Low_Lengths,Bit0_High_Lengths,Bit0_Low_Lengths);     
-    Serial.print(printstring);
+    #ifdef outputSERIALDEBUG
+      sprintf(printstring,"Adapted to Bit1: %d %d - Bit0: %d  %d \n",Bit1_High_Lengths,Bit1_Low_Lengths,Bit0_High_Lengths,Bit0_Low_Lengths);     
+      Serial.print(printstring);
+    #endif  
   }  
   else
-    Serial.print("No adaptation of Bit pulse lengths\n");
+    #ifdef outputSERIALDEBUG
+      Serial.print("No adaptation of Bit pulse lengths\n");
+    #endif  
 
-  int raw_temp=0;
-  unsigned nibble0, nibble1, nibble2;
-
+  sprintf(printstring," Fail: %d bits: %d \n",fail,bitsReceived);
+  Serial.print(printstring);
   if (!fail) {
-    //sprintf(printstring," Bits:  %d  \n",bitsReceived);
-    //Serial.print(printstring);
-    for(unsigned int i=0; i<6; i++) {
-      // print_bits(resultbuffer[i]);
-      // Serial.print(" ");
+    sprintf(printstring," Bits:  %d  \n",bitsReceived);
+    Serial.print(printstring);
+    for(i=0; i<6; i++) {
+      print_bits(resultbuffer[i]);
+      Serial.print(" ");
       resultbuffer[i] = reverse8(resultbuffer[i]);  // reverse bit order in byte, since stored in wrong order
     } 
-    //Serial.println(" ");
-    for(unsigned int i=0; i<6; i++) {
-      // print_bits(resultbuffer[i]);
-      // Serial.print(" ");
+    Serial.println(" ");
+    for(i=0; i<6; i++) {
+      print_bits(resultbuffer[i]);
+      Serial.print(" ");
     }  
 
     nibble0 = (resultbuffer[1]<<2 & 0xf) | resultbuffer[2]>>6;
@@ -421,29 +444,42 @@ bool calcValuesNew(int localsyncIndex1, int localsyncIndex2, int* Channel, float
     char str2[6];
     dtostrf(*tempF, 3, 1, str2); 
 
-    //sprintf(printstring,"\nCh: %d raw_temp: %d tempC: %s tempF: %s  raw_humidity: %d\n",
-    //    *Channel,raw_temp, str1, str2, *raw_humidity);
-    //Serial.print(printstring);
+    sprintf(printstring,"\nCh: %d raw_temp: %d tempC: %s tempF: %s  raw_humidity: %d\n",
+        *Channel,raw_temp, str1, str2, *raw_humidity);
+    Serial.print(printstring);
   } // fail  
+  else{
+    *Channel=111;
+    *tempC = -111.11;
+    *tempF = -111.11;
+    *raw_humidity = -111;
+  }
   return(fail);
 }
 
 void loop() {
   bool fail;
-  int raw_humidity =0;
-  float tempF = 0; 
-  float tempC = 0;
-  int Channel =0;
+  int raw_humidity =-33;
+  float tempF = -333; 
+  float tempC = -333;
+  int Channel =-33;
+  unsigned int i, t1, c;
   char str1[6];
   unsigned int localsyncIndex1, localsyncIndex2;
+  long processStartTime=0;
   
- // here starts improved method, working with changeCoung <> 88
+ // here starts improved method, working with changeCount <> 88
   if(received==true)
   {
       // disable interrupt to avoid new data corrupting the buffer
       detachInterrupt(1);
-      long processStartTime = micros(); 
+      processStartTime = micros(); 
 
+      // output data 
+      #ifdef outputDATA
+        outputMessageInfo5849(fail);
+      #endif  
+      
       // copy indexes to sync pulses in "timings"
       localsyncIndex1 = syncIndex1;
       localsyncIndex2 = syncIndex2;
@@ -453,16 +489,27 @@ void loop() {
       received = false;           // tell handler that he can start searching again
       attachInterrupt(1, handler, CHANGE);  // re-enable interrupt  
        
-      //sprintf(printstring,"\nt: %ld CC:%d s1: %d s2: %d\n",millis(),changeCount,localsyncIndex1,localsyncIndex2);
-      //sendSerialErr(printstring);
-      //Serial.print(printstring);
+      sprintf(printstring,"\nt: %ld CC:%d s1: %d s2: %d\n",millis(),changeCount,localsyncIndex1,localsyncIndex2);
+      sendSerialErr(printstring);
+      Serial.print(printstring);
+
+      // output info regarding sync pulses
+      for (i=localsyncIndex1-6;i<localsyncIndex1;i++)
+      {
+        t1=timings[i%RING_BUFFER_SIZE];
+        sprintf(printstring,"%d, %d\n",i,t1);
+        sendSerialErr(printstring);
+        #ifdef outputSERIALDEBUG
+          Serial.print(printstring);
+        #endif  
+      }  
 
       int lastDamageI=0,lastDamageC=0;
       int firstDamageI=RING_BUFFER_SIZE, firstDamageC=RING_BUFFER_SIZE;
       char known[12];
-      for(unsigned int i=localsyncIndex1, c=0; i!=localsyncIndex2; i=(i+1)%RING_BUFFER_SIZE, c++) 
+      for(i=localsyncIndex1, c=0; i!=localsyncIndex2; i=(i+1)%RING_BUFFER_SIZE, c++) 
       {
-        unsigned int t1=timings[i%RING_BUFFER_SIZE];
+        t1=timings[i%RING_BUFFER_SIZE];
         if(
           (t1>(SYNC_HIGH-TOL1) && t1<(SYNC_HIGH+TOL1)) ||
           // test +++ (t1>(SYNC_LOW-TOL3) && t1<(SYNC_LOW+TOL3))   ||
@@ -473,7 +520,7 @@ void loop() {
           (t1>(BIT0_HIGH-TOL1) && t1<(BIT0_HIGH+TOL1)) ||
           (t1>(BIT0_LOW-TOL3) && t1<(BIT0_LOW+TOL3))           
          )
-        {strcpy(known,"ok");}  
+        {strcpy(known,"ok ");}  
         else
         {
           if(c < firstDamageC)
@@ -481,25 +528,30 @@ void loop() {
           if(c > lastDamageC)
             {lastDamageC = c; lastDamageI = i;}
           //strcpy(known,"NOT_KNOWN"); 
-          //sprintf(printstring,"%d, %d, %d, %s\n",c,i,t1, known);
-          // sendSerialErr(printstring);
-          strcpy(printstring,"nk ");
-          Serial.print(printstring);
+          //sprintf(printstring,"%d, %d, %d\n",c,i,t1);
+          //sendSerialErr(printstring);
+          strcpy(known,"NK ");
+          //Serial.print(printstring);
         }
-        // sprintf(printstring,"%d, %d, %d, %s\n",c,i,t1, known);
-        // sendSerialErr(printstring);
-        // Serial.print(printstring);
+        sprintf(printstring,"%d, %d, %d\n",c,i,t1);
+        sendSerialErr(printstring);
+        #ifdef outputSERIALDEBUG
+          Serial.print(known);
+          Serial.print(printstring);
+        #endif  
       }
-      //sprintf(printstring,"FirstDamage: %d %d LastDamage: %d %d\n",firstDamageI,firstDamageC,lastDamageI,lastDamageC);
-      //sendSerialErr(printstring);
-      //Serial.print(printstring);
+      sprintf(printstring,"FirstDamage: %d %d LastDamage: %d %d\n",firstDamageI,firstDamageC,lastDamageI,lastDamageC);
+      sendSerialErr(printstring);
+      #ifdef outputSERIALDEBUG
+        Serial.print(printstring);
+      #endif
       
       // we can save the data if firstDamageC > 67 : valid data before, start from front : index 24..67
       // or lastDamageC < 24 : valid date in the end: index (localsyncIndex2-63) .. (localsyncIndex2-20) 
       if(firstDamageC > 67)
       {
         sprintf(printstring,"\nCase.gt.67 SI1 %d, SI2: %d\n",localsyncIndex1,localsyncIndex2);
-        // sendSerialErr(printstring);
+        sendSerialErr(printstring);
         Serial.print(printstring);
         int si1=localsyncIndex1;
         localsyncIndex1 = (si1 + 24)%RING_BUFFER_SIZE;   // data between 24 and 67, recalc to begin within buffer
@@ -508,21 +560,26 @@ void loop() {
       {
         // localsyncIndex1 = localsyncIndex2 - 64;   // data between 24 and 67, recalc to begin within buffer
         // localsyncIndex2 = localsyncIndex2 - 21;
-        sprintf(printstring,"\nCase.lt.24 SI1 %d, SI2: %d\n",localsyncIndex1,localsyncIndex2);
-        // sendSerialErr(printstring);
-        Serial.print(printstring);
+
         localsyncIndex1 = (localsyncIndex2 < 64) ? ((localsyncIndex2 - 64 + RING_BUFFER_SIZE)%RING_BUFFER_SIZE) : (localsyncIndex2 - 64);
         localsyncIndex2 = (localsyncIndex2 < 21) ? ((localsyncIndex2 - 21 + RING_BUFFER_SIZE)%RING_BUFFER_SIZE) : (localsyncIndex2 - 21);
+        // sprintf(printstring,"\nCase.lt.24 SI1 %d, SI2: %d\n",localsyncIndex1,localsyncIndex2);
+        // sendSerialErr(printstring);
+        // Serial.print(printstring);
       }
       sprintf(printstring,"New SI1: %d, SI2: %d\n",localsyncIndex1,localsyncIndex2);
-      // sendSerialErr(printstring);
-      Serial.print(printstring);
+      sendSerialErr(printstring);
+      #ifdef outputSERIALDEBUG
+        Serial.print(printstring);
+      #endif  
 
       if((firstDamageC > 67)||(lastDamageC < 24))   // saving is possible
       {
         sprintf(printstring,"### Calc-Range: %d-%d ###\n",localsyncIndex1,localsyncIndex2);
-        // sendSerialErr(printstring);
-        Serial.print(printstring);
+        sendSerialErr(printstring);
+        #ifdef outputSERIALDEBUG
+          Serial.print(printstring);
+        #endif  
         fail=calcValuesNew(localsyncIndex1, localsyncIndex2, &Channel, &tempC, &tempF, &raw_humidity);
 
         dtostrf(float(micros()-processStartTime)/1000.0, 3, 2, str1);
@@ -538,21 +595,29 @@ void loop() {
         else
         {
           sprintf(printstring,"<Fail Conv sI1 %d sI2 %d Damage %d-%d>",localsyncIndex1,localsyncIndex2,firstDamageC,lastDamageC);
-          sendSerialErr(printstring);      
-          dtostrf(float(micros()-processStartTime)/1000.0, 3, 2, str1);
-          sprintf(printstring,"\nConversion Duration: %s [ms]", str1);  
-          Serial.print(printstring);
+          sendSerialErr(printstring);    
+          Serial.print(printstring);  
+          //dtostrf(float(micros()-processStartTime)/1000.0, 3, 2, str1);
+          //sprintf(printstring,"\nConversion Duration: %s [ms]", str1);  
+          #ifdef outputSERIALDEBUG
+            sprintf(printstring,"\nConversion Duration: %ld [us]", micros()-processStartTime);  
+            Serial.print(printstring);
+          #endif  
         }
       }
       else
       {
         // restart measuring also in case of failure. separate to be able to send serial after this in positive case
-        sprintf(printstring,"<Fail Rng sI1 %d sI2 %d Damage %d-%d>",localsyncIndex1,localsyncIndex2,firstDamageC,lastDamageC);
+        sprintf(printstring,"<Fail Rng sI1 %d sI2 %d Damage %d-%d>\n",localsyncIndex1,localsyncIndex2,firstDamageC,lastDamageC);
+        Serial.print(printstring);  
         sendSerialErr(printstring);
       
-        dtostrf(float(micros()-processStartTime)/1000.0, 3, 2, str1);
-        sprintf(printstring,"\nConversion Duration: %s [ms]", str1);  
-        Serial.print(printstring);
+        // dtostrf(float(micros()-processStartTime)/1000.0, 3, 2, str1);
+        // sprintf(printstring,"\nConversion Duration: %s [ms]", str1);  
+        #ifdef outputSERIALDEBUG
+          sprintf(printstring,"\nConversion Duration: %ld [us]", micros()-processStartTime);  
+          Serial.print(printstring);
+        #endif  
       }
   }    
   //Serial.print("-");
@@ -666,5 +731,6 @@ void outputMessageInfo5849(bool fail)
     Serial.print(printstring);
     sprintf(printstring,  "'1'  #: %2d mean1LO:  %7.1f min1LO  %4d max1LO  +%4d\n", count1, (float)sum1LO/count1, min1LO-sum1LO/count1, max1LO-sum1LO/count1);   
     Serial.print(printstring);
+  delay(500);  
 } //outputData
 #endif
