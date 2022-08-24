@@ -3408,6 +3408,8 @@ void setup()
     #define minDiffCO2ppm       10.0
     #define minDiffExtTemp      0.05
     #define minDiffExtHumid     0.5
+    #define maxDiffExtTemp      5.0
+    #define maxDiffExtHumid     5.0
     #define minDiffRSSI         0.3
 
     #define minimumRepeatCounter 30   // at least every 30 calls the data are sent for items without own counter
@@ -3652,8 +3654,9 @@ void setup()
         switch(i){
           case 0: // attach temperature and humidity for Channel 1 (Index 0)
             if(
-                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
-                && (InfactoryT[i] > -100)
+                (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp) || last_InfactoryT[i] < -100)    // too large jump (unless not yet out of default): probably a spike
+                && (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)) // we want a minimum difference, but no wait forever
+                && (InfactoryT[i] > -100) // got out of default (-111.11)
                 && (abs(InfactoryT[i]) > 0.01)
               )
             {  
@@ -3664,7 +3667,8 @@ void setup()
               last_InfactoryT[i] = InfactoryT[i]; 
             }  
             if(
-              (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+              (isEqual(InfactoryH[i],last_InfactoryH[i],maxDiffExtHumid) || last_InfactoryH[i] < -100)    // too large jump (unless not yet out of default): probably a spike
+              && (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
               && (InfactoryH[i] > -100)
               && (abs(InfactoryH[i]) > 0.01)
             )
@@ -3679,7 +3683,8 @@ void setup()
           break;
           case 1: // attach temperature only for Channel 2 (Index 1)
             if(
-                (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+                (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp) || last_InfactoryT[i] < -100)    // too large jump (unless not yet out of default): probably a spike
+                && (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
                 && (InfactoryT[i] > -100)
                 && (abs(InfactoryT[i]) > 0.01)
               )
@@ -3888,7 +3893,7 @@ void main_handler()
             sprintf(printstring,">>>>>> Send TempC %3.1f >>>> Humidity %3.1f Ch: %d (fail: %d)\n",
                 InfactoryTempC, InfactoryHumidity, serialChannel,serialFailCount);
             logOut(printstring, msgReceiveSerialInfo, msgInfo); 
-            // store the channel related data for specialDisplay();
+            // store the channel related data for specialDisplay() and for sending via Thingspeak;
             InfactoryT[serialChannel] = InfactoryTempC;
             InfactoryH[serialChannel] = InfactoryHumidity;
             switch(serialChannel){
