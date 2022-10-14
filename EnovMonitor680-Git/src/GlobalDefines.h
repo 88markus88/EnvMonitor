@@ -3,15 +3,15 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.107"
-#define PROGDATE "2022-08-24"
+#define PROGVERSION "V0.108"
+#define PROGDATE "2022-10-14"
 
 
 // !!! use only one option that sends or receives data from serial!
 #define isBLYNK         // BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
     #define blynkRegularCheck // if defined, checkBlynk called() regularly by timer to reconnect
-    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define blynkCloud       // define this to use blynk cloud, undef to use local server
     #define blynkLocalIP    192,168,178,64  // IP address for local Blynk server
     #define blynkTerminal   // terminal output to virtual pin V50 
 
@@ -23,9 +23,9 @@
  // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
- // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+ #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
-  #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+ // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
@@ -35,7 +35,7 @@
 // hardware configurations defined here
 //***********************************************
 #ifdef blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Eur Box 
-    #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
+    #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
     #undef isMHZ14A        // CO2 Sensor present. communication via serial2
