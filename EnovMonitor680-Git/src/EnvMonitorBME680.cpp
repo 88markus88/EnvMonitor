@@ -1909,7 +1909,7 @@ void setup()
     } while(iaqSensorStatus != BSEC_OK || iaqBME680Status != BSEC_OK);  
   #endif 
 
-  #ifdef isBLYNK
+  // EXTDis #ifdef isBLYNK
     #if defined sendSERIAL || defined receiveSERIAL
       Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
       #ifdef isBLYNK
@@ -1926,7 +1926,7 @@ void setup()
         //Serial.println("A");
         logOut(printstring, msgBlynkNotConnected, msgInfo);
       #endif  
-    #endif
+    // EXTDis #endif
 
     // handle OTA over the air Updates 
     #ifdef isOTA
@@ -3199,7 +3199,7 @@ void setup()
       }
     } // while
 
-    Serial.printf(" - Serial read: '%s' \n", receivedChars);
+    Serial.printf(" - Serial read: '%s' len: %d \n", receivedChars, strlen(receivedChars));
     return(strlen(receivedChars));
 
   } // receiveSerial
@@ -3257,8 +3257,8 @@ void setup()
       {
         if (NULL != strstr(receivedChars,failure))
           serialFailCount++;
-        sprintf(printstring,"faulty data received, Total Count: %d - %s\n",serialFailCount, receivedChars);
-         logOut(printstring, msgSerialFaulty, msgErr);  
+        // sprintf(printstring,"%d faulty data received, Total Count: %d - %s\n",numCharsReceived,serialFailCount, receivedChars);
+        //  logOut(printstring, msgSerialFaulty, msgErr);  
         serialTemp=-111.11;
         serialHumidity=-111;
         serialChannel=0;
@@ -3864,12 +3864,12 @@ void main_handler()
     {
       if(charsReceived > 0)
       {  
-        sprintf(printstring,"faulty data received, Total Count: %d\n",serialFailCount);
+        sprintf(printstring,"faulty data received (chars: %d), Total Count: %d\n",charsReceived,serialFailCount);
         logOut(printstring, msgSerialReceived, msgWarn);  
       }  
     }
 
-    #ifdef isBLYNK
+    // EXPDis #ifdef isBLYNK
       if(serialReceived)
       {         
         if(lastInfactoryTempC[serialChannel]<-110) 
@@ -3880,81 +3880,93 @@ void main_handler()
         {
           // restart Blynk
           esp_task_wdt_reset(); // reset watchdog in case it takes longer
-          // testxxxxx Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
-          Blynk.connect();
-          sprintf(printstring,"Blynk Connected, serialReceived: %d \n",serialReceived);
-          logOut(printstring, msgBlynkConnected, msgInfo);  
-          checkBlynk();   // test to ensure that blynk is running
+          #ifdef isBLYNK
+            // testxxxxx Blynk.begin(auth, ssid, pass, IPAddress(blynkLocalIP), 8080);
+            Blynk.connect();
+            sprintf(printstring,"Blynk Connected, serialReceived: %d \n",serialReceived);
+            logOut(printstring, msgBlynkConnected, msgInfo);  
+            checkBlynk();   // test to ensure that blynk is running
+          #endif  
 
           do{
-            Blynk.run(); 
-            Blynk.virtualWrite(V38, serialFailCount);
-            Blynk.run();
-            // Blynk.virtualWrite(V38, serialFailCount);
+            #ifdef isBLYNK
+              Blynk.run(); 
+              Blynk.virtualWrite(V38, serialFailCount);
+              Blynk.run();
+              // Blynk.virtualWrite(V38, serialFailCount);
+            #endif   
             sprintf(printstring,">>>>>> Send TempC %3.1f >>>> Humidity %3.1f Ch: %d (fail: %d)\n",
                 InfactoryTempC, InfactoryHumidity, serialChannel,serialFailCount);
             logOut(printstring, msgReceiveSerialInfo, msgInfo); 
             // store the channel related data for specialDisplay() and for sending via Thingspeak;
             InfactoryT[serialChannel] = InfactoryTempC;
             InfactoryH[serialChannel] = InfactoryHumidity;
-            switch(serialChannel){
-              case 0:
-                Blynk.virtualWrite(V15, InfactoryTempC); //sending to Blynk, if other than the default -111.11
-                Blynk.virtualWrite(V16, InfactoryHumidity); //sending to Blynk
-                serialSentCh1Count++;
-                Blynk.virtualWrite(V35, serialSentCh1Count);
-              break;
-              case 1:
-                Blynk.virtualWrite(V17, InfactoryTempC); //sending to Blynk, if other than the default -111.11
-                Blynk.virtualWrite(V18, InfactoryHumidity); //sending to Blynk
-                serialSentCh2Count++;
-                Blynk.virtualWrite(V36, serialSentCh2Count);
-              break;
-              case 2:
-                Blynk.virtualWrite(V19, InfactoryTempC); //sending to Blynk, if other than the default -111.11
-                Blynk.virtualWrite(V20, InfactoryHumidity); //sending to Blynk
-                serialSentCh3Count++;
-                Blynk.virtualWrite(V37, serialSentCh3Count);
-              break;
-              default: 
-              Serial.printf("Unknown Channel %d\n",serialChannel);  
-            }
+            #ifdef isBLYNK
+              switch(serialChannel){
+                case 0:
+                  Blynk.virtualWrite(V15, InfactoryTempC); //sending to Blynk, if other than the default -111.11
+                  Blynk.virtualWrite(V16, InfactoryHumidity); //sending to Blynk
+                  serialSentCh1Count++;
+                  Blynk.virtualWrite(V35, serialSentCh1Count);
+                break;
+                case 1:
+                  Blynk.virtualWrite(V17, InfactoryTempC); //sending to Blynk, if other than the default -111.11
+                  Blynk.virtualWrite(V18, InfactoryHumidity); //sending to Blynk
+                  serialSentCh2Count++;
+                  Blynk.virtualWrite(V36, serialSentCh2Count);
+                break;
+                case 2:
+                  Blynk.virtualWrite(V19, InfactoryTempC); //sending to Blynk, if other than the default -111.11
+                  Blynk.virtualWrite(V20, InfactoryHumidity); //sending to Blynk
+                  serialSentCh3Count++;
+                  Blynk.virtualWrite(V37, serialSentCh3Count);
+                break;
+                default: 
+                Serial.printf("Unknown Channel %d\n",serialChannel);  
+              }
+            #endif  // isBLYNK 
             esp_task_wdt_reset(); // reset watchdog in case it takes longer
-            Blynk.run();
-            vTaskDelay(200 / portTICK_PERIOD_MS); // wait 200ms
+            #ifdef isBLYNK
+              Blynk.run();
+              vTaskDelay(200 / portTICK_PERIOD_MS); // wait 200ms
+            #endif  
             lastInfactoryTempC[serialChannel] = InfactoryTempC;
             serialReceived = processSerialData(&InfactoryTempC, &InfactoryHumidity, &serialChannel, &charsReceived);
           } while(serialReceived);  
-          Blynk.run();
+          #ifdef isBLYNK
+            Blynk.run();
+          #endif  
 
-          // send data from other sensors before disconnecting Blynk
-          #ifdef isOneDS18B20
-            if((calDS18B20Temperature[0]) > (-110.0))
-              Blynk.virtualWrite(V13, calDS18B20Temperature[0]); //sending to Blynk
-            if((calDS18B20Temperature[1]) > (-110.0))  
-              Blynk.virtualWrite(V10, calDS18B20Temperature[1]); //sending to Blynk
-            if((calDS18B20Temperature[2]) > (-110.0))  
-              Blynk.virtualWrite(V11, calDS18B20Temperature[2]); //sending to Blynk  
-            Blynk.run();  
-            sprintf(printstring,">>>>> Ds18B20 Temp's: T1: %3.1f T2: %3.1f T3: %3.1f\n",calDS18B20Temperature[0],calDS18B20Temperature[1],calDS18B20Temperature[2]);
-            logOut(printstring, msgReceiveSerialInfo, msgInfo);  
-            Blynk.run();  
-          #endif
-          #ifdef isBME280
-            if(Pressure > 950) // prevent sending zeroes
-            {
-              Blynk.virtualWrite(V5, Temperature); 
-              Blynk.virtualWrite(V6, Pressure); 
-              Blynk.virtualWrite(V7, Humidity); 
+          #ifdef isBLYNK
+            // send data from other sensors before disconnecting Blynk
+            #ifdef isOneDS18B20
+              if((calDS18B20Temperature[0]) > (-110.0))
+                Blynk.virtualWrite(V13, calDS18B20Temperature[0]); //sending to Blynk
+              if((calDS18B20Temperature[1]) > (-110.0))  
+                Blynk.virtualWrite(V10, calDS18B20Temperature[1]); //sending to Blynk
+              if((calDS18B20Temperature[2]) > (-110.0))  
+                Blynk.virtualWrite(V11, calDS18B20Temperature[2]); //sending to Blynk  
               Blynk.run();  
-              sprintf(printstring,">>>>> BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
-              Temperature, Humidity, Pressure, Altitude); 
-              logOut(printstring, msgReceiveSerialInfo, msgInfo);    
+              sprintf(printstring,">>>>> Ds18B20 Temp's: T1: %3.1f T2: %3.1f T3: %3.1f\n",calDS18B20Temperature[0],calDS18B20Temperature[1],calDS18B20Temperature[2]);
+              logOut(printstring, msgReceiveSerialInfo, msgInfo);  
               Blynk.run();  
-            }  
-          #endif
-          vTaskDelay(500 / portTICK_PERIOD_MS); // wait 500ms before disconnecting
-          Blynk.disconnect();
+            #endif
+            #ifdef isBME280
+              if(Pressure > 950) // prevent sending zeroes
+              {
+                Blynk.virtualWrite(V5, Temperature); 
+                Blynk.virtualWrite(V6, Pressure); 
+                Blynk.virtualWrite(V7, Humidity); 
+                Blynk.run();  
+                sprintf(printstring,">>>>> BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
+                Temperature, Humidity, Pressure, Altitude); 
+                logOut(printstring, msgReceiveSerialInfo, msgInfo);    
+                Blynk.run();  
+              }  
+            #endif
+            vTaskDelay(500 / portTICK_PERIOD_MS); // wait 500ms before disconnecting
+            Blynk.disconnect();
+          #endif //  isBLYNK 
         }
         else
         {
@@ -3965,7 +3977,7 @@ void main_handler()
           InfactoryH[serialChannel] = -111.11;
         }
       }  
-    #endif  // serialReceived
+    // EXPDis #endif  // isBLYNK
   #endif  //receiveSERIAL
 
   // DS18B20 Data are received in parallel running procedure "GetOneDS18B20Temperature()"
@@ -4009,9 +4021,10 @@ void main_handler()
   //     calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
   //  logOut(printstring, msgDS18B20Info, msgInfo);
     
+    double limit = -110.0; // EXPDis
     #ifdef isBLYNK
 
-      double limit = -110.0;
+      // EXPDis double limit = -110.0;
       sprintf(printstring,"ToBlynk: ");
       if((calDS18B20Temperature[0]) > (limit)){
         Blynk.virtualWrite(V13, calDS18B20Temperature[0]); //sending to Blynk
@@ -4493,7 +4506,7 @@ void lcd_handler()
 *****************************************************************************/
 void loop()
 {
-  #if defined isThingspeak || defined isVirtuino
+  #if defined isThingspeak || defined isVirtuino || defined isBME280 || defined isBME680 || define isOneDS18B20
     mainHandlerTimer.run();   // simple timer for main handler
   #endif
   #if defined isRelay && defined isFan
@@ -4507,8 +4520,9 @@ void loop()
   #endif  
 
   // and this is the version for Blynk timer. One for all, but needs Blynk
+  MyBlynkTimer.run(); // EXPDis
   #ifdef isBLYNK 
-    MyBlynkTimer.run();
+    // EXPDis MyBlynkTimer.run();
   #endif  
 
   #ifdef isVirtuino 

@@ -2,15 +2,15 @@
 * Global defines Header file for EnvMonitor680.cpp
 *******************************************************/
  
-#define PROGNAME  "EnvMonitorBME680.cpp"
-#define PROGVERSION "V0.108"
-#define PROGDATE "2022-10-14"
+#define PROGNAME  "EnvMonitorBME680"
+#define PROGVERSION "V0.109"
+#define PROGDATE "2022-10-15"
 
 
 // !!! use only one option that sends or receives data from serial!
-#define isBLYNK         // BLYNK Connection enabled
+#undef isBLYNK         // EXPDis BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
-    #define blynkRegularCheck // if defined, checkBlynk called() regularly by timer to reconnect
+    #undef blynkRegularCheck // EXPDis if defined, checkBlynk called() regularly by timer to reconnect
     #define blynkCloud       // define this to use blynk cloud, undef to use local server
     #define blynkLocalIP    192,168,178,64  // IP address for local Blynk server
     #define blynkTerminal   // terminal output to virtual pin V50 
@@ -68,7 +68,7 @@
     #define logSerial       // logging to serial enabled
     #undef isLEDHeartbeat      // LED heartbeat on, PIN 14
     #undef isBluetoothCredentials  // get credentials via bluetooth
-    #undef isCaptivePortal  // Code for captive portal
+    #define isCaptivePortal  // Code for captive portal
        #undef debugCaptivePortal // if defined, captive portal is always used.
     #undef isSyslog        // syslog logging is enabled   
         #define SYSLOG_SERVER "192.168.178.42" //"syslog-server"

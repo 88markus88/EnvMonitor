@@ -10,7 +10,7 @@
 // doubled tolerances (particularly for 8000 ms Sync Impulses - tend to get to 8400
 // Added upper tolerance of 20000 to get rid of long signals (translated to -1 = 65535)
 // Still, signals appear to be pretty bad.
-//
+// 15.10.22: correct check for availabilty of serial port. if(mySerial) instead of if(mySerial.available), which is for read only
 //
 //********************************************************************************************
 #include <SoftwareSerial.h>
@@ -36,8 +36,8 @@ int bitsReceived = 0;
 //  time in ms       .6  2.0
 
 #define PROGNAME  "Sniffer433_real.cpp"
-#define PROGDATE  "2022-08-16"
-#define PROGVERSION "V0.11a"
+#define PROGDATE  "2022-10-15"
+#define PROGVERSION "V0.12"
 
 #undef outputDATA
 #undef  outputSERIALDEBUG
@@ -221,8 +221,9 @@ void handler() {
     dtostrf(serialHumidity, 3, 1, str2); 
     sprintf(sendString,"<%d,%s,%s>",serialChannel,str1,str2);
     // if(mySerial.available()>=strlen(sendString))
-    // if(true)
-    if(mySerial.available())
+    //if(true)
+    //if(mySerial.available()) // .available: this applies only to reading
+    if(mySerial) // check if port is available. 
     {
       bytesSent= mySerial.write(sendString);
       Serial.print("\n>>>>>>> Serial sent: "); Serial.print(bytesSent);Serial.print(" "); Serial.println(sendString);

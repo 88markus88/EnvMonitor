@@ -291,13 +291,16 @@ unsigned long rssi_n=0;
 // credentials information: Blynk Auth tokens, wifi credentials etc.
 #include "Credentials.h"
 
+// timer for blynk check and restart
+#include <BlynkSimpleEsp32.h>
+BlynkTimer MyBlynkTimer;
 #ifdef isBLYNK
   // Stuff for Blynk
   #define BLYNK_PRINT Serial
-  #include <BlynkSimpleEsp32.h>
+  // EXPDis #include <BlynkSimpleEsp32.h>
 
   // timer for blynk check and restart
-  BlynkTimer MyBlynkTimer;
+  // EXPDis BlynkTimer MyBlynkTimer;
   int checkTimerHandle;
   #define checkTimerInterval 5000L
   int restartTimerHandle;
