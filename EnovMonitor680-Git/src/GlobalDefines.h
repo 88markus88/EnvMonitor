@@ -3,14 +3,14 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680"
-#define PROGVERSION "V0.109"
+#define PROGVERSION "V0.110"
 #define PROGDATE "2022-10-17"
-
+ 
 
 // !!! use only one option that sends or receives data from serial!
 #undef isBLYNK         // EXPDis BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
-    #undef blynkRegularCheck // EXPDis if defined, checkBlynk called() regularly by timer to reconnect
+    #define blynkRegularCheck // EXPDis if defined, checkBlynk called() regularly by timer to reconnect
     #define blynkCloud       // define this to use blynk cloud, undef to use local server
     #define blynkLocalIP    192,168,178,64  // IP address for local Blynk server
     #define blynkTerminal   // terminal output to virtual pin V50 

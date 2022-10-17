@@ -1925,8 +1925,9 @@ void setup()
         sprintf(printstring,"Blynk disconnected\n");
         //Serial.println("A");
         logOut(printstring, msgBlynkNotConnected, msgInfo);
-      #endif  
-    // EXTDis #endif
+      #endif  // isBLYNK 
+    #endif // Serial stuff  
+    // EXTDis #endif // isBLYNK
 
     // handle OTA over the air Updates 
     #ifdef isOTA
@@ -2003,22 +2004,23 @@ void setup()
         preferences.end();
       }  
     }
-    #endif
+    #endif // isInfactory
 
-    #ifdef blynkRegularCheck
-      // MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
-      checkTimerHandle = MyBlynkTimer.setInterval(checkTimerInterval, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
-      sprintf(printstring, "checkTimerHandle: %d\n", checkTimerHandle);
-      logOut(printstring, msgBlynkInfo, msgInfo);
-    #endif  
-    // Serial.println("B");
-    #ifdef blynkRestartHouly
-      // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
-      restartTimerHandle = MyBlynkTimer.setInterval(restartTimerInterval, restartBlynk); // attempt to restart Blynk every 3 hours
-      sprintf(printstring, "restartTimerHandle: %d\n", restartTimerHandle);
-      logOut(printstring, msgBlynkInfo, msgInfo);
-    #endif  
-  #endif
+    #ifdef isBLYNK
+      #ifdef blynkRegularCheck
+        // MyBlynkCheckTimer.setInterval(5000L, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+        checkTimerHandle = MyBlynkTimer.setInterval(checkTimerInterval, checkBlynk); // check if connected to Blynk server every 5 seconds. Not necessary, left out
+        sprintf(printstring, "checkTimerHandle: %d\n", checkTimerHandle);
+        logOut(printstring, msgBlynkInfo, msgInfo);
+      #endif  
+      // Serial.println("B");
+      #ifdef blynkRestartHouly
+        // MyBlynkRestartTimer.setInterval(1*3600L*1000L, restartBlynk); // attempt to restart Blynk every 1 hours
+        restartTimerHandle = MyBlynkTimer.setInterval(restartTimerInterval, restartBlynk); // attempt to restart Blynk every 3 hours
+        sprintf(printstring, "restartTimerHandle: %d\n", restartTimerHandle);
+        logOut(printstring, msgBlynkInfo, msgInfo);
+      #endif  
+    #endif // isBLYNK  
 
   Serial.print("8");
   #ifdef isOneDS18B20
