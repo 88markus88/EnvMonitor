@@ -103,6 +103,30 @@
     char* timestring, char* infoStringShort)
   {
     char printstring[40];
+    char sT1[20], sT0[20], sH0[20], sH1[20]; // strings to hold converted Infactory temps and humidities 
+
+    // ensure that 433MHz data are in permitted range, "--" otherwise
+    #if defined receiveSERIAL
+      if(iT0>-110) 
+        sprintf(sT0,"%3.1f", iT0);
+      else 
+        sprintf(sT0,"---");
+
+      if(iT1>-110) 
+        sprintf(sT1,"%3.1f", iT1);
+      else 
+        sprintf(sT1,"---");
+
+      if(iH0>-110) 
+        sprintf(sH0,"%2.0f", iH0);
+      else 
+        sprintf(sH0,"--");
+
+      if(iH1>-110) 
+        sprintf(sH1,"%2.0f", iH1);
+      else 
+        sprintf(sH1,"--");
+    #endif // receiveSERIAL  
 
     switch (lcdDisplayMode)
     {
@@ -133,7 +157,8 @@
         #endif
 
         #if defined receiveSERIAL
-          sprintf(printstring,"%3.1f%c %2.0f%% %3.1f%c %2.0f%%  ",iT0,223, iH0, iT1,223, iH1);
+          //sprintf(printstring,"%3.1f%c %2.0f%% %3.1f%c %2.0f%%  ",iT0,223, iH0, iT1,223, iH1);
+          sprintf(printstring,"%s%c %s%% %s%c %s%%  ",sT0,223, sH0, sT1,223, sH1);
           outLCD(0,3,printstring); 
         #endif
         break;
@@ -174,13 +199,15 @@
           #if defined receiveSERIAL
             sprintf(printstring,"%s Funksensor",timestring);                   outLCD(0,0,printstring);
             sprintf(printstring,"Sensor : CarPt GewHs ");                         outLCD(0,1,printstring);
-            sprintf(printstring,"Temp   : %4.1f%c %4.1f%c   ",iT0,223, iT1,223); outLCD(0,2,printstring);
+            //sprintf(printstring,"Temp   : %4.1f%c %4.1f%c   ",iT0,223, iT1,223); outLCD(0,2,printstring);
+            sprintf(printstring,"Temp   : %s%c %s%c   ",sT0,223, sT1,223); outLCD(0,2,printstring);
             /*
             sprintf(printstring,"%s Ext.433MHz",timestring);                   outLCD(0,0,printstring);
             sprintf(printstring,"Sensor : S1    S2    ");                         outLCD(0,1,printstring);
             sprintf(printstring,"Temp   : %4.1f%c %4.1f%c   ",iT0,223, iT1,223); outLCD(0,2,printstring);
             */
-            sprintf(printstring,"Feuchte:%3.0f%% %4.0f%%    ",iH0,iH1);           outLCD(0,3,printstring);
+            //sprintf(printstring,"Feuchte:%3.0f%% %4.0f%%    ",iH0,iH1);           outLCD(0,3,printstring);
+            sprintf(printstring,"Feuchte: %s%%   %s%%   ",sH0,sH1);           outLCD(0,3,printstring);
           #else
             sprintf(printstring,"displayLCD Mode %d", lcdDisplayMode);
             outLCD(0,0,printstring); 
