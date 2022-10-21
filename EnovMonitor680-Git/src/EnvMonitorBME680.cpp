@@ -3398,7 +3398,7 @@ void setup()
 
   /**************************************************!
     @brief    thingspeak handler. Handles all data sending to thingspeak, called via timer
-    @details  called via timer, does output for all sensors actually present
+    @details  called via timer, builds thingspeak string and does output for all sensors actually present
     @return   void
   ***************************************************/
   void thingspeak_handler() 
@@ -3436,89 +3436,94 @@ void setup()
     thingspeakCallCounter++;      // counter for how often this function has been called
     thingspeakItemsCollected = 0; // counter for the number of items to be sent during this call
     sprintf(printstring,"ToThingspeak: ");
-    // BME 680 stuff
-    if(temperature_n > 0)
-      avg = temperature_sum / temperature_n;
-    else
-      avg = temperature;
-    if(!isEqual(avg,last_temperature,minDiffTemperature) || (temperature_n > 999) || (repeatFlag==true)){  
-      last_temperature = avg;
-      sprintf(printstring2," temp: %5.2f",avg);
-      strcat(printstring, printstring2);
-      temperature_sum=0; temperature_n=0;
-      url = url+ "&field1=" + avg;
-      thingspeakSendItemCounter++;
-      thingspeakItemsCollected++;
-    }  
-    else{
-      sprintf(printstring2," temp: notMeas ");
-      strcat(printstring, printstring2);
-      temperature_sum=0; temperature_n=0;
-    }
-    // humidity to thingspeak
-    if(humidity_n > 0)
-      avg = humidity_sum / humidity_n;
-    else
-      avg = humidity;
-    if(!isEqual(avg,last_humidity,minDiffHumidity) || (humidity_n > 999) || (repeatFlag==true)){  
-      last_humidity = avg;
-      sprintf(printstring2," hum: %5.2f",avg);
-      strcat(printstring, printstring2);
-      humidity_sum=0; humidity_n=0;
-      url = url+ "&field2=" + avg;
-      thingspeakSendItemCounter++;
-      thingspeakItemsCollected++;
-    }  
-    else{
-      sprintf(printstring2," hum: notMeas ");
-      strcat(printstring, printstring2);
-      humidity_sum=0; humidity_n=0;
-    }
-    // pressure to thingspeak
-    if(pressure_n > 0)
-      avg = pressure_sum / pressure_n;
-    else
-      avg = pressure;
-    if(!isEqual(avg,last_pressure,minDiffPressure) || (pressure_n > 999) || (repeatFlag==true)){  
-      last_pressure = avg;
-      sprintf(printstring2," pres: %5.2f",avg);
-      strcat(printstring, printstring2);
-      pressure_sum=0; pressure_n=0;
-      url = url+ "&field3=" + avg;
-      thingspeakSendItemCounter++;
-      thingspeakItemsCollected++;
-    }  
-    else{
-      sprintf(printstring2," pres: notMeas ");
-      strcat(printstring, printstring2);
-      pressure_sum=0; pressure_n=0;
-    }
-
-    #if defined isBME680 || defined isBME680_BSECLib
-      // air quality score to thingspeak
-      if(air_quality_score_n > 0)
-        avg = air_quality_score_sum / air_quality_score_n;
+    // BME 680 & BME280 stuff
+    #if defined isBME280 || defined isBME680 || defined isBME680_BSECLib
+      // temperature to field 1 in thingspeak string
+      #ifndef sendSERIAL // if no serial data from Infactory 433 Sensor received, send BME temp to field 1 (otherwise humidity of 2nd channel)
+        if(temperature_n > 0)
+          avg = temperature_sum / temperature_n;
+        else
+          avg = temperature;
+        if(!isEqual(avg,last_temperature,minDiffTemperature) || (temperature_n > 999) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)){  
+          last_temperature = avg;
+          sprintf(printstring2," temp: %5.2f",avg);
+          strcat(printstring, printstring2);
+          temperature_sum=0; temperature_n=0;
+          url = url+ "&field1=" + avg;
+          thingspeakSendItemCounter++;
+          thingspeakItemsCollected++;
+        }  
+        else{
+          sprintf(printstring2," temp: notMeas ");
+          strcat(printstring, printstring2);
+          temperature_sum=0; temperature_n=0;
+        }
+      #endif //   #ifndef sendSERIAL
+      // humidity to thingspeak
+      if(humidity_n > 0)
+        avg = humidity_sum / humidity_n;
       else
-        avg = air_quality_score;
-      // send datum is sufficiently changed or 1000 measurments collected (to get an occasional data point to thingspeak)  
-      if(!isEqual(avg,last_air_quality_score,minDiffAirQuality) || air_quality_score_n > 999 || (repeatFlag==true))
-      {  
-        sprintf(printstring2," airq : %5.2f %5.2f %ld ",avg,air_quality_score_sum,air_quality_score_n);
+        avg = humidity;
+      if(!isEqual(avg,last_humidity,minDiffHumidity) || (humidity_n > 999) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)){  
+        last_humidity = avg;
+        sprintf(printstring2," hum: %5.2f",avg);
         strcat(printstring, printstring2);
-        last_air_quality_score = avg;
-        air_quality_score_sum = 0;  // reset sum for average
-        air_quality_score_n = 0;    // rest counter for average
-        url = url+ "&field4=" + avg;
-        thingspeakSendItemCounter++;      
-        thingspeakItemsCollected++;    
-    }  
+        humidity_sum=0; humidity_n=0;
+        url = url+ "&field2=" + avg;
+        thingspeakSendItemCounter++;
+        thingspeakItemsCollected++;
+      }  
       else{
-        sprintf(printstring2," airq: notMeas (avg: %5.3f) ",avg);
+        sprintf(printstring2," hum: notMeas ");
         strcat(printstring, printstring2);
-        air_quality_score_sum = 0;  // reset sum for average
-        air_quality_score_n = 0;    // rest counter for average
+        humidity_sum=0; humidity_n=0;
       }
-    #endif   
+      // pressure to thingspeak
+      if(pressure_n > 0)
+        avg = pressure_sum / pressure_n;
+      else
+        avg = pressure;
+      if(!isEqual(avg,last_pressure,minDiffPressure) || (pressure_n > 999) || (repeatFlag==true)|| (thingspeakCallCounter % minimumRepeatCounter == 0)){  
+        last_pressure = avg;
+        sprintf(printstring2," pres: %5.2f",avg);
+        strcat(printstring, printstring2);
+        pressure_sum=0; pressure_n=0;
+        url = url+ "&field3=" + avg;
+        thingspeakSendItemCounter++;
+        thingspeakItemsCollected++;
+      }  
+      else{
+        sprintf(printstring2," pres: notMeas ");
+        strcat(printstring, printstring2);
+        pressure_sum=0; pressure_n=0;
+      }
+
+      #if defined isBME680 || defined isBME680_BSECLib
+        // air quality score to thingspeak
+        if(air_quality_score_n > 0)
+          avg = air_quality_score_sum / air_quality_score_n;
+        else
+          avg = air_quality_score;
+        // send datum is sufficiently changed or 1000 measurments collected (to get an occasional data point to thingspeak)  
+        if(!isEqual(avg,last_air_quality_score,minDiffAirQuality) || air_quality_score_n > 999 || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+        {  
+          sprintf(printstring2," airq : %5.2f %5.2f %ld ",avg,air_quality_score_sum,air_quality_score_n);
+          strcat(printstring, printstring2);
+          last_air_quality_score = avg;
+          air_quality_score_sum = 0;  // reset sum for average
+          air_quality_score_n = 0;    // rest counter for average
+          url = url+ "&field4=" + avg;
+          thingspeakSendItemCounter++;      
+          thingspeakItemsCollected++;    
+      }  
+        else{
+          sprintf(printstring2," airq: notMeas (avg: %5.3f) ",avg);
+          strcat(printstring, printstring2);
+          air_quality_score_sum = 0;  // reset sum for average
+          air_quality_score_n = 0;    // rest counter for average
+        }
+      #endif  // defined isBME680 || defined isBME680_BSECLib
+    #endif // BME280 or BME680  
 
     #ifdef isThingspeakRSSI  // on field4. NOT if air quality, or external 466MHz sensors with ext humidity on field 4
       // Wifi RSSI to Thingspeak 
@@ -3526,7 +3531,7 @@ void setup()
         avg = rssi_sum / rssi_n;
       else
         avg = rssi;
-      if(!isEqual(avg,last_rssi,minDiffRSSI) || (rssi_n > 999) || (repeatFlag==true)){  
+      if(!isEqual(avg,last_rssi,minDiffRSSI) || (rssi_n > 999) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)){  
         last_rssi = avg;
         sprintf(printstring2," RSSI: %5.2f",avg);
         strcat(printstring, printstring2);
@@ -3684,7 +3689,7 @@ void setup()
               last_InfactoryH[i] = InfactoryH[i];
             }  
           break;
-          case 1: // attach temperature only for Channel 2 (Index 1)
+          case 1: // attach temperature only for Channel 2 (Index 1). Later added: Humidity for channel 2 into field 1 (that is BME Temp if no infactory present)
             if(
                 (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp) || last_InfactoryT[i] < -100)    // too large jump (unless not yet out of default): probably a spike
                 && (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
@@ -3699,6 +3704,21 @@ void setup()
               thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i];
             } 
+            // humidty 
+            if(
+              (isEqual(InfactoryH[i],last_InfactoryH[i],maxDiffExtHumid) || last_InfactoryH[i] < -100)    // too large jump (unless not yet out of default): probably a spike
+              && (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
+              && (InfactoryH[i] > -100)
+              && (abs(InfactoryH[i]) > 0.01)
+            )
+            {  
+              sprintf(printstring2," Infactory H Ch2: %5.2f",InfactoryH[i]);
+              strcat(printstring, printstring2);
+              url = url+ "&field1=" + InfactoryH[i];
+              thingspeakSendItemCounter++;
+              thingspeakItemsCollected++;
+              last_InfactoryH[i] = InfactoryH[i];
+            }  
           break;
           default:
             ;  
