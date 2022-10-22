@@ -1747,7 +1747,7 @@ void setup()
     logOut(printstring, msgRelayInfo, msgInfo);
   #endif
 
-  #if defined isWindowOpenDetector
+  #if defined isWindowOpenDetector && defined isBLYNK
     // set timer for windowOpenHandler()
     // windowOpenTimerHandle = MyBlynkTimer.setInterval(windowOpenHandlerInterval, windowOpenHandler);
     
@@ -3047,7 +3047,7 @@ void setup()
         digitalWrite(RELAYPIN1, LOW);
       #endif  
       */ 
-      #ifdef isSendBlynkWindowOpenAlert
+      #if defined isSendBlynkWindowOpenAlert && defined isBLYNK
         bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
         bridge2.virtualWrite(V80, 0); // bridge2 uses V80. 1: alert on, 0: alert off
       #endif
@@ -3062,7 +3062,7 @@ void setup()
       // beeperState = 0;
       // digitalWrite(RELAYPIN1, LOW); 
       beeperQuietCounter--;  // decrement counter for "button recently pressed"
-      #ifdef isSendBlynkWindowOpenAlert
+      #if defined isSendBlynkWindowOpenAlert && defined isBLYNK
         bridge1.virtualWrite(V70, 0); // bridge1 uses V70. 1: alert on, 0: alert off
         bridge2.virtualWrite(V80, 0); // bridge2 uses V80. 1: alert on, 0: alert off
       #endif
@@ -3439,7 +3439,7 @@ void setup()
     // BME 680 & BME280 stuff
     #if defined isBME280 || defined isBME680 || defined isBME680_BSECLib
       // temperature to field 1 in thingspeak string
-      #ifndef sendSERIAL // if no serial data from Infactory 433 Sensor received, send BME temp to field 1 (otherwise humidity of 2nd channel)
+      #ifndef receiveSERIAL // if no serial data from Infactory 433 Sensor received, send BME temp to field 1 (otherwise humidity of 2nd channel)
         if(temperature_n > 0)
           avg = temperature_sum / temperature_n;
         else
