@@ -3385,7 +3385,7 @@ void setup()
     logOut(printstring, msgThingspeakSend, msgErr);
     return(httpResponseCode);
   }
-#endif
+#endif  // isThingspeak
 
 #ifdef isThingspeak
   bool isEqual(double a, double b, double limit)
@@ -3420,7 +3420,7 @@ void setup()
     
     // build thingspeak string and then send it 
     double limit = -110.0;
-    static float last_temperature=0, last_humidity=0, last_pressure=0; 
+    static float last_temperature=-111, last_humidity=0, last_pressure=0; 
     int httpResponseCode;
     static bool repeatFlag = false; // first time is never a repeat
     #if defined isBME680 || defined isBME680_BSECLib
@@ -3430,6 +3430,7 @@ void setup()
     static long thingspeakSendItemCounter = 0, thingspeakCallCounter = 0;
     int thingspeakItemsCollected = 0;
     String url=ThingspeakServerName + thingspeakWriteAPIKey; 
+    String secondary_url=ThingspeakServerName + thingspeakWriteAPIKey; 
     // average since last transfer
     float avg;
 
@@ -3445,6 +3446,23 @@ void setup()
         else
           avg = temperature;
         if(!isEqual(avg,last_temperature,minDiffTemperature) || (temperature_n > 999) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)){  
+          // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
+          if(!isEqual(avg,last_temperature,minDiffTemperature*10) && (last_temperature > -110)) // if jump larger than 10 x minimum recognized temp difference, and valid last temp.
+          {
+            secondary_url =ThingspeakServerName + thingspeakWriteAPIKey + "&field1=" + last_temperature;
+            thingspeakSendItemCounter++;
+            thingspeakCallCounter++;
+            sprintf(printstring2," Sent temperature % 4.1f before strong rise  Call#: %ld \n", 
+                last_temperature, thingspeakCallCounter);
+            strcat(printstring, printstring2);
+            logOut(printstring, msgThingspeakSend, msgInfo);
+
+            httpResponseCode = sendThingspeakData(secondary_url);
+            sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
+              httpResponseCode, repeatFlag);
+            logOut(printstring, msgThingspeakSend, msgInfo);           
+          }
+          
           last_temperature = avg;
           sprintf(printstring2," temp: %5.2f",avg);
           strcat(printstring, printstring2);
@@ -3556,6 +3574,22 @@ void setup()
           && (temp > limit)
         )
       {    
+        // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
+        if(!isEqual(temp,last_DSTemp0,minDiffDS18B20*10) && (last_DSTemp0 > -110)) // if jump larger than 10 x minimum recognized temp difference
+          {
+            secondary_url = ThingspeakServerName + thingspeakWriteAPIKey + "&field5=" + last_DSTemp0;
+            thingspeakSendItemCounter++;
+            thingspeakCallCounter++;
+            sprintf(printstring2," Sent DS18B20 0 temperature % 4.1f before strong rise  Call#: %ld \n", 
+                last_DSTemp0, thingspeakCallCounter);
+            strcat(printstring, printstring2);
+            logOut(printstring, msgThingspeakSend, msgInfo);
+
+            httpResponseCode = sendThingspeakData(secondary_url);
+            sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
+              httpResponseCode, repeatFlag);
+            logOut(printstring, msgThingspeakSend, msgInfo);           
+          }
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
           calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
         strcat(printstring, printstring2);
@@ -3585,6 +3619,22 @@ void setup()
           && (temp > limit)
         )  
       {  
+        // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
+        if(!isEqual(temp,last_DSTemp1,minDiffDS18B20*10) && (last_DSTemp1 > -110)) // if jump larger than 10 x minimum recognized temp difference
+          {
+            secondary_url = ThingspeakServerName + thingspeakWriteAPIKey + "&field6=" + last_DSTemp1;
+            thingspeakSendItemCounter++;
+            thingspeakCallCounter++;
+            sprintf(printstring2," Sent DS18B20 1 temperature % 4.1f before strong rise  Call#: %ld \n", 
+                last_DSTemp1, thingspeakCallCounter);
+            strcat(printstring, printstring2);
+            logOut(printstring, msgThingspeakSend, msgInfo);
+
+            httpResponseCode = sendThingspeakData(secondary_url);
+            sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
+              httpResponseCode, repeatFlag);
+            logOut(printstring, msgThingspeakSend, msgInfo);           
+          }
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
         last_DSTemp1 = temp;
@@ -3612,6 +3662,22 @@ void setup()
           && (temp > limit)
         )  
       {  
+        // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
+        if(!isEqual(temp,last_DSTemp2,minDiffDS18B20*10) && (last_DSTemp2 > -110)) // if jump larger than 10 x minimum recognized temp difference
+          {
+            secondary_url = =ThingspeakServerName + thingspeakWriteAPIKey + "&field7=" + last_DSTemp2;
+            thingspeakSendItemCounter++;
+            thingspeakCallCounter++;
+            sprintf(printstring2," Sent DS18B20 2 temperature % 4.1f before strong rise  Call#: %ld \n", 
+                last_DSTemp2, thingspeakCallCounter);
+            strcat(printstring, printstring2);
+            logOut(printstring, msgThingspeakSend, msgInfo);
+
+            httpResponseCode = sendThingspeakData(secondary_url);
+            sprintf(printstring,"sendThingspeakData() returned: %d repeatFlag: %d \n",
+              httpResponseCode, repeatFlag);
+            logOut(printstring, msgThingspeakSend, msgInfo);           
+          }
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
         last_DSTemp2 = temp;
