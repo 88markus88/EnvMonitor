@@ -3665,7 +3665,7 @@ void setup()
         // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
         if(!isEqual(temp,last_DSTemp2,minDiffDS18B20*10) && (last_DSTemp2 > -110)) // if jump larger than 10 x minimum recognized temp difference
           {
-            secondary_url = =ThingspeakServerName + thingspeakWriteAPIKey + "&field7=" + last_DSTemp2;
+            secondary_url = ThingspeakServerName + thingspeakWriteAPIKey + "&field7=" + last_DSTemp2;
             thingspeakSendItemCounter++;
             thingspeakCallCounter++;
             sprintf(printstring2," Sent DS18B20 2 temperature % 4.1f before strong rise  Call#: %ld \n", 
