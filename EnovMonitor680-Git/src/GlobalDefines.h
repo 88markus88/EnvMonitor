@@ -19,6 +19,8 @@
 #undef isLocationUslar         
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
+ // may be automated via env. variables, see https://community.platformio.org/t/using-preprocessor-directives-defined-in-platformio-ini/24169 
+
  // #define blynkWebHinkelhurz
  // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
@@ -26,9 +28,9 @@
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
-  #define blynkExPapaKleineBox
+ // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
- // #define blynkRedBoxYellowButton
+  #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 
 //***********************************************

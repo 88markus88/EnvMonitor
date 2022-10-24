@@ -4594,7 +4594,7 @@ void lcd_handler()
 *****************************************************************************/
 void loop()
 {
-  #if defined isThingspeak || defined isVirtuino || defined isBME280 || defined isBME680 || define isOneDS18B20
+  #if defined isThingspeak || defined isVirtuino || defined isBME280 || defined isBME680 || defined isOneDS18B20
     mainHandlerTimer.run();   // simple timer for main handler
   #endif
   #if defined isRelay && defined isFan
