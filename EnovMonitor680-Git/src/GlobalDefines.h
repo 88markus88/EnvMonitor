@@ -13,13 +13,13 @@
 #else
     #define PROGDATE BUILD_DATE 
 #endif   
-
+#define PROGTIME BUILD_TIME
 
 // !!! use only one option that sends or receives data from serial!
-#undef isBLYNK         // EXPDis BLYNK Connection enabled
+#define isBLYNK         // EXPDis BLYNK Connection enabled
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
     #define blynkRegularCheck // EXPDis if defined, checkBlynk called() regularly by timer to reconnect
-    #define blynkCloud       // define this to use blynk cloud, undef to use local server
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
     #define blynkLocalIP    192,168,178,64  // IP address for local Blynk server
     #define blynkTerminal   // terminal output to virtual pin V50 
 
@@ -77,7 +77,7 @@
     #define blynkEnvLocal2Bad
 #elif BUILD_ENV_NAME==OTA_upload_Schlafzimmer
     #define blynkSchlafzimmer
-#elif BUILD_ENV_NAME==OTA_upload_KombiSensorExt-LCD
+#elif BUILD_ENV_NAME==OTA_upload_KombiSensorExtLCD
     #define blynkInfactoryExternalS
 #elif BUILD_ENV_NAME==OTA_upload_KombiSensorExt1
     #define blynkKombinsensor1
