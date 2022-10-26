@@ -3,9 +3,17 @@
 *******************************************************/
  
 #define PROGNAME  "EnvMonitorBME680"
-#define PROGVERSION "V0.114"
-#define PROGDATE "2022-10-24"
- 
+#ifndef VERSION     // VERSION from platformio.ini
+    #define PROGVERSION "V0.114"
+#else
+    #define PROGVERSION VERSION 
+#endif        
+#ifndef BUILD_DATE     // Build date from platformio.ini
+    #define PROGDATE "2022-10-25"
+#else
+    #define PROGDATE BUILD_DATE 
+#endif   
+
 
 // !!! use only one option that sends or receives data from serial!
 #undef isBLYNK         // EXPDis BLYNK Connection enabled
@@ -30,8 +38,58 @@
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
-  #define blynkRedBoxYellowButton
+ // #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
+
+// attempt to automate the HW configuration based on Platform IO ENV that is selected
+#ifndef BUILD_ENV_NAME
+    #error "Add -D BUILD_ENV_NAME=$PIOENV to platformio.ini build_flags"
+#else
+    #define USB_upload  100
+    #define OTA_upload_exPapaKleineBox 101
+    #define OTA_upload_EnvLocalSenseAirRedBox 102
+    #define OTA_upload_EnvLocal2Bad 103
+    #define OTA_upload_Schlafzimmer 104
+    #define OTA_upload_KombiSensorExtLCD 105
+    #define OTA_upload_KombiSensorExt1 106
+    #define OTA_upload_kueche 107
+    #define OTA_upload_BME680Breadboard 108
+    #define OTA_upload_RedBoxYellowBtn 109
+#endif
+
+#if BUILD_ENV_NAME==USB_upload  // needs to be manually selected in case of USB Upload ENV
+ // #define blynkWebHinkelhurz
+ // #define blynkBME680Kueche
+ // #define blynkSchlafzimmer 
+ // #define blynkEnvLocal2Bad
+ // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+ // #define blynkSenseAirRedBox
+ // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+ #define blynkExPapaKleineBox
+ // #define blynkBME680BreadBoard    // BME680 auf Breadboard
+ // #define blynkRedBoxYellowButton
+ // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
+#elif BUILD_ENV_NAME==OTA_upload_exPapaKleineBox
+    #define blynkExPapaKleineBox
+#elif BUILD_ENV_NAME==OTA_upload_EnvLocalSenseAirRedBox
+    #define blynkSenseAirRedBox
+#elif BUILD_ENV_NAME==OTA_upload_EnvLocal2Bad
+    #define blynkEnvLocal2Bad
+#elif BUILD_ENV_NAME==OTA_upload_Schlafzimmer
+    #define blynkSchlafzimmer
+#elif BUILD_ENV_NAME==OTA_upload_KombiSensorExt-LCD
+    #define blynkInfactoryExternalS
+#elif BUILD_ENV_NAME==OTA_upload_KombiSensorExt1
+    #define blynkKombinsensor1
+#elif BUILD_ENV_NAME==OTA_upload_kueche
+    #define blynkBME680Kueche    
+#elif BUILD_ENV_NAME==OTA_upload_BME680Breadboard
+    #define blynkBME680BreadBoard
+#elif BUILD_ENV_NAME==OTA_upload_RedBoxYellowBtn
+    #define blynkRedBoxYellowButton    
+#else
+    #error "BUILD_ENV_NAME NOT RECOGNIZED"
+#endif
 
 //***********************************************
 // hardware configurations defined here

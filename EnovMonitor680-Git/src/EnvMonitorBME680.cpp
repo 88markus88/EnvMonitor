@@ -622,10 +622,16 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
           timeDay,timeMonth,timeYearShort,timeHour,timeMinute,timeSecond);    
         // Serial.print(printstring); 
         break;  
+      case 7: 
+        sprintf(printstring,"%s%s%s-%s:%s:%s ", 
+          timeDay,timeMonth,timeYearShort,timeHour,timeMinute,timeSecond);    
+        // Serial.print(printstring); 
+        break;    
       case 6: 
         sprintf(printstring,"%s:%s:%s ",timeHour,timeMinute,timeSecond);    
         // Serial.print(printstring); 
         break;    
+        
       default: Serial.println("Invalid time print mode");
     }
     
@@ -2546,7 +2552,8 @@ void setup()
         display.setCursor(0, 24); display.println(printstring);
         #ifdef getNTPTIME
           if(TimeIsInitialized)
-            printLocalTime(timestring, 5);
+            // printLocalTime(timestring, 5); // with DST Info (1=DST, 0: not DST)
+            printLocalTime(timestring, 7);
         #endif 
         sprintf(printstring,"Time:%s",timestring);
         display.setCursor(0, 36); display.println(printstring);
