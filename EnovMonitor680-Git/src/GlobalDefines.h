@@ -9,22 +9,19 @@
     #define PROGVERSION VERSION 
 #endif        
 #ifndef BUILD_DATE     // Build date from platformio.ini
-    #define PROGDATE "2022-10-25"
+    #define PROGDATE "2022-111-10"
 #else
     #define PROGDATE BUILD_DATE 
 #endif   
 #define PROGTIME BUILD_TIME
 
 // !!! use only one option that sends or receives data from serial!
-#define isBLYNK         // EXPDis BLYNK Connection enabled
+#undef isBLYNK         // EXPDis BLYNK Connection enabled. This is the one and only central switch for blynk!
     #undef blynkRestartHouly // if defined, Blynk is restarted on an hourly base, for unsteady connections
     #define blynkRegularCheck // EXPDis if defined, checkBlynk called() regularly by timer to reconnect
-    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+
     #define blynkLocalIP    192,168,178,64  // IP address for local Blynk server
     #define blynkTerminal   // terminal output to virtual pin V50 
-
-#define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
-#undef isLocationUslar         
 
  // defines to determine the correct HW configuration, incl. auth string and calibration values. ONE ONLY!
  // may be automated via env. variables, see https://community.platformio.org/t/using-preprocessor-directives-defined-in-platformio-ini/24169 
@@ -62,10 +59,10 @@
  // #define blynkBME680Kueche
  // #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
- // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
- #define blynkExPapaKleineBox
+ // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
@@ -95,6 +92,10 @@
 // hardware configurations defined here
 //***********************************************
 #ifdef blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Eur Box 
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar        
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -142,6 +143,10 @@
 #endif
 
 #ifdef blynkKombinsensor1  // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar         
+    
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -189,6 +194,10 @@
 #endif
 
 #ifdef blynkBME680Kueche  // Küche in black Euro Box 
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -237,6 +246,10 @@
 #endif
 
 #ifdef blynkSenseAirRedBox  // Red Euro Box. OLED, Senseair CO2 sensor, 3 DS18B20
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -285,6 +298,10 @@
 #endif
 
 #ifdef  blynkEnvLocal2Bad // Bad: small box, no display
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -332,6 +349,10 @@
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+    
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -380,6 +401,10 @@
 
 
 #ifdef  blynkExPapaKleineBox // Ex Papa kleine Box : small box, OLED display, 2 DS18B20, BME280
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -427,6 +452,10 @@
 #endif
 
 #ifdef blynkBME680BreadBoard  // EnvMonitor BME680 Testbead on Breadboard
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -475,6 +504,10 @@
 #endif
 
 #ifdef blynkRedBoxYellowButton    // was blynkGeneralTestbed
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
     #define isOTA           // allow OTA over te air updates    
@@ -524,6 +557,10 @@
 
 #ifdef virtuinoTestbed  // Virtuino and MQTT Testbed
     #undef isBLYNK          // this one without Blynk
+    #undef blynkCloud       // define this to use blynk cloud, undef to use local server
+    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #undef isLocationUslar     
+
     #define isVirtuino      // this one is with Virtuino
     #undef isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
 
