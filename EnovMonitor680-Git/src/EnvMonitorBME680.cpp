@@ -3451,8 +3451,14 @@ void setup()
         if(temperature_n > 0)
           avg = temperature_sum / temperature_n;
         else
-          avg = temperature;
-        if(!isEqual(avg,last_temperature,minDiffTemperature) || (temperature_n > 999) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)){  
+          // avg = temperature;
+          avg = last_temperature;  // Test 11.10.22 to avoid zeroes
+        if(!isEqual(avg,last_temperature,minDiffTemperature) 
+            || (temperature_n > 999) 
+            || (repeatFlag==true) 
+            || (thingspeakCallCounter % minimumRepeatCounter == 0)
+          )
+        {  
           // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
           if(!isEqual(avg,last_temperature,minDiffTemperature*10) && (last_temperature > -110)) // if jump larger than 10 x minimum recognized temp difference, and valid last temp.
           {
@@ -3488,7 +3494,8 @@ void setup()
       if(humidity_n > 0)
         avg = humidity_sum / humidity_n;
       else
-        avg = humidity;
+        // avg = humidity;
+        avg = last_humidity;  // Test 11.10.22
       if(!isEqual(avg,last_humidity,minDiffHumidity) || (humidity_n > 999) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)){  
         last_humidity = avg;
         sprintf(printstring2," hum: %5.2f",avg);
@@ -3507,7 +3514,8 @@ void setup()
       if(pressure_n > 0)
         avg = pressure_sum / pressure_n;
       else
-        avg = pressure;
+        // avg = pressure;
+        avg = last_pressure;  // Test 11.10.22
       if(!isEqual(avg,last_pressure,minDiffPressure) || (pressure_n > 999) || (repeatFlag==true)|| (thingspeakCallCounter % minimumRepeatCounter == 0)){  
         last_pressure = avg;
         sprintf(printstring2," pres: %5.2f",avg);
