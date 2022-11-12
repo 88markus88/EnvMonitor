@@ -1433,7 +1433,7 @@ void setup()
   #else // ensure that there are wifi credentials if not taken from bluetooth
     strcpy(ssid,default_ssid);
     strcpy(pass,default_pass);  
-  #endif
+  #endif // isBluetoothCredentials
 
   #ifdef isCaptivePortal // captive portal is credentials are not present
     #ifdef isDisplay
@@ -1508,14 +1508,14 @@ void setup()
         logOut(printstring, msgWifiNotConnected, msgErr);
       }
     }
-  #endif
+  #endif // isCaptivePortal
 
   #ifdef getNTPTIME
     // get time from NTP server
     // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
     getNTPTime();
     esp_task_wdt_reset();   // keep watchdog happy
-  #endif 
+  #endif // getNPTTIME
   Serial.print("3");
 
   #ifdef isSyslog
@@ -1525,7 +1525,7 @@ void setup()
     syslog.deviceHostname(DEVICE_HOSTNAME);
     syslog.appName(APP_NAME);
     syslog.defaultPriority(LOG_KERN);
-  #endif  
+  #endif // isSyslog 
 
   // get number of reboots so far, is used to set SD filename
   preferences.begin("nvs", false);                 // Open nonvolatile storage (nvs)
@@ -1541,14 +1541,14 @@ void setup()
     // Create a file on the SD card and write the data labels
     sprintf(logfilename,"/log%04d.txt",NoReboots);
     initSDCard(logfilename);
-  #endif  
+  #endif  // isSD
 
   #ifdef isVirtuino
     virtuino.begin(onReceived,onRequested,512);  //Start Virtuino. Set the buffer to 512. With this buffer Virtuino can control about 50 pins (1 command >= 9bytes) The T(text) commands with 20 characters need 20+6 bytes
     //virtuino.key="1234";                       //This is the Virtuino password. Only requests the start with this key are accepted from the library
     connectToWiFiNetwork();
     server.begin();
-  #endif
+  #endif // isVirtuino
 
   #ifdef isThingspeak
     WiFi.mode(WIFI_STA);  
@@ -1560,7 +1560,22 @@ void setup()
     sprintf(printstring, "thingspeakHandlerTimerHandle: %d\n", thingspeakHandlerTimerHandle);
     logOut(printstring, msgThingspeakInfo, msgInfo);
     Serial.print(thingspeakHandlerTimerHandle);
-  #endif
+  #endif // isThingspeak
+
+  #ifdef isMQTT
+    // check wifi status and connect if not yet done
+    if(WiFi.status() != WL_CONNECTED)
+      connectToWiFi(ssid, pass, 7);
+
+    // create the timer for mqtt handling
+    mqttHandlerTimerHandle = mqttHandlerTimer.setInterval(mqttHandlerInterval, mqttHandler);
+    
+    // set MQTT server and MQTT callback function
+    strcpy(mqttActualServer, mqttDefaultServer);
+    mqttClient.setServer(mqttActualServer, 1883);
+    //mqttClient.setServer("192.168.178.64", 1883);
+    mqttClient.setCallback(mqttCallbackFunction);
+  #endif //isMQTT
 
   #ifdef isBLYNK
     sprintf(printstring,"Blynk setup section entered\n");
@@ -2060,6 +2075,7 @@ void setup()
   logOut(printstring, msgSetupInfo, msgInfo);
   Serial.print(" 10 ");
 } // setup
+
 
 #ifdef isBME680
 
@@ -3830,7 +3846,113 @@ void setup()
       logOut(printstring, msgThingspeakSend, msgInfo);
     }  
   }
-#endif
+#endif // isThingspeak
+
+#ifdef isMQTT
+  /**************************************************!
+    @brief    MQTT connect / reconned function. 
+    @details  New 2022-11-12.
+    @details  
+    @return   void
+  ***************************************************/
+  void mqttReconnect() 
+  { int i=0;
+    // Loop until we're reconnected
+    while (!mqttClient.connected() && i<2) {
+      Serial.print("Attempting MQTT connection...");
+      // Attempt to connect
+      if (mqttClient.connect("ESP8266Client", mqttDefaultUser, mqttDefaultPaSSWORD)) {
+        Serial.println("connected");
+        // Subscribe
+        mqttClient.subscribe("esp32/output");
+      } 
+      else 
+      {
+        Serial.print("failed, rc=");
+        Serial.print(mqttClient.state());
+        Serial.println(" try again in 2 seconds");
+        // Wait 2 seconds before retrying
+        delay(2000);
+      }
+      i++;
+    } // while
+  }
+
+  /**************************************************!
+    @brief    MQTT callback function. 
+    @details  New 2022-11-12.
+    @details  called when a MQTT message arrives, and is parsed here.
+    @return   void
+  ***************************************************/
+  void mqttCallbackFunction(char* topic, byte* message, unsigned int length) 
+  {
+    Serial.print("Message arrived on topic: ");
+    Serial.print(topic);
+    Serial.print(". Message: ");
+    String messageTemp;
+    
+    for (int i = 0; i < length; i++) {
+      Serial.print((char)message[i]);
+      messageTemp += (char)message[i];
+    }
+    Serial.println();
+
+    // If a message is received on the topic esp32/output, you check if the message is either "on" or "off". 
+    // Changes the output state according to the message
+    if (String(topic) == "esp32/output") {
+      Serial.print("Changing output to ");
+      if(messageTemp == "on"){
+        Serial.println("on");
+        //digitalWrite(ledPin, HIGH);
+      }
+      else if(messageTemp == "off"){
+        Serial.println("off");
+        //digitalWrite(ledPin, LOW);
+      }
+    }
+  } // mqttCallbackFunction
+
+  /**************************************************!
+    @brief    MQTT handler, handles sending of data to MQTT broker, called via timer
+    @details  New 2022-11-12.
+    @details  called via timer, does measurements and output for all sensors actually present
+    @details  uses global variables:
+    @details  char msg[50];
+    @details  int value = 0;
+    @return   void
+  ***************************************************/
+  void mqttHandler()
+  {
+    char payloadStr[50];
+    char topicStr[50];
+    if (!mqttClient.connected())
+      mqttReconnect();
+    if (mqttClient.connected()) 
+    {
+      mqttClient.loop();
+      #ifdef isBME280
+        sprintf(topicStr,"esp32/%s/temperature",mqttDeviceString);
+        sprintf(payloadStr,"%3.2f",Temperature);
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);
+
+        sprintf(topicStr,"esp32/%s/pressure",mqttDeviceString);
+        sprintf(payloadStr,"%3.2f",Pressure);
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);
+        
+        sprintf(topicStr,"esp32/%s/humidity",mqttDeviceString);
+        sprintf(payloadStr,"%3.2f",Humidity);
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);
+      
+      #endif // isBME280
+    } // if mqttClient connected
+  } // mqttHandler
+#endif // isMQTT
 
 /**************************************************!
   @brief    main handler, was loop. Handles all sensors, called via timer
@@ -3879,7 +4001,7 @@ void main_handler()
       #endif
     }  
     logOut(printstring, msgWiFiRssiInfo, msgInfo);
-  #endif
+  #endif // isMeasureRSSI
 
   #ifdef isInfactory433
     // if( (millis() > lastInfactoryReception + 45000) || (lastInfactoryReception < 1))
@@ -4377,7 +4499,7 @@ void main_handler()
       // delay(300); // give blynk time to send the stuff
       vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead
     } // if start_loop_time  
-  #endif  // isBME680
+  #endif  // isBME680_BSECLib
 
   #ifdef isBME280
     getBME280SensorData();
@@ -4620,6 +4742,9 @@ void loop()
   #endif  
   #ifdef isThingspeak
     thingspeakHandlerTimer.run(); // simple timer for thingspeak data sender handler
+  #endif  
+  #ifdef isMQTT
+    mqttHandlerTimer.run(); // simple timer for MQTT data handler
   #endif  
 
   // and this is the version for Blynk timer. One for all, but needs Blynk

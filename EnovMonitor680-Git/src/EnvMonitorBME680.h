@@ -69,6 +69,9 @@
 
 #define msgWiFiRssiInfo       210
 
+#define msgMQTTInfo           220
+#define msgMQTError           221
+
 //Message Severities
 #define msgDefault  0
 #define msgInfo     1
@@ -514,6 +517,19 @@ int mainHandlerTimerHandle;
   Syslog syslog(udpClient, SYSLOG_SERVER, SYSLOG_PORT, DEVICE_HOSTNAME, APP_NAME, LOG_KERN);
 #endif
 
+#ifdef isMQTT
+  // also needs WiFi.h - is always included
+  #include <PubSubClient.h>
+  WiFiClient espClient;
+  PubSubClient mqttClient(espClient);
+
+  // timer stuff
+  #define mqttHandlerInterval 15000L 
+
+  SimpleTimer mqttHandlerTimer;
+  int mqttHandlerTimerHandle=1;
+#endif
+
 /************************************************************
 * Forward declarations
 *************************************************************/
@@ -549,4 +565,9 @@ void windowSetBeeper(int desiredValue);
   void read_Response (int RS_len);
   unsigned short int ModBus_CRC(unsigned char * buf, int len);
   unsigned long get_Value(int RS_len);
+#endif
+
+#ifdef isMQTT
+  void mqttCallbackFunction(char* topic, byte* message, unsigned int length); 
+  void mqttHandler();
 #endif

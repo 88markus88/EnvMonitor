@@ -57,9 +57,9 @@
 #if BUILD_ENV_NAME==USB_upload  // needs to be manually selected in case of USB Upload ENV
  // #define blynkWebHinkelhurz
  // #define blynkBME680Kueche
- // #define blynkSchlafzimmer 
+  #define blynkSchlafzimmer 
  // #define blynkEnvLocal2Bad
-  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+ // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
@@ -346,6 +346,8 @@
     #define isThingspeakRSSI // transmit RSSI via Thingspeak
     static char infoStringLong[] = " Small Sensor Bad: Small Box, BME280, 2 DS18B20";
     static char infoStringShort[] = " Small Sensor Bad";
+    #define isMQTT      // connect to MQTT, send data there
+    static char mqttDeviceString[] = "EnvMonitorBad";
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
@@ -397,6 +399,8 @@
     #define isThingspeakRSSI // transmit RSSI via Thingspeak
     static char infoStringLong[] = " Small Sensor Schlafzimmer: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Schlafzimmer";
+    #define isMQTT      // connect to MQTT, send data there
+    static char mqttDeviceString[] = "EnvMonitorSchlafzimmer";
 #endif
 
 
