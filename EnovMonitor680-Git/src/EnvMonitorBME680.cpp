@@ -114,6 +114,15 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
         // Log Levels: LOG_INFO, LOG_ERR, LOG_DAEMON 
       }
     #endif
+
+    #ifdef isMQTTLog
+      char topicStr[50];
+      sprintf(topicStr,"esp32/%s/log",mqttRoomString);
+      strcpy(outstring, timestring);
+      strcat(outstring, printstring); 
+      mqttClient.publish(topicStr, outstring); //payload: outstring
+    #endif
+
   }
 
 #ifdef isDisplay
@@ -3925,31 +3934,98 @@ void setup()
   {
     char payloadStr[50];
     char topicStr[50];
+
+    double limit = -110.0;
+    static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
+    static long mqttSendItemCounter = 0, mqttCallCounter = 0;
+
+    mqttCallCounter++;      // counter for how often this function has been called
+    mqttSendItemCounter = 0; // counter for the number of items to be sent during this call
+
     if (!mqttClient.connected())
       mqttReconnect();
     if (mqttClient.connected()) 
     {
       mqttClient.loop();
-      #ifdef isBME280
-        sprintf(topicStr,"esp32/%s/temperature",mqttDeviceString);
+      #if defined isBME280 || defined isBME680 || defined isBME680_BSECLib
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorBME280, mqttBMETemperature);
         sprintf(payloadStr,"%3.2f",Temperature);
+        mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
         logOut(printstring, msgMQTTInfo, msgInfo);
         mqttClient.publish(topicStr, payloadStr);
 
-        sprintf(topicStr,"esp32/%s/pressure",mqttDeviceString);
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorBME280, mqttBMEPressure);
         sprintf(payloadStr,"%3.2f",Pressure);
+        mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
         logOut(printstring, msgMQTTInfo, msgInfo);
         mqttClient.publish(topicStr, payloadStr);
-        
-        sprintf(topicStr,"esp32/%s/humidity",mqttDeviceString);
+
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorBME280, mqttBMEHumidity);
         sprintf(payloadStr,"%3.2f",Humidity);
+        mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
         logOut(printstring, msgMQTTInfo, msgInfo);
         mqttClient.publish(topicStr, payloadStr);
       
-      #endif // isBME280
+      #endif // isBME280 || is BME680
+
+      #if defined isBME680 || defined isBME680_BSECLib
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorBME680, mqttBMEAirQuality);
+        sprintf(payloadStr,"%3.2f",air_quality_score);
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);
+      #endif // isBME680  || isBME680_BSECLib
+
+      #ifdef isOneDS18B20
+        // DS18B20 data 
+        double temp;
+        sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum[0],calDS18B20Temperature_n[0]);
+        logOut(printstring,msgDS18B20Info, msgInfo);
+        if(calDS18B20Temperature_n[0] > 0)
+          temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
+        else
+          temp = -111.11;  
+        if( 
+            (!isEqual(temp,last_DSTemp0,minDiffDS18B20) )
+            && (temp > limit)
+          )
+        {    
+          // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
+          if(!isEqual(temp,last_DSTemp0,minDiffDS18B20*10) && (last_DSTemp0 > -110)) // if jump larger than 10 x minimum recognized temp difference
+            {
+              sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature1);
+              sprintf(payloadStr,"%3.2f",last_DSTemp0);
+              mqttSendItemCounter++;
+              sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+              logOut(printstring, msgMQTTInfo, msgInfo);
+              mqttClient.publish(topicStr, payloadStr);
+
+              sprintf(printstring2," MQTT Sent DS18B20 0 temperature % 4.1f before strong rise \n", last_DSTemp0);
+              strcat(printstring, printstring2);
+              logOut(printstring, msgMQTTSend, msgInfo);          
+            }
+          sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+            calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+          strcat(printstring, printstring2);
+       
+          sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature1);
+          sprintf(payloadStr,"%3.2f",temp);
+          mqttSendItemCounter++;
+          sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+          logOut(printstring, msgMQTTInfo, msgInfo);
+          mqttClient.publish(topicStr, payloadStr);
+        }  
+        else{
+          sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+            calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+          strcat(printstring, printstring2);
+        }
+
+      #endif // isOneDS18B20  
+
     } // if mqttClient connected
   } // mqttHandler
 #endif // isMQTT

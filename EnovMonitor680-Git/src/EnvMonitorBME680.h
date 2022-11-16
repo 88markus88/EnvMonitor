@@ -70,7 +70,9 @@
 #define msgWiFiRssiInfo       210
 
 #define msgMQTTInfo           220
-#define msgMQTError           221
+#define msgMQTTError          221
+#define msgMQTTSend           222
+#define msgMQTTReceive        223
 
 //Message Severities
 #define msgDefault  0
@@ -79,6 +81,23 @@
 #define msgErr      3
 #define msgStop     4
 
+// defines for MQTT to build topic string
+// sensor types and associates measurement values
+#define mqttSensorBME280      "BME280"
+#define mqttSensorBME680      "BME680"
+#define mqttBMETemperature    "Temperature"
+#define mqttBMEHumidity       "Humidity"
+#define mqttBMEPressure       "Pressure"
+#define mqttBMEAirQuality     "AirQuality"
+
+#define mqttSensorDS18B20     "DS18B20"
+#define mqttDS18B20Temperature1 "DSTemperature1"
+#define mqttDS18B20Temperature2 "DSTemperature2"
+#define mqttDS18B20Temperature3 "DSTemperature3"
+
+#define mqttSensorSenseAirS8  "SenseAirS8"
+#define mqttSensorMHZ14A      "MHZ14A"
+#define mqttCO2ppm            "CO2ppm"
 
 // general rule for globals: defined in module defining their function,
 // otherwise external.

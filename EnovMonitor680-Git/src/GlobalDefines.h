@@ -9,7 +9,7 @@
     #define PROGVERSION VERSION 
 #endif        
 #ifndef BUILD_DATE     // Build date from platformio.ini
-    #define PROGDATE "2022-111-10"
+    #define PROGDATE "2022-11-10"
 #else
     #define PROGDATE BUILD_DATE 
 #endif   
@@ -400,7 +400,8 @@
     static char infoStringLong[] = " Small Sensor Schlafzimmer: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Schlafzimmer";
     #define isMQTT      // connect to MQTT, send data there
-    static char mqttDeviceString[] = "EnvMonitorSchlafzimmer";
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "Schlafzimmer";
 #endif
 
 
