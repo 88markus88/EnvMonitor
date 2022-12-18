@@ -3921,6 +3921,65 @@ void setup()
     }
   } // mqttCallbackFunction
 
+
+  /**************************************************!
+    @brief    send one DS18B20 Temperature, called from MQTT handler
+    @details  New 2022-12-18
+    @param int sNo: Number of sensor, 0..2
+    @return   void
+  ***************************************************/
+  void mqttSendDS18B20(int sNo)
+  {
+    char payloadStr[50];
+    char topicStr[50];
+    // DS18B20 data 
+    double temp;
+    double limit = -110.0;
+    static double last_DSTemp[MAX_NO_DS18B20] = {-111, -111, -111, -111, -111, -111, -111, -111, -111, -111};
+    sprintf(printstring,"DS18B20[sNo] sum: %f n: %d \n",calDS18B20Temperature_sum[sNo],calDS18B20Temperature_n[sNo]);
+    logOut(printstring,msgDS18B20Info, msgInfo);
+    if(calDS18B20Temperature_n[sNo] > 0)
+      temp = calDS18B20Temperature_sum[sNo] / calDS18B20Temperature_n[sNo];
+    else
+      temp = -111.11;  
+    if( 
+        (!isEqual(temp,last_DSTemp[sNo],minDiffDS18B20) )
+        && (temp > limit)
+      )
+      {    
+        // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
+        if(!isEqual(temp,last_DSTemp[sNo],minDiffDS18B20*10) && (last_DSTemp[sNo] > -110)) // if jump larger than 10 x minimum recognized temp difference
+        {
+          sprintf(topicStr,"esp32/%s/%s/%s%d",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature, sNo+1);
+          printf(payloadStr,"%3.2f",last_DSTemp[sNo]);
+          // caller! mqttSendItemCounter++;
+          sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+          logOut(printstring, msgMQTTInfo, msgInfo);
+          mqttClient.publish(topicStr, payloadStr);
+
+          sprintf(printstring2," MQTT Sent DS18B20 %d temperature % 4.1f before strong rise \n", sNo, last_DSTemp[sNo]);
+          strcat(printstring, printstring2);
+          logOut(printstring, msgMQTTSend, msgInfo);          
+        }
+        sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+          calDS18B20Temperature[0], last_DSTemp[sNo], temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+        strcat(printstring, printstring2);
+       
+        sprintf(topicStr,"esp32/%s/%s/%s%d",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature,sNo+1);
+        sprintf(payloadStr,"%3.2f",temp);
+        // caller! mqttSendItemCounter++;
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);
+      }  
+      else{
+        sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+          calDS18B20Temperature[0], last_DSTemp[sNo], temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+        strcat(printstring, printstring2);
+        // logOut(printstring, msgMQTTInfo, msgInfo);
+      }
+  }
+
   /**************************************************!
     @brief    MQTT handler, handles sending of data to MQTT broker, called via timer
     @details  New 2022-11-12.
@@ -3938,6 +3997,7 @@ void setup()
     double limit = -110.0;
     static double last_DSTemp0=-111, last_DSTemp1=-111, last_DSTemp2=-111;
     static long mqttSendItemCounter = 0, mqttCallCounter = 0;
+    int i;
 
     mqttCallCounter++;      // counter for how often this function has been called
     mqttSendItemCounter = 0; // counter for the number of items to be sent during this call
@@ -3981,6 +4041,9 @@ void setup()
 
       #ifdef isOneDS18B20
         // DS18B20 data 
+        for(i = 0; i < noDS18B20Connected; i++)
+          mqttSendDS18B20(i);
+        /*
         double temp;
         sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum[0],calDS18B20Temperature_n[0]);
         logOut(printstring,msgDS18B20Info, msgInfo);
@@ -4023,7 +4086,7 @@ void setup()
             calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
           strcat(printstring, printstring2);
         }
-
+        */
       #endif // isOneDS18B20  
 
     } // if mqttClient connected

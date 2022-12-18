@@ -4,12 +4,12 @@
  
 #define PROGNAME  "EnvMonitorBME680"
 #ifndef VERSION     // VERSION from platformio.ini
-    #define PROGVERSION "V0.114"
+    #define PROGVERSION "V0.119"
 #else
     #define PROGVERSION VERSION 
 #endif        
 #ifndef BUILD_DATE     // Build date from platformio.ini
-    #define PROGDATE "2022-11-10"
+    #define PROGDATE "2022-12-18"
 #else
     #define PROGDATE BUILD_DATE 
 #endif   
@@ -93,8 +93,8 @@
 //***********************************************
 #ifdef blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Eur Box 
     #undef blynkCloud       // define this to use blynk cloud, undef to use local server
-    #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
-    #undef isLocationUslar        
+    #undef isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
+    #define isLocationUslar        
 
     #define isThingspeak      // Thingspeak connection enabled. Alternative to Blynk
     #undef isVirtuino      // Virtuno connection enabled. Alternative to Blynk
@@ -140,6 +140,9 @@
     #undef isThingspeakRSSI // transmit RSSI via Thingspeak. Not here: ext. humidity on field 4
     static char infoStringLong[] = " KombiSensorExtLCD: Black Eurobox with LCD. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExtLCD";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "ExtLCD";
 #endif
 
 #ifdef blynkKombinsensor1  // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
@@ -191,6 +194,9 @@
     #undef isThingspeakRSSI // transmit RSSI via Thingspeak. Not here: ext. humidity on field 4
     static char infoStringLong[] = " KombiSensorExt: Black Velleman Box with OLED. Ext433 via serial, BME280, 2 DS18B20";
     static char infoStringShort[] = "KombiSensorExt";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "KombiExt";
 #endif
 
 #ifdef blynkBME680Kueche  // Küche in black Euro Box 
@@ -243,6 +249,9 @@
     #undef isThingspeakRSSI // transmit RSSI via Thingspeak. Not here: air quality on field 4
     static char infoStringLong[] = " BME680 Küche: Eurobox, OLED, BME680, 3 DS18B20, MH-Z14a, Fan";
     static char infoStringShort[] = "BME680 Kueche";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "Kueche";
 #endif
 
 #ifdef blynkSenseAirRedBox  // Red Euro Box. OLED, Senseair CO2 sensor, 3 DS18B20
@@ -295,6 +304,9 @@
     #define isThingspeakRSSI // transmit RSSI via Thingspeak 
     static char infoStringLong[] = " SenseAirRedBox: Eurobox, OLED, BME280, 3 DS18B20, SenseAir S8, Beeper";
     static char infoStringShort[] = " SenseAirRedBox";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "RedBox";
 #endif
 
 #ifdef  blynkEnvLocal2Bad // Bad: small box, no display
@@ -347,7 +359,8 @@
     static char infoStringLong[] = " Small Sensor Bad: Small Box, BME280, 2 DS18B20";
     static char infoStringShort[] = " Small Sensor Bad";
     #define isMQTT      // connect to MQTT, send data there
-    static char mqttDeviceString[] = "EnvMonitorBad";
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "BadLi";
 #endif
 
 #ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
@@ -454,6 +467,9 @@
     #define isThingspeakRSSI // transmit RSSI via Thingspeak  
     static char infoStringLong[] = " Small Sensor ExHans: Small Box, OLED, BME280, 2 DS18B20";
     static char infoStringShort[] = "Small Sensor ExHans";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "ExHans";
 #endif
 
 #ifdef blynkBME680BreadBoard  // EnvMonitor BME680 Testbead on Breadboard
@@ -506,6 +522,9 @@
     #undef isThingspeakRSSI // transmit RSSI via Thingspeak. not here, air quality on field 4
     static char infoStringLong[] = " BME680 Breadboard: BME680, 1 DS18B20 auf Breadboard";
     static char infoStringShort[] = "BME680 Breadboard";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "BME680BreadB";
 #endif
 
 #ifdef blynkRedBoxYellowButton    // was blynkGeneralTestbed
@@ -558,6 +577,9 @@
     #define isThingspeakRSSI // transmit RSSI via Thingspeak    
     static char infoStringLong[] = "Red Box Yellow Button with SenseAir";// " General Testbed for all kinds of stuff";
     static char infoStringShort[] = "RedBoxYellowBtn"; // "GeneralTestbed";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "RedBoxYeBtn";
 #endif 
 
 #ifdef virtuinoTestbed  // Virtuino and MQTT Testbed
@@ -604,4 +626,7 @@
     #define isThingspeakRSSI // transmit RSSI via Thingspeak   
     static char infoStringLong[] = " Virtuino Testbed: BME680 und 1 DS18B20 auf V0.4 Platine";
     static char infoStringShort[] = "Virtuino Testbed";
+    #define isMQTT      // connect to MQTT, send data there
+    #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
+    static char mqttRoomString[] = "VirtuinoTst";
 #endif 

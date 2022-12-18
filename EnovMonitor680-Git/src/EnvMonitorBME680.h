@@ -91,6 +91,7 @@
 #define mqttBMEAirQuality     "AirQuality"
 
 #define mqttSensorDS18B20     "DS18B20"
+#define mqttDS18B20Temperature "DSTemperature"
 #define mqttDS18B20Temperature1 "DSTemperature1"
 #define mqttDS18B20Temperature2 "DSTemperature2"
 #define mqttDS18B20Temperature3 "DSTemperature3"
