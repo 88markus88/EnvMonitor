@@ -117,7 +117,7 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
 
     #ifdef isMQTTLog
       char topicStr[50];
-      sprintf(topicStr,"esp32/%s/log",mqttRoomString);
+      sprintf(topicStr,"esp32/%s/log/%d/%d",mqttRoomString, MsgID, MsgSeverity);
       strcpy(outstring, timestring);
       strcat(outstring, printstring); 
       mqttClient.publish(topicStr, outstring); //payload: outstring
@@ -1524,6 +1524,12 @@ void setup()
     // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
     getNTPTime();
     esp_task_wdt_reset();   // keep watchdog happy
+
+    NTPTimerHandle = NTPTimer.setInterval(NTPTimerInterval, getNTPTime);
+    Serial.print("6b ");
+    sprintf(printstring, "NTPTimerHandle: %d\n", NTPTimerHandle);
+    logOut(printstring, msgTimeInfo, msgInfo);
+    Serial.print(NTPTimerHandle);
   #endif // getNPTTIME
   Serial.print("3");
 
@@ -3603,10 +3609,10 @@ void setup()
     #ifdef isOneDS18B20
       // DS18B20 data 
       double temp;
-      sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum[0],calDS18B20Temperature_n[0]);
+      sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",sum_ThSp_calDS18B20Temperature[0],n_ThSp_calDS18B20Temperature[0]);
       logOut(printstring,msgDS18B20Info, msgInfo);
-      if(calDS18B20Temperature_n[0] > 0)
-        temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
+      if(n_ThSp_calDS18B20Temperature[0] > 0)
+        temp = sum_ThSp_calDS18B20Temperature[0] / n_ThSp_calDS18B20Temperature[0];
       else
         temp = -111.11;  
       if( 
@@ -3631,25 +3637,25 @@ void setup()
             logOut(printstring, msgThingspeakSend, msgInfo);           
           }
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
-          calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+          calDS18B20Temperature[0], last_DSTemp0, temp, sum_ThSp_calDS18B20Temperature[0], n_ThSp_calDS18B20Temperature[0]);
         strcat(printstring, printstring2);
         last_DSTemp0 = temp;
-        calDS18B20Temperature_sum[0] = 0;
-        calDS18B20Temperature_n[0] = 0;
+        sum_ThSp_calDS18B20Temperature[0] = 0;
+        n_ThSp_calDS18B20Temperature[0] = 0;
         url = url+ "&field5=" + temp;
         thingspeakSendItemCounter++;
         thingspeakItemsCollected++;       
       }  
       else{
         sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
-          calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+          calDS18B20Temperature[0], last_DSTemp0, temp, sum_ThSp_calDS18B20Temperature[0], n_ThSp_calDS18B20Temperature[0]);
         strcat(printstring, printstring2);
-        calDS18B20Temperature_sum[0] = 0;
-        calDS18B20Temperature_n[0] = 0;
+        sum_ThSp_calDS18B20Temperature[0] = 0;
+        n_ThSp_calDS18B20Temperature[0] = 0;
       }
 
-      if(calDS18B20Temperature_n[1] > 0)
-        temp = calDS18B20Temperature_sum[1] / calDS18B20Temperature_n[1];
+      if(n_ThSp_calDS18B20Temperature[1] > 0)
+        temp = sum_ThSp_calDS18B20Temperature[1] / n_ThSp_calDS18B20Temperature[1];
       else
         temp = -111.11;  
       //if( ((temp > limit) && !isEqual(temp,last_DSTemp1,minDiffDS18B20)) || (repeatFlag==true)
@@ -3678,8 +3684,8 @@ void setup()
         sprintf(printstring2," Tmp1: %5.2f ",temp);
         strcat(printstring, printstring2);
         last_DSTemp1 = temp;
-        calDS18B20Temperature_sum[1] = 0;
-        calDS18B20Temperature_n[1] = 0;
+        sum_ThSp_calDS18B20Temperature[1] = 0;
+        n_ThSp_calDS18B20Temperature[1] = 0;
         url = url+ "&field6=" + temp;
         thingspeakSendItemCounter++;
         thingspeakItemsCollected++;
@@ -3687,12 +3693,12 @@ void setup()
       else{
         sprintf(printstring2," Tmp1: notMeas ");
         strcat(printstring, printstring2);
-        calDS18B20Temperature_sum[1] = 0;
-        calDS18B20Temperature_n[1] = 0;
+        sum_ThSp_calDS18B20Temperature[1] = 0;
+        n_ThSp_calDS18B20Temperature[1] = 0;
       }
 
-      if(calDS18B20Temperature_n[2] > 0)
-        temp = calDS18B20Temperature_sum[2] / calDS18B20Temperature_n[2];
+      if(n_ThSp_calDS18B20Temperature[2] > 0)
+        temp = sum_ThSp_calDS18B20Temperature[2] / n_ThSp_calDS18B20Temperature[2];
       else
         temp = -111.11;        
       //if( ((temp > limit) && !isEqual(temp,last_DSTemp2,minDiffDS18B20)) || (repeatFlag==true)
@@ -3721,8 +3727,8 @@ void setup()
         sprintf(printstring2," Tmp2: %5.2f",temp);
         strcat(printstring, printstring2);
         last_DSTemp2 = temp;
-        calDS18B20Temperature_sum[2] = 0;
-        calDS18B20Temperature_n[2] = 0;
+        sum_ThSp_calDS18B20Temperature[2] = 0;
+        n_ThSp_calDS18B20Temperature[2] = 0;
         url = url+ "&field7=" + temp;
         thingspeakSendItemCounter++;
         thingspeakItemsCollected++;
@@ -3730,8 +3736,8 @@ void setup()
       else{
         sprintf(printstring2," Tmp2: notMeas ");
         strcat(printstring, printstring2);
-        calDS18B20Temperature_sum[1] = 0;
-        calDS18B20Temperature_n[1] = 0;
+        sum_ThSp_calDS18B20Temperature[1] = 0;
+        n_ThSp_calDS18B20Temperature[1] = 0;
       }
     #endif // isOneDS18B20  
 
@@ -3936,15 +3942,21 @@ void setup()
     double temp;
     double limit = -110.0;
     static double last_DSTemp[MAX_NO_DS18B20] = {-111, -111, -111, -111, -111, -111, -111, -111, -111, -111};
-    sprintf(printstring,"DS18B20[sNo] sum: %f n: %d \n",calDS18B20Temperature_sum[sNo],calDS18B20Temperature_n[sNo]);
-    logOut(printstring,msgDS18B20Info, msgInfo);
-    if(calDS18B20Temperature_n[sNo] > 0)
-      temp = calDS18B20Temperature_sum[sNo] / calDS18B20Temperature_n[sNo];
+    float time_sec;
+    static float last_TimeDSSent[MAX_NO_DS18B20] = {0, 0, 0, 0, 0,  0, 0, 0, 0, 0};
+
+    time_sec = (float)millis()/1000;
+
+    sprintf(printstring,"DS18B20[%d] sum: %f n: %d \n",sNo, sum_MQTT_calDS18B20Temperature[sNo],n_MQTT_calDS18B20Temperature[sNo]);
+    logOut(printstring,msgMQTTSendDS10B20, msgInfo);
+    if(n_MQTT_calDS18B20Temperature[sNo] > 0)
+      temp = sum_MQTT_calDS18B20Temperature[sNo] / n_MQTT_calDS18B20Temperature[sNo];
     else
       temp = -111.11;  
     if( 
-        (!isEqual(temp,last_DSTemp[sNo],minDiffDS18B20) )
-        && (temp > limit)
+        (!isEqual(temp,last_DSTemp[sNo],minDiffDS18B20)   // sufficiently large change
+        || (time_sec > last_TimeDSSent[sNo] + 120))           // enough time elapsed
+        && (temp > limit)                                 // and valid data
       )
       {    
         // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
@@ -3954,29 +3966,37 @@ void setup()
           printf(payloadStr,"%3.2f",last_DSTemp[sNo]);
           // caller! mqttSendItemCounter++;
           sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-          logOut(printstring, msgMQTTInfo, msgInfo);
+          logOut(printstring, msgMQTTSendDS10B20, msgInfo);
           mqttClient.publish(topicStr, payloadStr);
 
           sprintf(printstring2," MQTT Sent DS18B20 %d temperature % 4.1f before strong rise \n", sNo, last_DSTemp[sNo]);
           strcat(printstring, printstring2);
-          logOut(printstring, msgMQTTSend, msgInfo);          
+          logOut(printstring, msgMQTTSendDS10B20, msgInfo);          
         }
-        sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
-          calDS18B20Temperature[0], last_DSTemp[sNo], temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+        sprintf(printstring2," Tmp%d: toMQTT cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+          sNo, calDS18B20Temperature[0], last_DSTemp[sNo], temp, sum_MQTT_calDS18B20Temperature[0], n_MQTT_calDS18B20Temperature[0]);
         strcat(printstring, printstring2);
-       
+        logOut(printstring, msgMQTTSendDS10B20, msgInfo);
+
+        last_DSTemp[sNo] = temp;
+        sum_MQTT_calDS18B20Temperature[sNo] = 0;
+        n_MQTT_calDS18B20Temperature[sNo] = 0;
+
         sprintf(topicStr,"esp32/%s/%s/%s%d",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature,sNo+1);
         sprintf(payloadStr,"%3.2f",temp);
+        last_TimeDSSent[sNo] = time_sec; 
         // caller! mqttSendItemCounter++;
-        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-        logOut(printstring, msgMQTTInfo, msgInfo);
+        sprintf(printstring,"Strings to MQTT: [%s] [%s] at time %5.2f\n", topicStr, payloadStr, time_sec);
+        logOut(printstring, msgMQTTSendDS10B20, msgInfo);
         mqttClient.publish(topicStr, payloadStr);
       }  
       else{
-        sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
-          calDS18B20Temperature[0], last_DSTemp[sNo], temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
+        sprintf(printstring2,"\n Tmp%d: notMQTT cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d last sent:%5.3f[s] now:%5.3f[s]",
+          sNo,calDS18B20Temperature[0], last_DSTemp[sNo], temp, sum_MQTT_calDS18B20Temperature[0], n_MQTT_calDS18B20Temperature[0], last_DSTemp[sNo], time_sec);
         strcat(printstring, printstring2);
-        // logOut(printstring, msgMQTTInfo, msgInfo);
+        logOut(printstring, msgMQTTSendDS10B20, msgWarn);
+        sum_MQTT_calDS18B20Temperature[sNo] = 0;
+        n_MQTT_calDS18B20Temperature[sNo] = 0;
       }
   }
 
@@ -4045,7 +4065,7 @@ void setup()
           mqttSendDS18B20(i);
         /*
         double temp;
-        sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum[0],calDS18B20Temperature_n[0]);
+        sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum,calDS18B20Temperature_n[0]);
         logOut(printstring,msgDS18B20Info, msgInfo);
         if(calDS18B20Temperature_n[0] > 0)
           temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
@@ -4106,6 +4126,7 @@ void main_handler()
 
   // float time_sec;
   long start_loop_time, end_loop_time = 0;
+  int i; // for loops
   
   #if defined  isBME680  || defined isBME680_BSECLib
     static long lastBME680Time;
@@ -4460,17 +4481,27 @@ void main_handler()
 
     #ifdef isThingspeak
        if((calDS18B20Temperature[0]) > (limit)){
-         calDS18B20Temperature_sum[0] += calDS18B20Temperature[0];
-         calDS18B20Temperature_n[0] += 1;
+         sum_ThSp_calDS18B20Temperature[0] += calDS18B20Temperature[0];
+         n_ThSp_calDS18B20Temperature[0] += 1;
        }  
        if((calDS18B20Temperature[1]) > (limit)){
-         calDS18B20Temperature_sum[1] += calDS18B20Temperature[1];
-         calDS18B20Temperature_n[1] += 1;
+         sum_ThSp_calDS18B20Temperature[1] += calDS18B20Temperature[1];
+         n_ThSp_calDS18B20Temperature[1] += 1;
        }  
        if((calDS18B20Temperature[2]) > (limit)){
-         calDS18B20Temperature_sum[2] += calDS18B20Temperature[2];
-         calDS18B20Temperature_n[2] += 1;
+         sum_ThSp_calDS18B20Temperature[2] += calDS18B20Temperature[2];
+         n_ThSp_calDS18B20Temperature[2] += 1;
        }  
+    #endif
+
+    #ifdef isMQTT
+      for(i=0;i<3;i++)
+      {
+       if((calDS18B20Temperature[i]) > (limit)){
+         sum_MQTT_calDS18B20Temperature[i] += calDS18B20Temperature[i];
+         n_MQTT_calDS18B20Temperature[i] += 1;
+       }
+      } 
     #endif
 
     // checks for problems with measurements of DS18B20

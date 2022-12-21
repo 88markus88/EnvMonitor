@@ -72,7 +72,8 @@
 #define msgMQTTInfo           220
 #define msgMQTTError          221
 #define msgMQTTSend           222
-#define msgMQTTReceive        223
+#define msgMQTTSendDS10B20    223
+#define msgMQTTReceive        225
 
 //Message Severities
 #define msgDefault  0
@@ -161,12 +162,15 @@ volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched
 #ifdef getNTPTIME
   // get time from NTP server
   // https://randomnerdtutorials.com/esp32-date-time-ntp-client-server-arduino/
-  const char* ntpServer = "fritz.box";
+  // const char* ntpServer = "fritz.box";
+  // const char* ntpServer2 = "192.168.178.1";
+const char* ntpServer = "pool.ntp.org";
+const char* ntpServer2 = "ptbtime3.ptb.de";
+const char* ntpServer3 = "fritz.box";
   // const char* ntpServer = "192.168.178.1";
   // const char* ntpServer2 = "pool.ntp.org";
-  const char* ntpServer2 = "192.168.178.1";
   // const char* ntpServer3 = "ptbtime3.ptb.de";
-  const char* ntpServer3 = "pool.ntp.org";
+
   const long  gmtOffset_sec = 3600;             // Germany_ UTC + 1 = +3600 sec
   const int   daylightOffset_sec = 3600;
   // improved for setting to the correct time zone directly
@@ -174,6 +178,10 @@ volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched
   // https://remotemonitoringsystems.ca/time-zone-abbreviations.php
   const char* defaultTimezone = "CET-1CEST,M3.5.0/2,M10.5.0/3";
   int TimeIsInitialized = false;
+
+  SimpleTimer NTPTimer;
+  int NTPTimerHandle;               // timer handle for NTP time calls
+  int NTPTimerInterval = 3600000;   // call this every hour
 #endif // getNPTTIME
  
 #if defined sendSERIAL || defined receiveSERIAL
@@ -209,8 +217,10 @@ volatile float tempSwitchOffset = 2.5;     // at this offset the fan is switched
                                             -111.11, -111.11, -111.11, -111.11, -111.11};
   volatile double calDS18B20Temperature[MAX_NO_DS18B20]={-111.11, -111.11,-111.11,-111.11,-111.11,
                                             -111.11, -111.11, -111.11, -111.11, -111.11}; 
-  double calDS18B20Temperature_sum[MAX_NO_DS18B20]= {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-  int calDS18B20Temperature_n[MAX_NO_DS18B20]  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  double sum_ThSp_calDS18B20Temperature[MAX_NO_DS18B20]= {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int n_ThSp_calDS18B20Temperature[MAX_NO_DS18B20]  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  double sum_MQTT_calDS18B20Temperature[MAX_NO_DS18B20]= {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int n_MQTT_calDS18B20Temperature[MAX_NO_DS18B20]  = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
                                                 // calibrated temperature values for output
   #define DS18B20RestartLimit 25              // these two to store how long no valid measurements, do restart of above limit

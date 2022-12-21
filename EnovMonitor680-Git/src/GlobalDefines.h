@@ -410,11 +410,11 @@
         #define APP_NAME PROGNAME
     #define isMeasureRSSI   // measure and transmit the Wifi signal strength (RSSI)    
     #define isThingspeakRSSI // transmit RSSI via Thingspeak
-    static char infoStringLong[] = " Small Sensor Schlafzimmer: Small Box, OLED, BME280, 2 DS18B20";
-    static char infoStringShort[] = "Schlafzimmer";
+    static char infoStringLong[] = " Small Sensor Küche Links: Small Box, OLED, BME280, 2 DS18B20";
+    static char infoStringShort[] = "KuecheLks";
     #define isMQTT      // connect to MQTT, send data there
     #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
-    static char mqttRoomString[] = "Schlafzimmer";
+    static char mqttRoomString[] = "KuecheLks";
 #endif
 
 
