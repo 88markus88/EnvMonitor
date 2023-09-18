@@ -3238,8 +3238,8 @@ void setup()
         recvInProgress = true;
       }
     } // while
-
-    Serial.printf(" - Serial read: '%s' len: %d \n", receivedChars, strlen(receivedChars));
+    if(strlen(receivedChars)>0)
+      Serial.printf(" - Serial read: '%s' len: %d \n", receivedChars, strlen(receivedChars));
     return(strlen(receivedChars));
 
   } // receiveSerial
@@ -3247,23 +3247,27 @@ void setup()
   boolean parseData(char *tempChars, float* serialT, float* serialH, int* serialCh) {      // split the data into its parts
 
     char * strtokIndx;                    // this is used by strtok() as an index
+    char *pEnd;                           // end pointer for strtod  
     //char message[numChars];               // buffer
 
     strtokIndx = strtok(tempChars,",");   // get the first part - the string
     if (strtokIndx != NULL) 
-      *serialCh = atoi(strtokIndx);    // convert this part to an integer
+      // *serialCh = atoi(strtokIndx);    // convert this part to an integer
+      *serialCh = strtol(strtokIndx,&pEnd, 10); // strol and strod are more robust than atoi and atof
     else
       return false;  
  
     strtokIndx = strtok(NULL, ",");  // this continues where the previous call left off
     if (strtokIndx != NULL) 
-      *serialT = atof(strtokIndx);     // convert this part to an integer
+      // *serialT = atof(strtokIndx);     // convert this part to an float
+      *serialT = strtod(strtokIndx,&pEnd);
     else
       return false;  
 
     strtokIndx = strtok(NULL, ",");
     if (strtokIndx != NULL) 
-      *serialH = atof(strtokIndx);     // convert this part to a float
+      // *serialH = atof(strtokIndx);     // convert this part to a float
+      *serialH = strtod(strtokIndx,&pEnd);
     else
       return false;
 
@@ -3773,25 +3777,61 @@ void setup()
         logOut(printstring2, msgReceiveSerialInfo, msgInfo);
         switch(i){
           case 0: // attach temperature and humidity for Channel 1 (Index 0)
+              if( // check for validity of data
+                  (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp)   // jump between act and last data not too large (would be a spike)
+                    || last_InfactoryT[i] < -100                              // excemption: last value not yet out of default
+                  )  
+                  && InfactoryT[i] > -100                                   // act value is out of default (-111.11)
+                  && abs(InfactoryT[i]) > 0.01                              // value is above zero: otherwise atoi conversion error when reading likely
+                )  
+                if( // check for sufficient difference of last and act data, or repeat flag
+                  !isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) // sufficient difference in data
+                    || (repeatFlag==true)                                   // repeat flag, since sending to thingspeak not successful  
+                    || (thingspeakCallCounter % minimumRepeatCounter == 0)  // we want a minimum difference, but no wait forever
+                  ) 
+                  {  
+                    sprintf(printstring,"Infactory T Ch1: %5.2f ",InfactoryT[i]);
+                    url = url+ "&field7=" + InfactoryT[i];
+                    thingspeakSendItemCounter++;
+                    thingspeakItemsCollected++;
+                    last_InfactoryT[i] = InfactoryT[i]; 
+                  }              
+            /*  
             if(
                 (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp) || last_InfactoryT[i] < -100)    // too large jump (unless not yet out of default): probably a spike
                 && (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0)) // we want a minimum difference, but no wait forever
                 && (InfactoryT[i] > -100) // got out of default (-111.11)
                 && (abs(InfactoryT[i]) > 0.01)
               )
+            
             {  
               sprintf(printstring,"Infactory T Ch1: %5.2f ",InfactoryT[i]);
               url = url+ "&field7=" + InfactoryT[i];
               thingspeakSendItemCounter++;
               thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i]; 
-            }  
+            }
+              
             if(
               (isEqual(InfactoryH[i],last_InfactoryH[i],maxDiffExtHumid) || last_InfactoryH[i] < -100)    // too large jump (unless not yet out of default): probably a spike
               && (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
               && (InfactoryH[i] > -100)
               && (abs(InfactoryH[i]) > 0.01)
             )
+            */  
+            if( // check for validity of data
+                  (isEqual(InfactoryH[i],last_InfactoryH[i],maxDiffExtHumid)   // jump between act and last data not too large (would be a spike)
+                    || last_InfactoryH[i] < -100                              // excemption: last value not yet out of default
+                  )  
+                  && InfactoryH[i] > -100                                   // act value is out of default (-111.11)
+                  && abs(InfactoryH[i]) > 0.01                              // value is above zero: otherwise atoi conversion error when reading likely
+                )  
+                if( // check for sufficient difference of last and act data, or repeat flag
+                  !isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) // sufficient difference in data
+                    || (repeatFlag==true)                                   // repeat flag, since sending to thingspeak not successful  
+                    || (thingspeakCallCounter % minimumRepeatCounter == 0)  // we want a minimum difference, but no wait forever
+                  ) 
+
             {  
               sprintf(printstring2," Infactory H Ch1: %5.2f",InfactoryH[i]);
               strcat(printstring, printstring2);
@@ -3802,6 +3842,26 @@ void setup()
             }  
           break;
           case 1: // attach temperature only for Channel 2 (Index 1). Later added: Humidity for channel 2 into field 1 (that is BME Temp if no infactory present)
+            if( // check for validity of data
+                  (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp)   // jump between act and last data not too large (would be a spike)
+                    || last_InfactoryT[i] < -100                              // excemption: last value not yet out of default
+                  )  
+                  && InfactoryT[i] > -100                                   // act value is out of default (-111.11)
+                  && abs(InfactoryT[i]) > 0.01                              // value is above zero: otherwise atoi conversion error when reading likely
+              )  
+                if( // check for sufficient difference of last and act data, or repeat flag
+                  !isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) // sufficient difference in data
+                    || (repeatFlag==true)                                   // repeat flag, since sending to thingspeak not successful  
+                    || (thingspeakCallCounter % minimumRepeatCounter == 0)  // we want a minimum difference, but no wait forever
+                  ) 
+                  {  
+                    sprintf(printstring,"Infactory T Ch2: %5.2f ",InfactoryT[i]);
+                    url = url+ "&field8=" + InfactoryT[i];
+                    thingspeakSendItemCounter++;
+                    thingspeakItemsCollected++;
+                    last_InfactoryT[i] = InfactoryT[i]; 
+                  }
+            /*     
             if(
                 (isEqual(InfactoryT[i],last_InfactoryT[i],maxDiffExtTemp) || last_InfactoryT[i] < -100)    // too large jump (unless not yet out of default): probably a spike
                 && (!isEqual(InfactoryT[i],last_InfactoryT[i],minDiffExtTemp) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
@@ -3816,13 +3876,20 @@ void setup()
               thingspeakItemsCollected++;
               last_InfactoryT[i] = InfactoryT[i];
             } 
-            // humidty 
-            if(
-              (isEqual(InfactoryH[i],last_InfactoryH[i],maxDiffExtHumid) || last_InfactoryH[i] < -100)    // too large jump (unless not yet out of default): probably a spike
-              && (!isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) || (repeatFlag==true) || (thingspeakCallCounter % minimumRepeatCounter == 0))
-              && (InfactoryH[i] > -100)
-              && (abs(InfactoryH[i]) > 0.01)
-            )
+            */
+            // humidity 
+            if( // check for validity of data
+                  (isEqual(InfactoryH[i],last_InfactoryH[i],maxDiffExtHumid)   // jump between act and last data not too large (would be a spike)
+                    || last_InfactoryH[i] < -100                              // excemption: last value not yet out of default
+                  )  
+                  && InfactoryH[i] > -100                                   // act value is out of default (-111.11)
+                  && abs(InfactoryH[i]) > 0.01                              // value is above zero: otherwise atoi conversion error when reading likely
+              )  
+                if( // check for sufficient difference of last and act data, or repeat flag
+                  !isEqual(InfactoryH[i],last_InfactoryH[i],minDiffExtHumid) // sufficient difference in data
+                    || (repeatFlag==true)                                   // repeat flag, since sending to thingspeak not successful  
+                    || (thingspeakCallCounter % minimumRepeatCounter == 0)  // we want a minimum difference, but no wait forever
+                  ) 
             {  
               sprintf(printstring2," Infactory H Ch2: %5.2f",InfactoryH[i]);
               strcat(printstring, printstring2);

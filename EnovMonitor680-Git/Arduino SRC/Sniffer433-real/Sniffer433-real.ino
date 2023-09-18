@@ -11,7 +11,7 @@
 // Added upper tolerance of 20000 to get rid of long signals (translated to -1 = 65535)
 // Still, signals appear to be pretty bad.
 // 15.10.22: correct check for availabilty of serial port. if(mySerial) instead of if(mySerial.available), which is for read only
-//
+// 12.09.23: still problems with high temperatures. TOL3 changed from 2*250 to 4*250. Compile on old PC with Arduino IDE
 //********************************************************************************************
 #include <SoftwareSerial.h>
 #define sendSERIAL        // send data via serial
@@ -36,8 +36,8 @@ int bitsReceived = 0;
 //  time in ms       .6  2.0
 
 #define PROGNAME  "Sniffer433_real.cpp"
-#define PROGDATE  "2022-10-15"
-#define PROGVERSION "V0.12"
+#define PROGDATE  "2022-09-12"
+#define PROGVERSION "V0.13"
 
 #undef outputDATA
 #undef  outputSERIALDEBUG
@@ -57,7 +57,7 @@ int bitsReceived = 0;
 
 #define TOL1  2*80  // tolerance values
 #define TOL2 2*150   
-#define TOL3 2*250 
+#define TOL3 4*250 
 
 #define DATAPIN  3  // D3 is interrupt 1
 #define TRIGGERPIN 12 // to trigger scope
@@ -86,7 +86,6 @@ unsigned int count0=0,  sum0HI=0,  sum0LO=0, max0HI=0,  min0HI=1000000,  max0LO=
 unsigned int counts2=0, sums2HI=0, sums2LO=0,maxs2HI=0, mins2HI=1000000, maxs2LO=0, mins2LO=1000000;
 unsigned int counts1=0, sums1HI=0, sums1LO=0,maxs1HI=0, mins1HI=1000000, maxs1LO=0, mins1LO=1000000;
 unsigned int countsy=0, sumsyHI=0, sumsyLO=0,maxsyHI=0, minsyHI=1000000, maxsyLO=0, minsyLO=1000000;
- 
 
 // other global ariables
 char printstring[100];
