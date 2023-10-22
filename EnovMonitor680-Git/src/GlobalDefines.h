@@ -4,12 +4,12 @@
  
 #define PROGNAME  "EnvMonitorBME680"
 #ifndef VERSION     // VERSION from platformio.ini
-    #define PROGVERSION "V0.123"
+    #define PROGVERSION "V0.124"
 #else
     #define PROGVERSION VERSION 
 #endif        
 #ifndef BUILD_DATE     // Build date from platformio.ini
-    #define PROGDATE "2022-02-10"
+    #define PROGDATE "2023-09-19"
 #else
     #define PROGDATE BUILD_DATE 
 #endif   
@@ -28,7 +28,7 @@
 
  // #define blynkWebHinkelhurz
  // #define blynkBME680Kueche
- // #define blynkSchlafzimmer 
+ // #define blynkKuecheLinks
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
@@ -62,16 +62,16 @@
 #if BUILD_ENV_NAME==USB_upload  // needs to be manually selected in case of USB Upload ENV
  // #define blynkWebHinkelhurz
  // #define blynkBME680Kueche
- // #define blynkSchlafzimmer 
+ // #define blynkKuecheLinks
  // #define blynkEnvLocal2Bad
- // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
  // #define blynkExPapaKleineBox
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
  // #define blynkArbeitszimmerPrintedRed    // new sensor 07.02.23 in red printed housing
-#define blynkWohnziLinksPrintedBlack //new sensor 10.02.23 in red printed housing
+ // #define blynkWohnziLinksPrintedBlack //new sensor 10.02.23 in red printed housing
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
 #elif BUILD_ENV_NAME==OTA_upload_exPapaKleineBox
     #define blynkExPapaKleineBox
@@ -79,8 +79,8 @@
     #define blynkSenseAirRedBox
 #elif BUILD_ENV_NAME==OTA_upload_EnvLocal2Bad
     #define blynkEnvLocal2Bad
-#elif BUILD_ENV_NAME==OTA_upload_Schlafzimmer
-    #define blynkSchlafzimmer
+#elif BUILD_ENV_NAME==OTA_upload_KuecheLinks
+    #define blynkKuecheLinks
 #elif BUILD_ENV_NAME==OTA_upload_KombiSensorExtLCD
     #define blynkInfactoryExternalS
 #elif BUILD_ENV_NAME==OTA_upload_KombiSensorExt1
@@ -119,6 +119,7 @@
         #define noDS18B20Sensors 2  // number of DS18B20 expected
     #undef isDisplay       // Adafruit SSD 1306 display is present
     #define isLCD            // LCD display present
+        #undef allowLCDOff  // if defined, the LCD is turned completely off in cyle and by timer
     #undef isInfactory433   // Infactory 433 MHz Sender (Type NV-5849, black). Internal connection to ESP32
     #undef isRelay         // relais connected to GPIO 26 (R1) and 27 (R2)
     #undef isFan           // Fan ist connected to RELAYPIN1
@@ -374,7 +375,7 @@
     static char mqttRoomString[] = "BadLi";
 #endif
 
-#ifdef  blynkSchlafzimmer // Schlafzimmer: small box, OLED display
+#ifdef  blynkKuecheLinks // Schlafzimmer: small box, OLED display
     #undef blynkCloud       // define this to use blynk cloud, undef to use local server
     #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
     #undef isLocationUslar     

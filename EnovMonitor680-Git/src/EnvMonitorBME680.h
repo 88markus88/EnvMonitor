@@ -502,7 +502,7 @@ long temperature_n, humidity_n, pressure_n; // counters for averaging
 
 #if defined isLCD || defined isDisplay
   // timer for darkening display, and interval for it
-  #define displayOffTimerInterval 900000L // 900000 ms= 900 sec
+  #define displayOffTimerInterval 30000L // 900000 ms= 900 sec
   int displayOffTimerHandle;
 #endif
 

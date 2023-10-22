@@ -488,7 +488,9 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
       logOut(printstring, msgLCDInfo, msgInfo);
     #endif
     #ifdef isLCD
-      lcdDisplayMode = 0; // for LCD
+       #ifdef allowLCDOff
+         lcdDisplayMode = 0; // for LCD. If this line is enabled: display off after displayOffTimerInterval [ms]
+       #endif // allowLCDOff
       sprintf(printstring, "Switching off LCD display since no button pressed. %d\n", lcdDisplayMode);
       logOut(printstring, msgLCDInfo, msgInfo);
     #endif
@@ -549,7 +551,11 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     {
       lcdDisplayMode ++;
       if (lcdDisplayMode > maxLcdisplayMode)    // tbd: variable adaptation to number of sensors
+      #ifdef allowLCDOff
          lcdDisplayMode = 0;
+      #else
+        lcdDisplayMode = 1;
+      #endif   
       lcdDisplayDone=0;    
       //lastButtonTime = millis();   
     }  
@@ -1319,6 +1325,7 @@ bool connectToWiFi(char* ssid, char* pass, int noRetries)
   if(WiFi.status() == WL_CONNECTED)
   {
     sprintf(printstring,"Connected after %5.2f sec IP: %s\n",(float)(endtime-starttime)/1000, toStringIp(WiFi.localIP()).c_str());
+    Serial.println(printstring);
     logOut(printstring, msgWifiConnected, msgInfo);
     #ifdef isDisplay
       sprintf(printstring,"Connected in %5.2f s ",(float)(endtime-starttime)/1000);
@@ -1335,6 +1342,7 @@ bool connectToWiFi(char* ssid, char* pass, int noRetries)
   {
     sprintf(printstring,"NOT Connected after %5.2f sec",(float)(endtime-starttime)/1000);
     Serial.println(printstring);
+    logOut(printstring, msgWifiConnected, msgInfo);
     #ifdef isDisplay
       display.setCursor(0, 48);
       display.println(printstring);
@@ -1965,10 +1973,10 @@ void setup()
     #endif // Serial stuff  
     // EXTDis #endif // isBLYNK
 
-    // handle OTA over the air Updates 
-    #ifdef isOTA
-      ArduinoOTA.setHostname("EnvMonitor680");
-      // Port defaults to 3232
+  // handle OTA over the air Updates 
+  #ifdef isOTA
+    ArduinoOTA.setHostname("EnvMonitor680");
+  // Port defaults to 3232
   // ArduinoOTA.setPort(3232);
 
   // Hostname defaults to esp3232-[MAC]
@@ -1990,7 +1998,7 @@ void setup()
           type = "filesystem";
 
           // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-          Serial.println("Start updating " + type);
+          Serial.println("Start OTA updating " + type);
       })
       .onEnd([]() {
         Serial.println("\nEnd");
@@ -4328,7 +4336,7 @@ void main_handler()
           lastInfactoryTempC[serialChannel] = InfactoryTempC - 4.5; // get out of default
         // too large difference-improbable value.
         // 0.0 and -111.11 are errors
-        if( (abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0) && InfactoryTempC>-110 && abs(InfactoryTempC) > 0.01 ) 
+        if( (abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0) && InfactoryTempC>-110 && abs(InfactoryTempC) > 0.01 )  
         {
           // restart Blynk
           esp_task_wdt_reset(); // reset watchdog in case it takes longer
@@ -4425,6 +4433,7 @@ void main_handler()
           //if( (abs(lastInfactoryTempC[serialChannel]-InfactoryTempC) < 5.0) && InfactoryTempC>-110 && abs(InfactoryTempC) > 0.01 )
           sprintf(printstring,"##### Serial data rejected: Ch: %d TempC: %3.1f lastTempC: %3.1f\n",serialChannel, InfactoryTempC, lastInfactoryTempC[serialChannel]);
           logOut(printstring, msgBlynkConnected, msgInfo);  
+          lastInfactoryTempC[serialChannel] = InfactoryTempC; // needs to be updated also in "else" case, otherwise one outlier stops all new data.
           InfactoryT[serialChannel] = -111.11;
           InfactoryH[serialChannel] = -111.11;
         }
@@ -4850,6 +4859,9 @@ void lcd_handler()
   }
   if(lcdDisplayMode > 0)
   {
+    if(lcdDisplayMode==1 && lcdDisplayDone == 0) // button press just registered, predisplayOffTimerIntervalv. mode 0 (=off), no action taken yet
+      initLCD();  // then initialize the display
+
     //sprintf(printstring,"displayLCD Mode %d\n", lcdDisplayMode);
     //logOut(printstring, , msgLCDInfo, msgInfo);
     printLocalTime(printstring, 6); // local time into printstring for display on LCD

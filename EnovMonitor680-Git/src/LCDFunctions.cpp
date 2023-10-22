@@ -53,6 +53,7 @@
 
     // strcpy(outstring,"                    ");
     strncpy(outstring, printstring,20);
+    printstring[20] = 0; // ensure null-termination, which strncpy does not do if printstring is too long => Overflow
     lcd.setCursor(x, y);
     lcd.print(outstring);
   }
@@ -187,7 +188,8 @@
             sprintf(printstring,"Sensor 1: %3.1f%cC    ",T1,223); outLCD(0,1,printstring);
             sprintf(printstring,"Sensor 2: %3.1f%cC    ",T2,223); outLCD(0,2,printstring);
             */
-            sprintf(printstring,"                      ");        outLCD(0,3,printstring);
+            sprintf(printstring,"Sec: %3.1f            ",(float)millis()/1000);  outLCD(0,3,printstring);
+            // sprintf(printstring,"                      ");        outLCD(0,3,printstring);
           #else
             sprintf(printstring,"displayLCD Mode %d", lcdDisplayMode);
             outLCD(0,0,printstring); 
