@@ -1121,7 +1121,7 @@ void vDelay(int delayInMillis){long t=millis()+delayInMillis;while (millis()<t) 
 
 #endif
 
-#ifdef isBluetoothCredentials
+#ifdef isBluetoothCredentials 
 
 String NetworkID[50];
 /**************************************************!

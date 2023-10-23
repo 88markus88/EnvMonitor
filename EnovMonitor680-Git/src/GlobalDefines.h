@@ -593,7 +593,7 @@
     static char mqttRoomString[] = "RedBoxYeBtn";
 #endif 
 
-#ifdef blynkArbeitszimmerPrintedRed     // 
+#ifdef blynkArbeitszimmerPrintedRed     // presently used at Katharing Grgic.
     #undef blynkCloud       // define this to use blynk cloud, undef to use local server
     #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
     #undef isLocationUslar     
