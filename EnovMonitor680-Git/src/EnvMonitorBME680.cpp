@@ -3980,7 +3980,11 @@ void setup()
     Serial.print(topic);
     Serial.print(". Message: ");
     String messageTemp;
+    char myTopic [50];
     
+    sprintf(myTopic,"esp32/%s",mqttRoomString);
+    //sprintf(myTopic,"esp32/RedBoxYeBtn/output");
+
     for (int i = 0; i < length; i++) {
       Serial.print((char)message[i]);
       messageTemp += (char)message[i];
@@ -3989,17 +3993,14 @@ void setup()
 
     // If a message is received on the topic esp32/output, you check if the message is either "on" or "off". 
     // Changes the output state according to the message
-    if (String(topic) == "esp32/output") {
-      Serial.print("Changing output to ");
-      if(messageTemp == "on"){
-        Serial.println("on");
-        //digitalWrite(ledPin, HIGH);
-      }
-      else if(messageTemp == "off"){
-        Serial.println("off");
-        //digitalWrite(ledPin, LOW);
-      }
+    if (String(topic) == "esp32/RedBoxYeBtn/output") 
+    //if(strstr(topic,myTopic))  
+    {
+      // sprintf(printstring,"esp32/%s/received/%s",mqttRoomString, message);
+      sprintf(printstring,"esp32/%s/received",mqttRoomString);
+      logOut(printstring, msgMQTTReceive, msgInfo);
     }
+    
   } // mqttCallbackFunction
 
 
@@ -4129,6 +4130,7 @@ void setup()
       #if defined isBME680 || defined isBME680_BSECLib
         sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorBME680, mqttBMEAirQuality);
         sprintf(payloadStr,"%3.2f",air_quality_score);
+        mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
         logOut(printstring, msgMQTTInfo, msgInfo);
         mqttClient.publish(topicStr, payloadStr);
@@ -4138,51 +4140,51 @@ void setup()
         // DS18B20 data 
         for(i = 0; i < noDS18B20Connected; i++)
           mqttSendDS18B20(i);
-        /*
-        double temp;
-        sprintf(printstring,"DS18B20[0] sum: %f n: %d \n",calDS18B20Temperature_sum,calDS18B20Temperature_n[0]);
-        logOut(printstring,msgDS18B20Info, msgInfo);
-        if(calDS18B20Temperature_n[0] > 0)
-          temp = calDS18B20Temperature_sum[0] / calDS18B20Temperature_n[0];
-        else
-          temp = -111.11;  
-        if( 
-            (!isEqual(temp,last_DSTemp0,minDiffDS18B20) )
-            && (temp > limit)
-          )
-        {    
-          // insert here if large temp jump: send last_temperature again to avoid unrealistical curve form
-          if(!isEqual(temp,last_DSTemp0,minDiffDS18B20*10) && (last_DSTemp0 > -110)) // if jump larger than 10 x minimum recognized temp difference
-            {
-              sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature1);
-              sprintf(payloadStr,"%3.2f",last_DSTemp0);
-              mqttSendItemCounter++;
-              sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-              logOut(printstring, msgMQTTInfo, msgInfo);
-              mqttClient.publish(topicStr, payloadStr);
+      #endif // isOneDS18B20      
 
-              sprintf(printstring2," MQTT Sent DS18B20 0 temperature % 4.1f before strong rise \n", last_DSTemp0);
-              strcat(printstring, printstring2);
-              logOut(printstring, msgMQTTSend, msgInfo);          
-            }
-          sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
-            calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
-          strcat(printstring, printstring2);
-       
-          sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorDS18B20, mqttDS18B20Temperature1);
-          sprintf(payloadStr,"%3.2f",temp);
-          mqttSendItemCounter++;
-          sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-          logOut(printstring, msgMQTTInfo, msgInfo);
-          mqttClient.publish(topicStr, payloadStr);
-        }  
-        else{
-          sprintf(printstring2," Tmp0: notMeas cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
-            calDS18B20Temperature[0], last_DSTemp0, temp, calDS18B20Temperature_sum[0], calDS18B20Temperature_n[0]);
-          strcat(printstring, printstring2);
-        }
-        */
-      #endif // isOneDS18B20  
+      #if defined isMHZ14A || defined isSENSEAIR_S8
+        #ifdef isMHZ14A
+          sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorMHZ14A, mqttCO2ppm);
+        #endif
+        #ifdef isSENSEAIR_S8
+          sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorSenseAirS8, mqttCO2ppm);
+        #endif  
+        sprintf(payloadStr,"%d",CO2ppm);
+        mqttSendItemCounter++;
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);
+      #endif // defined isMHZ14A || defined isSENSEAIR_S8
+
+      #ifdef receiveSERIAL
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Temperature1);
+        sprintf(payloadStr,"%3.1f",InfactoryT[0]);
+        mqttSendItemCounter++;
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);      
+
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Humidity1);
+        sprintf(payloadStr,"%3.1f",InfactoryH[0]);
+        mqttSendItemCounter++;
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);    
+
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Temperature2);
+        sprintf(payloadStr,"%3.1f",InfactoryT[1]);
+        mqttSendItemCounter++;
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);      
+
+        sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Humidity2);
+        sprintf(payloadStr,"%3.1f",InfactoryH[1]);
+        mqttSendItemCounter++;
+        sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
+        logOut(printstring, msgMQTTInfo, msgInfo);
+        mqttClient.publish(topicStr, payloadStr);    
+      #endif // receiveSERIAL
 
     } // if mqttClient connected
   } // mqttHandler

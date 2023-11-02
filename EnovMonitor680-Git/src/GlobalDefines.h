@@ -33,7 +33,7 @@
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1    // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
- // #define blynkExPapaKleineBox
+ // #define blynkWohnzimmerRechts
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
@@ -46,7 +46,7 @@
     #error "Add -D BUILD_ENV_NAME=$PIOENV to platformio.ini build_flags"
 #else
     #define USB_upload  100
-    #define OTA_upload_exPapaKleineBox 101
+    #define OTA_upload_WohnzimmerRe 101
     #define OTA_upload_EnvLocalSenseAirRedBox 102
     #define OTA_upload_EnvLocal2Bad 103
     #define OTA_upload_Schlafzimmer 104
@@ -67,14 +67,14 @@
   #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
- // #define blynkExPapaKleineBox
+ // #define blynkWohnzimmerRechts
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
  // #define blynkArbeitszimmerPrintedRed    // new sensor 07.02.23 in red printed housing
  // #define blynkWohnziLinksPrintedBlack //new sensor 10.02.23 in red printed housing
  // #define virtuinoTestbed          // testbed for virtuino and MQTT, started 27.10.21
-#elif BUILD_ENV_NAME==OTA_upload_exPapaKleineBox
-    #define blynkExPapaKleineBox
+#elif BUILD_ENV_NAME==OTA_upload_WohnzimmerRe
+    #define blynkWohnzimmerRechts
 #elif BUILD_ENV_NAME==OTA_upload_EnvLocalSenseAirRedBox
     #define blynkSenseAirRedBox
 #elif BUILD_ENV_NAME==OTA_upload_EnvLocal2Bad
@@ -429,7 +429,7 @@
     static char mqttRoomString[] = "KuecheLks";
 #endif
 
-#ifdef  blynkExPapaKleineBox // Ex Papa kleine Box : small box, OLED display, 2 DS18B20, BME280
+#ifdef  blynkWohnzimmerRechts // Ex Papa kleine Box : small box, OLED display, 2 DS18B20, BME280
     #undef blynkCloud       // define this to use blynk cloud, undef to use local server
     #define isLocationFFM       //ssid and passwort determined by location, defined in "credentials.h"
     #undef isLocationUslar     

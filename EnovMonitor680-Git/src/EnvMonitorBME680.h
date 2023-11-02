@@ -101,6 +101,12 @@
 #define mqttSensorMHZ14A      "MHZ14A"
 #define mqttCO2ppm            "CO2ppm"
 
+#define mqttSensorInfactory433        "Infactory433"
+#define mqttInfactory433Temperature1  "TempCh1"
+#define mqttInfactory433Humidity1     "HumidCh1"
+#define mqttInfactory433Temperature2  "TempCh2"
+#define mqttInfactory433Humidity2     "HumidCh2"
+
 // general rule for globals: defined in module defining their function,
 // otherwise external.
 
