@@ -116,11 +116,17 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
     #endif
 
     #ifdef isMQTTLog
-      char topicStr[50];
+      char topicStr[200];
       sprintf(topicStr,"esp32/%s/log/%d/%d",mqttRoomString, MsgID, MsgSeverity);
       strcpy(outstring, timestring);
       strcat(outstring, printstring); 
-      mqttClient.publish(topicStr, outstring); //payload: outstring
+
+      //sprintf(printstring, "test logOut 2. Topic: _%s_ _%s_ %d",topicStr, outstring, strlen(outstring));
+      //Serial.print(printstring);
+      if(mqttClient.connected())
+        mqttClient.publish(topicStr, outstring, strlen(outstring)); //payload: outstring
+      //sprintf(printstring, "test logOut 2");  
+      //Serial.print(printstring);
     #endif
 
   }
@@ -691,7 +697,7 @@ void logOut(char* printstring, unsigned int MsgID, unsigned int MsgSeverity)
 
   void getNTPTime()
   {
-    char printstring[80];
+    //char printstring[80];
     // int tryCount = 0;
 
     Serial.print(F("Connecting to "));
@@ -1585,8 +1591,9 @@ void setup()
     Serial.print(thingspeakHandlerTimerHandle);
   #endif // isThingspeak
 
-  #ifdef isMQTT
-    // check wifi status and connect if not yet done
+ // https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/
+  #ifdef isMQTT // library dafür: pubsubclient
+     // check wifi status and connect if not yet done
     if(WiFi.status() != WL_CONNECTED)
       connectToWiFi(ssid, pass, 7);
 
@@ -1598,6 +1605,8 @@ void setup()
     mqttClient.setServer(mqttActualServer, 1883);
     //mqttClient.setServer("192.168.178.64", 1883);
     mqttClient.setCallback(mqttCallbackFunction);
+    mqttClient.setKeepAlive(120); // keep the client alive for 120 sec if no action occurs
+    mqttClient.setBufferSize(1024); // increase buffer size from standard 1024
   #endif //isMQTT
 
   #ifdef isBLYNK
@@ -2576,7 +2585,7 @@ void setup()
   {
     static float TempC0=-111.11, TempC1 = -111.11, TempC2=-111.11;
     char timestring[50]="unknown";    
-    char printstring[80];
+    //char printstring[80];
     display.clearDisplay(); 
     switch (displayMode)
     {
@@ -2892,7 +2901,7 @@ void setup()
   /*
   void restartBlynk()
   {
-    char printstring[80];
+    //char printstring[80];
 
     // logics to check if a reboot has been done
     if (restartCount == 0) {            
@@ -3942,25 +3951,41 @@ void setup()
   /**************************************************!
     @brief    MQTT connect / reconned function. 
     @details  New 2022-11-12.
-    @details  
+    @details  https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/
+    @details  API description: https://pubsubclient.knolleary.net/api
+    @details  pubsubclient library is used
     @return   void
   ***************************************************/
   void mqttReconnect() 
   { int i=0;
+    char topic1[50], topic2[50];
     // Loop until we're reconnected
     while (!mqttClient.connected() && i<2) {
-      Serial.print("Attempting MQTT connection...");
+      sprintf(printstring, "Attempting MQTT connection...");
+      logOut(printstring, msgMQTTConnect, msgInfo);
+
       // Attempt to connect
-      if (mqttClient.connect("ESP8266Client", mqttDefaultUser, mqttDefaultPaSSWORD)) {
-        Serial.println("connected");
-        // Subscribe
-        mqttClient.subscribe("esp32/output");
+      if (mqttClient.connect(mqttRoomString, mqttDefaultUser, mqttDefaultPaSSWORD)) {
+        sprintf(topic1,"esp/%s",mqttRoomString);
+        // sprintf(topic1,"esp32/KombiExt");
+        sprintf(topic2,"esp/cmnd/%s",mqttRoomString);
+        sprintf(printstring, "MQTT connected, subscribed: %s %s\n",topic1, topic2);
+        logOut(printstring, msgMQTTSubscribe, msgInfo);
+        
+        // Subscribe. Multiple topics are possible.
+        mqttClient.subscribe("esp32/KombiExt");
+        mqttClient.loop();
+        mqttClient.subscribe(topic2);
+        mqttClient.loop();
       } 
       else 
       {
         Serial.print("failed, rc=");
         Serial.print(mqttClient.state());
         Serial.println(" try again in 2 seconds");
+        sprintf(printstring, "MQTT connection failed. Retry in 2 seconds");
+        logOut(printstring, msgMQTTError, msgWarn);
+
         // Wait 2 seconds before retrying
         delay(2000);
       }
@@ -3976,9 +4001,13 @@ void setup()
   ***************************************************/
   void mqttCallbackFunction(char* topic, byte* message, unsigned int length) 
   {
+    sprintf(printstring, "MQTT msg received: [%s] [%s]",topic, message);
+    logOut(printstring, msgMQTTReceive, msgInfo);
+
     Serial.print("Message arrived on topic: ");
     Serial.print(topic);
     Serial.print(". Message: ");
+    
     String messageTemp;
     char myTopic [50];
     
@@ -3991,16 +4020,14 @@ void setup()
     }
     Serial.println();
 
-    // If a message is received on the topic esp32/output, you check if the message is either "on" or "off". 
-    // Changes the output state according to the message
-    if (String(topic) == "esp32/RedBoxYeBtn/output") 
-    //if(strstr(topic,myTopic))  
+    // If a message is received on the subscribed topics 
+    // Do what is needed
+    // if (String(topic) == "esp32/output") 
+    if(strstr(topic,myTopic))  
     {
-      // sprintf(printstring,"esp32/%s/received/%s",mqttRoomString, message);
-      sprintf(printstring,"esp32/%s/received",mqttRoomString);
+      sprintf(printstring,"action: esp32 %s receivedMQTT %s",mqttRoomString, message);
       logOut(printstring, msgMQTTReceive, msgInfo);
     }
-    
   } // mqttCallbackFunction
 
 
@@ -4049,7 +4076,7 @@ void setup()
           strcat(printstring, printstring2);
           logOut(printstring, msgMQTTSendDS10B20, msgInfo);          
         }
-        sprintf(printstring2," Tmp%d: toMQTT cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d",
+        sprintf(printstring2," Tmp%d: toMQTT cal: %5.2f last: %5.2f act: %5.2f sum: %5.2f n: %d\n",
           sNo, calDS18B20Temperature[0], last_DSTemp[sNo], temp, sum_MQTT_calDS18B20Temperature[0], n_MQTT_calDS18B20Temperature[0]);
         strcat(printstring, printstring2);
         logOut(printstring, msgMQTTSendDS10B20, msgInfo);
@@ -4098,11 +4125,23 @@ void setup()
     mqttCallCounter++;      // counter for how often this function has been called
     mqttSendItemCounter = 0; // counter for the number of items to be sent during this call
 
-    if (!mqttClient.connected())
+    int tst = mqttClient.connected();
+    if (!tst)
+    {
+      sprintf(printstring,"MQTT client not connected, return: %d State: %d\n",tst, mqttClient.state());
+      logOut(printstring, msgMQTTConnect, msgWarn);
       mqttReconnect();
+    }  
+    else{
+      sprintf(printstring,"MQTT client is still connected, return: %d\n",tst);
+      logOut(printstring, msgMQTTConnect, msgWarn);
+    }
+    sprintf(printstring,"MQTT client after attempt to connect, State: %d\n", mqttClient.state());
+    logOut(printstring, msgMQTTConnect, msgWarn);
+    
     if (mqttClient.connected()) 
     {
-      mqttClient.loop();
+      //mqttClient.loop();
       #if defined isBME280 || defined isBME680 || defined isBME680_BSECLib
         sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorBME280, mqttBMETemperature);
         sprintf(payloadStr,"%3.2f",Temperature);
@@ -4152,7 +4191,7 @@ void setup()
         sprintf(payloadStr,"%d",CO2ppm);
         mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-        logOut(printstring, msgMQTTInfo, msgInfo);
+        logOut(printstring, msgMQTTSend, msgInfo);
         mqttClient.publish(topicStr, payloadStr);
       #endif // defined isMHZ14A || defined isSENSEAIR_S8
 
@@ -4161,29 +4200,30 @@ void setup()
         sprintf(payloadStr,"%3.1f",InfactoryT[0]);
         mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-        logOut(printstring, msgMQTTInfo, msgInfo);
+        logOut(printstring, msgMQTTSend, msgInfo);
         mqttClient.publish(topicStr, payloadStr);      
 
         sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Humidity1);
         sprintf(payloadStr,"%3.1f",InfactoryH[0]);
         mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-        logOut(printstring, msgMQTTInfo, msgInfo);
+        logOut(printstring, msgMQTTSend, msgInfo);
         mqttClient.publish(topicStr, payloadStr);    
 
         sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Temperature2);
         sprintf(payloadStr,"%3.1f",InfactoryT[1]);
         mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-        logOut(printstring, msgMQTTInfo, msgInfo);
+        logOut(printstring, msgMQTTSend, msgInfo);
         mqttClient.publish(topicStr, payloadStr);      
 
         sprintf(topicStr,"esp32/%s/%s/%s",mqttRoomString, mqttSensorInfactory433, mqttInfactory433Humidity2);
         sprintf(payloadStr,"%3.1f",InfactoryH[1]);
         mqttSendItemCounter++;
         sprintf(printstring,"Strings to MQTT: [%s] [%s]\n", topicStr, payloadStr);
-        logOut(printstring, msgMQTTInfo, msgInfo);
+        logOut(printstring, msgMQTTSend, msgInfo);
         mqttClient.publish(topicStr, payloadStr);    
+        
       #endif // receiveSERIAL
 
     } // if mqttClient connected
@@ -4197,7 +4237,7 @@ void setup()
 ***************************************************/
 void main_handler() 
 {
-  char printstring[180]="";
+  // char printstring[180]="";
   // char printstring1[80]="", printstring2[80]="", printstring3[80]="";
   float time_sec;
 
@@ -4461,10 +4501,15 @@ void main_handler()
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
      logOut(printstring, msgDS18B20Info, msgInfo);
     */ 
-    sprintf(printstring,"CalDS18B20 Tmp1  %3.2f Tmp2 %3.2f Tmp3 %3.2f %d %d %d - %d %ld\n", 
-      calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2], 
+     
+    /*
+    sprintf(printstring,"CalDS18B20 Tmp1  %3.2f Tmp2 %3.2f Tmp3 %3.2f\n", 
+      calDS18B20Temperature[0], calDS18B20Temperature[1], calDS18B20Temperature[2]);
+    logOut(printstring, msgDS18B20Info, msgInfo);
+    sprintf(printstring,"%d %d %d - %d %ld\n", 
       notMeasuredCount, notChangedCount, noDS18B20Restarts, state, GetOneDS18B20Counter);
-     logOut(printstring, msgDS18B20Info, msgInfo);
+    logOut(printstring, msgDS18B20Info, msgInfo);
+    */
     if(GetOneDS18B20Counter <= previousGetOneDS18B20Counter)  // DS18B20 routine not counting
     {
       notMeasuredDS18B20 ++;
@@ -4754,11 +4799,14 @@ void main_handler()
     // correct with compensation factors which are specific to each sensor module, defined near auth codes
     Temperature += corrBMETemp;
     Pressure += corrBMEPressure; 
-    sprintf(printstring,"BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
-        Temperature, Humidity, Pressure, Altitude); 
-    logOut(printstring, msgBME280Info, msgInfo);    
+    //sprintf(printstring,"BME280 Sensor values: %3.1f °C %3.1f %% %3.1f mBar %3.1f m\n", 
+    //    Temperature, Humidity, Pressure, Altitude); 
+    // logOut(printstring, msgBME280Info, msgInfo);    
 
     // get the data, and collect the required sums for averaging for Thingspeak
+    // sprintf(printstring,"test1\n");
+    // logOut(printstring, msgMQTTState, msgInfo);
+    
     #ifdef isThingspeak
       temperature = Temperature;    // sensor temperature in C
       temperature_sum += temperature;         // for averaging in thingspeak
@@ -4826,6 +4874,20 @@ void main_handler()
     else
       CO2ppm = -1;
   #endif    // SENSEAIR
+
+  //sprintf(printstring,"test4\n");
+  //logOut(printstring, msgMQTTState, msgInfo);
+  #ifdef isMQTT
+    sprintf(printstring,"before mqtt client loop\n");
+    logOut(printstring, msgMQTTState, msgInfo);
+    mqttClient.loop(); // ensure that callback function for mqtt is handled
+    int tst = mqttClient.state();
+    sprintf(printstring,"MQTT client state: %d\n",tst);
+    logOut(printstring, msgMQTTState, msgInfo);
+    if(tst!=MQTT_CONNECTED)
+      mqttReconnect();
+    mqttClient.loop(); // ensure that callback function for mqtt is handled  
+  #endif
 
   sprintf(printstring,"%ld %ld",start_loop_time, end_loop_time);
   // loop timing - no more needed, with main_handler controlled by timer

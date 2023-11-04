@@ -64,10 +64,10 @@
  // #define blynkBME680Kueche
  // #define blynkKuecheLinks
  // #define blynkEnvLocal2Bad
-  #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
+ // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
- // #define blynkWohnzimmerRechts
+  #define blynkWohnzimmerRechts
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
  // #define blynkArbeitszimmerPrintedRed    // new sensor 07.02.23 in red printed housing

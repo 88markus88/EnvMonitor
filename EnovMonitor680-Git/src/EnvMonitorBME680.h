@@ -74,6 +74,9 @@
 #define msgMQTTSend           222
 #define msgMQTTSendDS10B20    223
 #define msgMQTTReceive        225
+#define msgMQTTConnect        226
+#define msgMQTTSubscribe      227
+#define msgMQTTState          228
 
 //Message Severities
 #define msgDefault  0
