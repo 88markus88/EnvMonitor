@@ -4788,6 +4788,11 @@ void main_handler()
         V[8] = air_quality_score; 
         // V[12] = air_quality_string; 
       #endif
+
+      // 26.01.24: copy to proper global variables to transfer to MQTT as well
+      Temperature = temperature;
+      Pressure = pressure;
+      Humidity = humidity;
     
       // delay(300); // give blynk time to send the stuff
       vTaskDelay(100 / portTICK_PERIOD_MS); // non-blocking delay instead

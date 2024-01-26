@@ -61,13 +61,13 @@
 
 #if BUILD_ENV_NAME==USB_upload  // needs to be manually selected in case of USB Upload ENV
  // #define blynkWebHinkelhurz
- // #define blynkBME680Kueche
+  #define blynkBME680Kueche
  // #define blynkKuecheLinks
  // #define blynkEnvLocal2Bad
  // #define blynkInfactoryExternalS  // KombiSensorExt-LCD. LCD in Black Box 
  // #define blynkSenseAirRedBox
  // #define blynkKombinsensor1       // KombiSensorExt-OLED. OLED in Black Box, Arduino, BME280, 2 DS18B20 
-  #define blynkWohnzimmerRechts
+ // #define blynkWohnzimmerRechts
  // #define blynkBME680BreadBoard    // BME680 auf Breadboard
  // #define blynkRedBoxYellowButton
  // #define blynkArbeitszimmerPrintedRed    // new sensor 07.02.23 in red printed housing
@@ -263,7 +263,7 @@
     static char infoStringShort[] = "BME680 Kueche";
     #define isMQTT      // connect to MQTT, send data there
     #define isMQTTLog   // logging to MQTT, topic esp/mqttRoomString/log
-    static char mqttRoomString[] = "Kueche";
+    static char mqttRoomString[] = "KuecheCO2";
 #endif
 
 #ifdef blynkSenseAirRedBox  // Red Euro Box. OLED, Senseair CO2 sensor, 3 DS18B20

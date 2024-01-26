@@ -310,6 +310,8 @@ unsigned long rssi_n=0;
   void checkIaqSensorStatus(void);
   void loadBsecState(void);
   void updateBsecState(void);
+
+  float Temperature, Humidity, Pressure, Altitude; // converted values in °C, %, mbar
 #endif  
 
 #ifdef isBME280
